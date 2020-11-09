@@ -1,39 +1,54 @@
-# System Lambda
+# System Stubs
 
-![Build Status Linux](https://github.com/stefanbirkner/system-lambda/workflows/Java%20CI%20with%20Maven/badge.svg?branch=master) [![Build Status Windows](https://ci.appveyor.com/api/projects/status/4ck6g0triwhvk9dy?svg=true)](https://ci.appveyor.com/project/stefanbirkner/system-lambda)
-
-System Lambda is a collection of functions for testing code which uses
+## Overview
+System Stubs is a collection of mechanisms for testing code which uses
 `java.lang.System`.
 
-System Lambda is published under the
+System Stubs is published under the
 [MIT license](http://opensource.org/licenses/MIT). It requires at least Java 8.
 
-For JUnit 4 there is an alternative to System Lambda. Its name is
-[System Rules](http://stefanbirkner.github.io/system-rules/index.html).
+## History
+Based on the excellent work by Stefan Birkner in
+[System Rules](https://stefanbirkner.github.io/system-rules/index.html) and [System Lambda](https://github.com/stefanbirkner/system-lambda) this is a remix
+of the core techniques, to allow them to be used more
+flexibly.
+
+No longer limited to being a JUnit4 rule (system rules)
+and available as a JUnit 5 plugin, this version comes
+from solving some problems that were hard to solve with the
+originals and were not considered in keeping
+with the trajectory of **System Lambda**.
+
+This version comes with the [assent](https://github.com/stefanbirkner/system-lambda/issues/9) of the original author.
+The original author has no responsibility for this version.
+
+### Differences
+
+The main aims of this version:
+
+- Enable environment variables to be set before child test suites
+  - allowing environment details to be set in _beforeAll_ or _beforeEach_ hooks
+  - as can be necessaru for Spring tests
+- Support JUnit4 and JUnit5 plugins
+- Improve the fluency of the interfaces to reduce boilerplate
+- Modularise the code
+- Standardise this module's tests around _Mockito_ and _AssertJ_ (removing
+home-made alternatives)
 
 ## Installation
 
-System Lambda is available from
-[Maven Central](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.github.stefanbirkner%22%20AND%20a%3A%22system-lambda%22).
+... tbc - when published to maven central
 
-```xml
-<dependency>
-    <groupId>com.github.stefanbirkner</groupId>
-    <artifactId>system-lambda</artifactId>
-    <version>1.1.1</version>
-</dependency>
-```
+## Usage with Execute Around
 
-Please don't forget to add the scope `test` if you're using System Lambda for
-tests only.
+In order to support migration from [System Lambda](https://github.com/stefanbirkner/system-lambda), and
+to enable reuse of the original unit tests, the `SystemStubs` facade supports the original
+[execute around](https://java-design-patterns.com/patterns/execute-around/) idiom.
 
-
-## Usage
-
-Import System Lambda's functions by adding
+Import System Stubs functions by adding
 
 ```java
-import static com.github.stefanbirkner.systemlambda.SystemLambda.*;
+import static uk.org.webcompere.systemstubs.SystemStubs.*;
 ```
 
 to your tests.
@@ -49,8 +64,7 @@ the method `catchSystemExit` which also returns the status code of the
 
 ```java
 @Test
-void application_exits_with_status_42(
-) throws Exception {
+void application_exits_with_status_42() throws Exception {
   int statusCode = catchSystemExit(() -> {
     System.exit(42);
   });
@@ -70,18 +84,14 @@ within your test code that are removed after your code under test is executed.
 
 ```java
 @Test
-void execute_code_with_environment_variables(
-) throws Exception {
+void execute_code_with_environment_variables() throws Exception {
   List<String> values = withEnvironmentVariable("first", "first value")
     .and("second", "second value")
     .execute(() -> asList(
       System.getenv("first"),
       System.getenv("second")
     ));
-  assertEquals(
-    asList("first value", "second value"),
-    values
-  );
+  assertEquals(asList("first value", "second value"), values);
 }
 ```
 
@@ -95,20 +105,19 @@ other tests.
 
 ```java
 @Test
-void execute_code_that_manipulates_system_properties(
-) throws Exception {
+void execute_code_that_manipulates_system_properties() throws Exception {
   restoreSystemProperties(() -> {
     System.setProperty("some.property", "some value");
     //code under test that reads properties (e.g. "some.property") or
     //modifies them.
   });
-  
+
   //Here the value of "some.property" is the same like before.
   //E.g. it is not set.
 }
 ```
 
-     
+
 ### System.out and System.err
 
 Command-line applications usually write to the console. If you write such
@@ -121,8 +130,7 @@ different operating systems.
 
 ```java
 @Test
-void application_writes_text_to_System_err(
-) throws Exception {
+void application_writes_text_to_System_err() throws Exception {
   String text = tapSystemErr(() -> {
     System.err.print("some text");
   });
@@ -130,8 +138,7 @@ void application_writes_text_to_System_err(
 }
 
 @Test
-void application_writes_mutliple_lines_to_System_err(
-) throws Exception {
+void application_writes_mutliple_lines_to_System_err() throws Exception {
   String text = tapSystemErrNormalized(() -> {
     System.err.println("first line");
     System.err.println("second line");
@@ -140,8 +147,7 @@ void application_writes_mutliple_lines_to_System_err(
 }
 
 @Test
-void application_writes_text_to_System_out(
-) throws Exception {
+void application_writes_text_to_System_out() throws Exception {
   String text = tapSystemOut(() -> {
     System.out.print("some text");
   });
@@ -149,8 +155,7 @@ void application_writes_text_to_System_out(
 }
 
 @Test
-void application_writes_mutliple_lines_to_System_out(
-) throws Exception {
+void application_writes_mutliple_lines_to_System_out() throws Exception {
   String text = tapSystemOutNormalized(() -> {
     System.out.println("first line");
     System.out.println("second line");
@@ -166,16 +171,14 @@ following tests fail:
 
 ```java
 @Test
-void fails_because_something_is_written_to_System_err(
-) throws Exception {
+void fails_because_something_is_written_to_System_err() throws Exception {
   assertNothingWrittenToSystemErr(() -> {
     System.err.println("some text");
   });
 }
 
 @Test
-void fails_because_something_is_written_to_System_out(
-) throws Exception {
+void fails_because_something_is_written_to_System_out() throws Exception {
   assertNothingWrittenToSystemOut(() -> {
     System.out.println("some text");
   });
@@ -190,16 +193,14 @@ don't write anything to `System.err`/`System.out`:
 
 ```java
 @Test
-void nothing_is_written_to_System_err(
-) throws Exception {
+void nothing_is_written_to_System_err() throws Exception {
   muteSystemErr(() -> {
     System.err.println("some text");
   });
 }
 
 @Test
-void nothing_is_written_to_System_out(
-) throws Exception {
+void nothing_is_written_to_System_out() throws Exception {
   muteSystemOut(() -> {
     System.out.println("some text");
   });
@@ -215,8 +216,7 @@ the lines that are available from `System.in` with the method
 
 ```java
 @Test
-void Scanner_reads_text_from_System_in(
-) throws Exception {
+void Scanner_reads_text_from_System_in() throws Exception {
   withTextFromSystemIn("first line", "second line")
     .execute(() -> {
       Scanner scanner = new Scanner(System.in);
@@ -234,8 +234,7 @@ consumed.
 
 ```java
 @Test
-void System_in_throws_IOException(
-) throws Exception {
+void System_in_throws_IOException() throws Exception {
   withTextFromSystemIn("first line", "second line")
     .andExceptionThrownOnInputEnd(new IOException())
     .execute(() -> {
@@ -250,8 +249,7 @@ void System_in_throws_IOException(
 }
 
 @Test
-void System_in_throws_RuntimeException(
-) throws Exception {
+void System_in_throws_RuntimeException() throws Exception {
   withTextFromSystemIn("first line", "second line")
     .andExceptionThrownOnInputEnd(new RuntimeException())
     .execute(() -> {
@@ -289,8 +287,7 @@ executed.
 
 ```java
 @Test
-void execute_code_with_specific_SecurityManager(
-) throws Exception {
+void execute_code_with_specific_SecurityManager() throws Exception {
   SecurityManager securityManager = new ASecurityManager();
   withSecurityManager(
     securityManager,
@@ -310,20 +307,19 @@ After `withSecurityManager(...)` is executed`System.getSecurityManager()`
 returns the original security manager again.
 
 
+
 ## Contributing
 
-You have three options if you have a feature request, found a bug or
-simply have a question about System Lambda.
+You have two options if you have a feature request, found a bug or
+simply have a question.
 
-* [Write an issue.](https://github.com/stefanbirkner/system-lambda/issues/new)
+* [Write an issue.](https://github.com/webcompere/system-stubs/issues/new)
 * Create a pull request. (See [Understanding the GitHub Flow](https://guides.github.com/introduction/flow/index.html))
-* [Write a mail to mail@stefan-birkner.de](mailto:mail@stefan-birkner.de)
-
 
 ## Development Guide
 
-System Lambda is build with [Maven](http://maven.apache.org/). If you
-want to contribute code than
+System Stubs is built with [Maven](http://maven.apache.org/). If you
+want to contribute code then
 
 * Please write a test for your change.
 * Ensure that you didn't break the build by running `mvnw test`.
@@ -332,11 +328,7 @@ want to contribute code than
 The basic coding style is described in the
 [EditorConfig](http://editorconfig.org/) file `.editorconfig`.
 
-System Lambda supports [GitHub Actions](https://help.github.com/en/actions)
-(Linux) and [AppVeyor](http://www.appveyor.com/) (Windows) for continuous
-integration. Your pull request will be automatically build by both CI
-servers.
-
+System Stubs is built with [travis-ci](https://travis-ci.org/github/webcompere/system-stubs).
 
 ## Release Guide
 
@@ -346,4 +338,4 @@ servers.
   this readme.
 * Commit the modified `pom.xml` and `README.md`.
 * Run `mvnw clean deploy` with JDK 8.
-* Add a tag for the release: `git tag system-lambda-X.X.X`
+* Add a tag for the release: `git tag system-stubs-X.X.X`
