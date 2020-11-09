@@ -1,7 +1,7 @@
 package uk.org.webcompere.systemstubs;
 
 import uk.org.webcompere.systemstubs.environment.PropertiesUtils;
-import uk.org.webcompere.systemstubs.environment.WithEnvironmentVariables;
+import uk.org.webcompere.systemstubs.environment.EnvironmentVariables;
 import uk.org.webcompere.systemstubs.security.CheckExitCalled;
 import uk.org.webcompere.systemstubs.security.NoExitSecurityManager;
 import uk.org.webcompere.systemstubs.stream.SystemInStub;
@@ -18,7 +18,7 @@ import static java.util.Collections.singletonMap;
 import static java.util.stream.Collectors.joining;
 
 /**
- * {@code SystemLambda} is a collection of functions for testing code
+ * {@link SystemStubs} is a collection of functions for testing code
  * that uses {@code java.lang.System}.
  *
  * <h2>System.exit</h2>
@@ -31,8 +31,7 @@ import static java.util.stream.Collectors.joining;
  *
  * <pre>
  * &#064;Test
- * void application_exits_with_status_42(
- * ) throws Exception {
+ * void application_exits_with_status_42() throws Exception {
  *   int statusCode = catchSystemExit((){@literal ->} {
  *     System.exit(42);
  *   });
@@ -52,8 +51,7 @@ import static java.util.stream.Collectors.joining;
  * removed after your code under test is executed.
  * <pre>
  * &#064;Test
- * void execute_code_with_environment_variables(
- * ) throws Exception {
+ * void execute_code_with_environment_variables() throws Exception {
  *  {@literal List<String>} values = withEnvironmentVariable("first", "first value")
  *     .and("second", "second value")
  *     .execute((){@literal ->} asList(
@@ -75,8 +73,7 @@ import static java.util.stream.Collectors.joining;
  * the test code without having an impact on other tests.
  * <pre>
  * &#064;Test
- * void execute_code_that_manipulates_system_properties(
- * ) throws Exception {
+ * void execute_code_that_manipulates_system_properties() throws Exception {
  *   restoreSystemProperties((){@literal ->} {
  *     System.setProperty("some.property", "some value");
  *     //code under test that reads properties (e.g. "some.property") or
@@ -99,8 +96,7 @@ import static java.util.stream.Collectors.joining;
  *
  * <pre>
  * &#064;Test
- * void application_writes_text_to_System_err(
- * ) throws Exception {
+ * void application_writes_text_to_System_err() throws Exception {
  *   String text = tapSystemErr((){@literal ->} {
  *     System.err.print("some text");
  *   });
@@ -108,8 +104,7 @@ import static java.util.stream.Collectors.joining;
  * }
  *
  * &#064;Test
- * void application_writes_mutliple_lines_to_System_err(
- * ) throws Exception {
+ * void application_writes_mutliple_lines_to_System_err() throws Exception {
  *   String text = tapSystemErrNormalized((){@literal ->} {
  *     System.err.println("first line");
  *     System.err.println("second line");
@@ -118,8 +113,7 @@ import static java.util.stream.Collectors.joining;
  * }
  *
  * &#064;Test
- * void application_writes_text_to_System_out(
- * ) throws Exception {
+ * void application_writes_text_to_System_out() throws Exception {
  *   String text = tapSystemOut((){@literal ->} {
  *     System.out.print("some text");
  *   });
@@ -127,8 +121,7 @@ import static java.util.stream.Collectors.joining;
  * }
  *
  * &#064;Test
- * void application_writes_mutliple_lines_to_System_out(
- * ) throws Exception {
+ * void application_writes_mutliple_lines_to_System_out() throws Exception {
  *   String text = tapSystemOutNormalized((){@literal ->} {
  *     System.out.println("first line");
  *     System.out.println("second line");
@@ -143,16 +136,14 @@ import static java.util.stream.Collectors.joining;
  * assertNothingWrittenToSystemOut}. E.g. the following tests fail:
  * <pre>
  * &#064;Test
- * void fails_because_something_is_written_to_System_err(
- * ) throws Exception {
+ * void fails_because_something_is_written_to_System_err() throws Exception {
  *   assertNothingWrittenToSystemErr((){@literal ->} {
  *     System.err.println("some text");
  *   });
  * }
  *
  * &#064;Test
- * void fails_because_something_is_written_to_System_out(
- * ) throws Exception {
+ * void fails_because_something_is_written_to_System_out() throws Exception {
  *   assertNothingWrittenToSystemOut((){@literal ->} {
  *     System.out.println("some text");
  *   });
@@ -169,16 +160,14 @@ import static java.util.stream.Collectors.joining;
  * {@code System.err}/{@code System.out}:
  * <pre>
  * &#064;Test
- * void nothing_is_written_to_System_err(
- * ) throws Exception {
+ * void nothing_is_written_to_System_err() throws Exception {
  *   muteSystemErr((){@literal ->} {
  *     System.err.println("some text");
  *   });
  * }
  *
  * &#064;Test
- * void nothing_is_written_to_System_out(
- * ) throws Exception {
+ * void nothing_is_written_to_System_out() throws Exception {
  *   muteSystemOut((){@literal ->} {
  *     System.out.println("some text");
  *   });
@@ -193,8 +182,7 @@ import static java.util.stream.Collectors.joining;
  * method {@link #withTextFromSystemIn(String...) withTextFromSystemIn}
  * <pre>
  * &#064;Test
- * void Scanner_reads_text_from_System_in(
- * ) throws Exception {
+ * void Scanner_reads_text_from_System_in() throws Exception {
  *   withTextFromSystemIn("first line", "second line")
  *     .execute((){@literal ->} {
  *       Scanner scanner = new Scanner(System.in);
@@ -211,8 +199,7 @@ import static java.util.stream.Collectors.joining;
  * after the text has been consumed.
  * <pre>
  * &#064;Test
- * void System_in_throws_IOException(
- * ) throws Exception {
+ * void System_in_throws_IOException() throws Exception {
  *   withTextFromSystemIn("first line", "second line")
  *     .andExceptionThrownOnInputEnd(new IOException())
  *     .execute((){@literal ->} {
@@ -227,8 +214,7 @@ import static java.util.stream.Collectors.joining;
  * }
  *
  * &#064;Test
- * void System_in_throws_RuntimeException(
- * ) throws Exception {
+ * void System_in_throws_RuntimeException() throws Exception {
  *   withTextFromSystemIn("first line", "second line")
  *     .andExceptionThrownOnInputEnd(new RuntimeException())
  *     .execute((){@literal ->} {
@@ -265,8 +251,7 @@ import static java.util.stream.Collectors.joining;
  * {@code System.getSecurityManger()} while your code under test is executed.
  * <pre>
  * &#064;Test
- * void execute_code_with_specific_SecurityManager(
- * ) throws Exception {
+ * void execute_code_with_specific_SecurityManager() throws Exception {
  *   SecurityManager securityManager = new ASecurityManager();
  *   withSecurityManager(
  *     securityManager,
@@ -638,19 +623,19 @@ public class SystemStubs {
 	 * such modifications.
 	 * @param name the name of the environment variable.
 	 * @param value the value of the environment variable.
-	 * @return an {@link WithEnvironmentVariables} instance that can be used to
+	 * @return an {@link EnvironmentVariables} instance that can be used to
 	 * set more variables and run a statement with the specified environment
 	 * variables.
 	 * @since 1.0.0
-	 * @see WithEnvironmentVariables#and(String, String)
-	 * @see WithEnvironmentVariables#execute(Callable)
-	 * @see WithEnvironmentVariables#execute(ThrowingRunnable)
+	 * @see EnvironmentVariables#and(String, String)
+	 * @see EnvironmentVariables#execute(Callable)
+	 * @see EnvironmentVariables#execute(ThrowingRunnable)
 	 */
-	public static WithEnvironmentVariables withEnvironmentVariable(
+	public static EnvironmentVariables withEnvironmentVariable(
 		String name,
 		String value
 	) {
-		return new WithEnvironmentVariables(
+		return new EnvironmentVariables(
 			singletonMap(name, value)
 		);
 	}

@@ -2,6 +2,8 @@ package uk.org.webcompere.systemstubs.environment;
 
 import uk.org.webcompere.systemstubs.ThrowingRunnable;
 import uk.org.webcompere.systemstubs.SystemStubs;
+import uk.org.webcompere.systemstubs.resource.Resources;
+import uk.org.webcompere.systemstubs.resource.SingularTestResource;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
@@ -17,10 +19,11 @@ import static java.lang.System.getenv;
  * object is then used to execute an arbitrary piece of code with these
  * environment variables being present.
  */
-public class WithEnvironmentVariables {
+public class EnvironmentVariables extends SingularTestResource {
     private final Map<String, String> variables;
+    private Map<String, String> originalEnvironment = null;
 
-    public WithEnvironmentVariables(Map<String, String> variables) {
+    public EnvironmentVariables(Map<String, String> variables) {
         this.variables = new HashMap<>(variables);
     }
 
@@ -37,20 +40,14 @@ public class WithEnvironmentVariables {
      * @see SystemStubs#withEnvironmentVariable(String, String)
      * @see #execute(ThrowingRunnable)
      */
-    public WithEnvironmentVariables and(
-        String name,
-        String value
-    ) {
+    public EnvironmentVariables and(String name, String value) {
         validateNotSet(name, value);
         HashMap<String, String> moreVariables = new HashMap<>(variables);
         moreVariables.put(name, value);
-        return new WithEnvironmentVariables(moreVariables);
+        return new EnvironmentVariables(moreVariables);
     }
 
-    private void validateNotSet(
-        String name,
-        String value
-    ) {
+    private void validateNotSet(String name, String value) {
         if (variables.containsKey(name)) {
             String currentValue = variables.get(name);
             throw new IllegalArgumentException(
@@ -64,10 +61,11 @@ public class WithEnvironmentVariables {
     private String format(
         String text
     ) {
-        if (text == null)
+        if (text == null) {
             return "null";
-        else
+        } else {
             return "'" + text + "'";
+        }
     }
 
     /**
@@ -105,16 +103,19 @@ public class WithEnvironmentVariables {
      * @see #and(String, String)
      * @see #execute(ThrowingRunnable)
      */
-    public <T> T execute(
-        Callable<T> callable
-    ) throws Exception {
-        Map<String, String> originalVariables = new HashMap<>(getenv());
-        try {
-            setEnvironmentVariables();
-            return callable.call();
-        } finally {
-            restoreOriginalVariables(originalVariables);
-        }
+    public <T> T execute(Callable<T> callable) throws Exception {
+        return Resources.executeAround(callable, this);
+    }
+
+    @Override
+    protected void doSetup() {
+        originalEnvironment = new HashMap<>(getenv());
+        setEnvironmentVariables();
+    }
+
+    @Override
+    protected void doTeardown() {
+        restoreOriginalVariables(originalEnvironment);
     }
 
     /**
@@ -150,19 +151,11 @@ public class WithEnvironmentVariables {
      * @throws Exception any exception thrown by the statement.
      * @since 1.0.0
      * @see SystemStubs#withEnvironmentVariable(String, String)
-     * @see WithEnvironmentVariables#and(String, String)
+     * @see EnvironmentVariables#and(String, String)
      * @see #execute(Callable)
      */
-    public void execute(
-        ThrowingRunnable throwingRunnable
-    ) throws Exception {
-        Map<String, String> originalVariables = new HashMap<>(getenv());
-        try {
-            setEnvironmentVariables();
-            throwingRunnable.run();
-        } finally {
-            restoreOriginalVariables(originalVariables);
-        }
+    public void execute(ThrowingRunnable throwingRunnable) throws Exception {
+        execute(throwingRunnable.asCallable());
     }
 
     private void setEnvironmentVariables() {
@@ -174,13 +167,13 @@ public class WithEnvironmentVariables {
         );
     }
 
-    private void overrideVariables(
-        Map<String, String> existingVariables
-    ) {
-        if (existingVariables != null) //theCaseInsensitiveEnvironment may be null
+    private void overrideVariables(Map<String, String> existingVariables) {
+        //theCaseInsensitiveEnvironment may be null
+        if (existingVariables != null) {
             variables.forEach(
                 (name, value) -> set(existingVariables, name, value)
             );
+        }
     }
 
     private void set(

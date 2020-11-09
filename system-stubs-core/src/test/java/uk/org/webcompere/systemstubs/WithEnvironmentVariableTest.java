@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import uk.org.webcompere.systemstubs.environment.WithEnvironmentVariables;
+import uk.org.webcompere.systemstubs.environment.EnvironmentVariables;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -208,7 +208,7 @@ class WithEnvironmentVariableTest {
 	@Test
 	void the_and_method_creates_a_new_object_so_that_EnvironmentVariables_object_can_be_reused(
 	) throws Exception {
-		WithEnvironmentVariables baseSetting = SystemStubs.withEnvironmentVariable("first", "first value");
+		EnvironmentVariables baseSetting = SystemStubs.withEnvironmentVariable("first", "first value");
 		baseSetting.and("second", "second value")
 			.execute(() -> {});
 
