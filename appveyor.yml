@@ -1,0 +1,10 @@
+version: '{build}'
+image:
+  - Visual Studio 2015
+  - Ubuntu
+build_script:
+  - ./mvnw clean package -DskipTest
+test_script:
+  - ./mvnw clean verify
+cache:
+  - C:\Users\appveyor\.m2
