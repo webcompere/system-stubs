@@ -27,10 +27,17 @@
 
   <modules>
     <module>system-stubs-core</module>
+    <module>system-stubs-junit4</module>
   </modules>
 
   <dependencyManagement>
     <dependencies>
+      <dependency>
+        <groupId>uk.org.webcompere</groupId>
+        <artifactId>system-stubs-core</artifactId>
+        <version>0.0.1</version>
+      </dependency>
+
       <dependency>
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-lang3</artifactId>
@@ -54,6 +61,13 @@
         <artifactId>mockito-junit-jupiter</artifactId>
         <version>3.6.0</version>
         <scope>test</scope>
+      </dependency>
+      <!-- For JUnit plugin -->
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>4.12</version>
+        <scope>provided</scope>
       </dependency>
     </dependencies>
   </dependencyManagement>

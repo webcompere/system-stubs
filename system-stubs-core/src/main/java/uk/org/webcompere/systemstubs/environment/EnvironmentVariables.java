@@ -21,13 +21,25 @@ import static java.util.Collections.emptyMap;
  * environment variables being present.
  */
 public class EnvironmentVariables extends SingularTestResource {
-    private final Map<String, String> variables;
+    protected final Map<String, String> variables;
     private Map<String, String> originalEnvironment = null;
 
+    /**
+     * Default constructor with an empty set of environment variables. Use {@link #set(String, String)} to
+     * provide some, mutating this, or {@link #and(String, String)} to fork a fresh object with desired
+     * environment variable settings.
+     */
     public EnvironmentVariables() {
         this(emptyMap());
     }
 
+    /**
+     * Construct with an initial set of variables as name value pairs.
+     * @param name first environment variable's name
+     * @param value first environment variable's value
+     * @param others must be of even-numbered length. Name/value pairs of the other values to
+     *               apply to the environment when this object is active
+     */
     public EnvironmentVariables(String name, String value, String ... others) {
         if (others.length % 2 != 0) {
             throw new IllegalArgumentException("Must provide even number of parameters");
@@ -39,6 +51,9 @@ public class EnvironmentVariables extends SingularTestResource {
         }
     }
 
+    /**
+     * Construct with an initial map of variables as name value pairs
+     */
     public EnvironmentVariables(Map<String, String> variables) {
         this.variables = new HashMap<>(variables);
     }
@@ -58,9 +73,7 @@ public class EnvironmentVariables extends SingularTestResource {
      */
     public EnvironmentVariables and(String name, String value) {
         validateNotSet(name, value);
-        HashMap<String, String> moreVariables = new HashMap<>(variables);
-        moreVariables.put(name, value);
-        return new EnvironmentVariables(moreVariables);
+        return new EnvironmentVariables(variables).set(name, value);
     }
 
     /**
@@ -79,6 +92,10 @@ public class EnvironmentVariables extends SingularTestResource {
         return this;
     }
 
+    public Map<String, String> getVariables() {
+        return variables;
+    }
+
     private void validateNotSet(String name, String value) {
         if (variables.containsKey(name)) {
             String currentValue = variables.get(name);
@@ -90,9 +107,7 @@ public class EnvironmentVariables extends SingularTestResource {
         }
     }
 
-    private String format(
-        String text
-    ) {
+    private String format(String text) {
         if (text == null) {
             return "null";
         } else {
