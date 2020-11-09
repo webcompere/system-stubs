@@ -12,6 +12,7 @@ import java.util.concurrent.Callable;
 
 import static java.lang.Class.forName;
 import static java.lang.System.getenv;
+import static java.util.Collections.emptyMap;
 
 /**
  * A collection of values for environment variables. New values can be
@@ -23,12 +24,27 @@ public class EnvironmentVariables extends SingularTestResource {
     private final Map<String, String> variables;
     private Map<String, String> originalEnvironment = null;
 
+    public EnvironmentVariables() {
+        this(emptyMap());
+    }
+
+    public EnvironmentVariables(String name, String value, String ... others) {
+        if (others.length % 2 != 0) {
+            throw new IllegalArgumentException("Must provide even number of parameters");
+        }
+        variables = new HashMap<>();
+        variables.put(name, value);
+        for (int i = 0; i < others.length; i += 2) {
+            variables.put(others[i], others[i + 1]);
+        }
+    }
+
     public EnvironmentVariables(Map<String, String> variables) {
         this.variables = new HashMap<>(variables);
     }
 
     /**
-     * Creates a new {@code WithEnvironmentVariables} object that
+     * <em>Immutable setter:</em> creates a new {@code WithEnvironmentVariables} object that
      * additionally stores the value for an additional environment variable.
      * <p>You cannot specify the value of an environment variable twice. An
      * {@code IllegalArgumentException} when you try.
@@ -45,6 +61,22 @@ public class EnvironmentVariables extends SingularTestResource {
         HashMap<String, String> moreVariables = new HashMap<>(variables);
         moreVariables.put(name, value);
         return new EnvironmentVariables(moreVariables);
+    }
+
+    /**
+     * <em>Mutable setter:</em> applies the change to the stored environment variables
+     * and applies to the environment too if currently active.
+     * @param name name of variable to set
+     * @param value value to set
+     * @return this for fluent calling
+     */
+    public EnvironmentVariables set(String name, String value) {
+        variables.put(name, value);
+
+        if (isActive()) {
+            setEnvironmentVariables();
+        }
+        return this;
     }
 
     private void validateNotSet(String name, String value) {
@@ -171,20 +203,19 @@ public class EnvironmentVariables extends SingularTestResource {
         //theCaseInsensitiveEnvironment may be null
         if (existingVariables != null) {
             variables.forEach(
-                (name, value) -> set(existingVariables, name, value)
+                (name, value) -> setOrRemoveInMap(existingVariables, name, value)
             );
         }
     }
 
-    private void set(
-        Map<String, String> variables,
-        String name,
-        String value
-    ) {
-        if (value == null)
+    private void setOrRemoveInMap(Map<String, String> variables,
+                                  String name,
+                                  String value) {
+        if (value == null) {
             variables.remove(name);
-        else
+        } else {
             variables.put(name, value);
+        }
     }
 
     void restoreOriginalVariables(
