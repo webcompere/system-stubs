@@ -1,6 +1,8 @@
 package uk.org.webcompere.systemstubs.stream;
 
 import uk.org.webcompere.systemstubs.ThrowingRunnable;
+import uk.org.webcompere.systemstubs.resource.Resources;
+import uk.org.webcompere.systemstubs.resource.SingularTestResource;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,14 +20,13 @@ import static java.nio.charset.Charset.defaultCharset;
  * <p>The specified behaviour of {@code System.in} is applied to an
  * arbitrary piece of code that is provided to {@link #execute(ThrowingRunnable)}.
  */
-public class SystemInStub {
+public class SystemIn extends SingularTestResource {
     private IOException ioException;
     private RuntimeException runtimeException;
     private final String text;
+    private InputStream originalIn;
 
-    public SystemInStub(
-            String text
-    ) {
+    public SystemIn(String text) {
         this.text = text;
     }
 
@@ -37,14 +38,13 @@ public class SystemInStub {
      * already set by
      * {@link #andExceptionThrownOnInputEnd(RuntimeException)}
      */
-    public SystemInStub andExceptionThrownOnInputEnd(
-        IOException exception
-    ) {
-        if (runtimeException != null)
+    public SystemIn andExceptionThrownOnInputEnd(IOException exception) {
+        if (runtimeException != null) {
             throw new IllegalStateException("You cannot call"
                 + " andExceptionThrownOnInputEnd(IOException) because"
                 + " andExceptionThrownOnInputEnd(RuntimeException) has"
                 + " already been called.");
+        }
         this.ioException = exception;
         return this;
     }
@@ -56,9 +56,7 @@ public class SystemInStub {
      * @throws IllegalStateException if an {@code IOException} was already
      * set by {@link #andExceptionThrownOnInputEnd(IOException)}
      */
-    public SystemInStub andExceptionThrownOnInputEnd(
-        RuntimeException exception
-    ) {
+    public SystemIn andExceptionThrownOnInputEnd(RuntimeException exception) {
         if (ioException != null)
             throw new IllegalStateException("You cannot call"
                 + " andExceptionThrownOnInputEnd(RuntimeException) because"
@@ -78,95 +76,86 @@ public class SystemInStub {
      * @param throwingRunnable an arbitrary piece of code.
      * @throws Exception any exception thrown by the statement.
      */
-    public void execute(
-        ThrowingRunnable throwingRunnable
-    ) throws Exception {
-        InputStream stubStream = new ReplacementInputStream(
-            text, ioException, runtimeException
-        );
-        InputStream originalIn = System.in;
-        try {
-            setIn(stubStream);
-            throwingRunnable.run();
-        } finally {
-            setIn(originalIn);
-        }
+    public void execute(ThrowingRunnable throwingRunnable) throws Exception {
+        Resources.executeAround(throwingRunnable.asCallable(), this);
     }
 
+    @Override
+    protected void doSetup() throws Exception {
+        InputStream stubStream = new ReplacementInputStream(text, ioException, runtimeException);
+        originalIn = System.in;
+        setIn(stubStream);
+    }
+
+    @Override
+    protected void doTeardown() throws Exception {
+        setIn(originalIn);
+    }
 
     private static class ReplacementInputStream extends InputStream {
         private final StringReader reader;
         private final IOException ioException;
         private final RuntimeException runtimeException;
 
-        ReplacementInputStream(
-            String text,
+        ReplacementInputStream(String text,
             IOException ioException,
-            RuntimeException runtimeException
-        ) {
+            RuntimeException runtimeException) {
             this.reader = new StringReader(text);
             this.ioException = ioException;
             this.runtimeException = runtimeException;
         }
 
         @Override
-        public int read(
-        ) throws IOException {
+        public int read() throws IOException {
             int character = reader.read();
-            if (character == -1)
+            if (character == -1) {
                 handleEmptyReader();
+            }
             return character;
         }
 
-        private void handleEmptyReader(
-        ) throws IOException {
-            if (ioException != null)
+        private void handleEmptyReader() throws IOException {
+            if (ioException != null) {
                 throw ioException;
-            else if (runtimeException != null)
+            } else if (runtimeException != null) {
                 throw runtimeException;
+            }
         }
 
         @Override
-        public int read(
-            byte[] buffer,
-            int offset,
-            int len
-        ) throws IOException {
-            if (buffer == null)
+        public int read(byte[] buffer, int offset, int len) throws IOException {
+            if (buffer == null) {
                 throw new NullPointerException();
-            else if (offset < 0 || len < 0 || len > buffer.length - offset)
+            } else if (offset < 0 || len < 0 || len > buffer.length - offset) {
                 throw new IndexOutOfBoundsException();
-            else if (len == 0)
+            } else if (len == 0) {
                 return 0;
-            else
+            } else {
                 return readNextLine(buffer, offset, len);
+            }
         }
 
-        private int readNextLine(
-            byte[] buffer,
-            int offset,
-            int len
-        ) throws IOException {
+        private int readNextLine(byte[] buffer, int offset, int len) throws IOException {
             int c = read();
-            if (c == -1)
+            if (c == -1) {
                 return -1;
+            }
             buffer[offset] = (byte) c;
 
             int i = 1;
             for (; (i < len) && !isCompleteLineWritten(buffer, i - 1); ++i) {
                 byte read = (byte) read();
-                if (read == -1)
+                if (read == -1) {
                     break;
-                else
+                } else {
                     buffer[offset + i] = read;
+                }
             }
             return i;
         }
 
-        private boolean isCompleteLineWritten(
-            byte[] buffer,
-            int indexLastByteWritten
-        ) {
+        private boolean isCompleteLineWritten(byte[] buffer,
+            int indexLastByteWritten) {
             byte[] separator = getProperty("line.separator")
                 .getBytes(defaultCharset());
             int indexFirstByteOfSeparator = indexLastByteWritten
@@ -175,14 +164,14 @@ public class SystemInStub {
                 && contains(buffer, separator, indexFirstByteOfSeparator);
         }
 
-        private boolean contains(
-            byte[] array,
+        private boolean contains(byte[] array,
             byte[] pattern,
-            int indexStart
-        ) {
-            for (int i = 0; i < pattern.length; ++i)
-                if (array[indexStart + i] != pattern[i])
+            int indexStart) {
+            for (int i = 0; i < pattern.length; ++i) {
+                if (array[indexStart + i] != pattern[i]) {
                     return false;
+                }
+            }
             return true;
         }
     }

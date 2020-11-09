@@ -1,14 +1,14 @@
 package uk.org.webcompere.systemstubs;
 
-import uk.org.webcompere.systemstubs.environment.PropertiesUtils;
 import uk.org.webcompere.systemstubs.environment.EnvironmentVariables;
+import uk.org.webcompere.systemstubs.properties.SystemProperties;
 import uk.org.webcompere.systemstubs.security.CheckExitCalled;
 import uk.org.webcompere.systemstubs.security.NoExitSecurityManager;
-import uk.org.webcompere.systemstubs.stream.SystemInStub;
+import uk.org.webcompere.systemstubs.stream.SecurityManagerStub;
+import uk.org.webcompere.systemstubs.stream.SystemIn;
 import uk.org.webcompere.systemstubs.stream.SystemStreams;
 
 import java.io.*;
-import java.util.*;
 import java.util.concurrent.Callable;
 
 import static uk.org.webcompere.systemstubs.stream.SystemStreams.executeWithSystemErrReplacement;
@@ -464,16 +464,9 @@ public class SystemStubs {
 	 * @throws Exception any exception thrown by the statement.
 	 * @since 1.0.0
 	 */
-	public static void restoreSystemProperties(
-		ThrowingRunnable throwingRunnable
-	) throws Exception {
-		Properties originalProperties = getProperties();
-		setProperties(PropertiesUtils.copyOf(originalProperties));
-		try {
-			throwingRunnable.run();
-		} finally {
-			setProperties(originalProperties);
-		}
+	public static void restoreSystemProperties(ThrowingRunnable throwingRunnable) throws Exception {
+        new SystemProperties()
+            .executeAround(throwingRunnable.asCallable());
 	}
 
 	/**
@@ -664,17 +657,10 @@ public class SystemStubs {
      * @throws Exception any exception thrown by the statement.
      * @since 1.0.0
      */
-    public static void withSecurityManager(
-        SecurityManager securityManager,
-        ThrowingRunnable throwingRunnable
-    ) throws Exception {
-        SecurityManager originalSecurityManager = getSecurityManager();
-        setSecurityManager(securityManager);
-        try {
-            throwingRunnable.run();
-        } finally {
-            setSecurityManager(originalSecurityManager);
-        }
+    public static void withSecurityManager(SecurityManager securityManager,
+        ThrowingRunnable throwingRunnable) throws Exception {
+        new SecurityManagerStub(securityManager)
+            .executeAround(throwingRunnable.asCallable());
     }
 
 	/**
@@ -730,22 +716,22 @@ public class SystemStubs {
 	 * in addition then the exception is thrown after the text has been read
 	 * from {@code System.in}.
 	 * @param lines the lines that are available from {@code System.in}.
-	 * @return an {@link SystemInStub} instance that is used to execute a
-	 * statement with its {@link SystemInStub#execute(ThrowingRunnable) execute}
+	 * @return an {@link SystemIn} instance that is used to execute a
+	 * statement with its {@link SystemIn#execute(ThrowingRunnable) execute}
 	 * method. In addition it can be used to specify an exception that is thrown
 	 * after the text is read.
 	 * @since 1.0.0
-	 * @see SystemInStub#execute(ThrowingRunnable)
-	 * @see SystemInStub#andExceptionThrownOnInputEnd(IOException)
-	 * @see SystemInStub#andExceptionThrownOnInputEnd(RuntimeException)
+	 * @see SystemIn#execute(ThrowingRunnable)
+	 * @see SystemIn#andExceptionThrownOnInputEnd(IOException)
+	 * @see SystemIn#andExceptionThrownOnInputEnd(RuntimeException)
 	 */
-    public static SystemInStub withTextFromSystemIn(
+    public static SystemIn withTextFromSystemIn(
     	String... lines
 	) {
     	String text = stream(lines)
 			.map(line -> line + lineSeparator())
 			.collect(joining());
-    	return new SystemInStub(text);
+    	return new SystemIn(text);
 	}
 
     private static class DisallowWriteStream extends OutputStream {
