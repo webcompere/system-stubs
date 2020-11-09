@@ -77,7 +77,7 @@ public class SystemIn extends SingularTestResource {
      * @throws Exception any exception thrown by the statement.
      */
     public void execute(ThrowingRunnable throwingRunnable) throws Exception {
-        Resources.executeAround(throwingRunnable.asCallable(), this);
+        Resources.execute(throwingRunnable.asCallable(), this);
     }
 
     @Override

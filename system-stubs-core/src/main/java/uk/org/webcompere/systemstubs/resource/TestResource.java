@@ -27,6 +27,6 @@ public interface TestResource {
      * @throws Exception on any error thrown by the callable
      */
     default <T> T executeAround(Callable<T> callable) throws Exception {
-        return Resources.executeAround(callable, this);
+        return Resources.execute(callable, this);
     }
 }

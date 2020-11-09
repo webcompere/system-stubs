@@ -151,7 +151,7 @@ public class EnvironmentVariables extends SingularTestResource {
      * @see #execute(ThrowingRunnable)
      */
     public <T> T execute(Callable<T> callable) throws Exception {
-        return Resources.executeAround(callable, this);
+        return Resources.execute(callable, this);
     }
 
     @Override

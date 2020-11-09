@@ -5,7 +5,7 @@ import uk.org.webcompere.systemstubs.exception.WrappedThrowable;
 import java.util.concurrent.Callable;
 
 /**
- * Code that should be executed by on of the methods of {@link SystemStubs}.
+ * Code that can be executed by one of the methods of {@link SystemStubs}.
  * This code may throw an {@link Exception}. Therefore we cannot use
  * {@link Runnable}.
  */
