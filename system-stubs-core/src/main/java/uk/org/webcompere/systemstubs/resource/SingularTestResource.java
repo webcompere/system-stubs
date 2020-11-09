@@ -40,4 +40,8 @@ public abstract class SingularTestResource implements TestResource {
      * @throws Exception on clean up error
      */
     protected abstract void doTeardown() throws Exception;
+
+    protected boolean isActive() {
+        return refCount > 0;
+    }
 }
