@@ -17,7 +17,7 @@ public class Statements {
         return new Statement() {
             public void evaluate() throws Throwable {
                 try {
-                    Resources.executeAround(ThrowingRunnable.asCallable(base::evaluate), resource);
+                    Resources.execute(ThrowingRunnable.asCallable(base::evaluate), resource);
                 } catch (WrappedThrowable t) {
                     throw t.getCause();
                 }

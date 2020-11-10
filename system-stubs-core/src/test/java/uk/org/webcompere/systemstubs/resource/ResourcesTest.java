@@ -11,7 +11,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.*;
 import static org.mockito.Mockito.never;
-import static uk.org.webcompere.systemstubs.resource.Resources.executeAround;
+import static uk.org.webcompere.systemstubs.resource.Resources.execute;
 
 @ExtendWith(MockitoExtension.class)
 class ResourcesTest {
@@ -29,14 +29,14 @@ class ResourcesTest {
 
     @Test
     void canRunRunnableWithNoResources() throws Exception {
-        executeAround(callable);
+        execute(callable);
 
         then(callable).should().call();
     }
 
     @Test
     void canRunRunnableWithOneResource() throws Exception {
-        executeAround(callable, firstResource);
+        execute(callable, firstResource);
 
         then(callable).should().call();
         then(firstResource).should().setup();
@@ -47,13 +47,13 @@ class ResourcesTest {
     void runnablesReturnIsReturned() throws Exception {
         given(callable.call()).willReturn("bar");
 
-        String result = executeAround(callable, firstResource);
+        String result = execute(callable, firstResource);
         assertThat(result).isEqualTo("bar");
     }
 
     @Test
     void canRunRunnableWithTwoResources() throws Exception {
-        executeAround(callable, firstResource, secondResource);
+        execute(callable, firstResource, secondResource);
 
         then(callable).should().call();
         then(firstResource).should().setup();
@@ -65,7 +65,7 @@ class ResourcesTest {
 
     @Test
     void canRunRunnableWithThreeResources() throws Exception {
-        executeAround(callable, firstResource, secondResource, thirdResource);
+        execute(callable, firstResource, secondResource, thirdResource);
 
         then(callable).should().call();
         then(firstResource).should().setup();
@@ -82,7 +82,7 @@ class ResourcesTest {
     void whenSecondResourceFailsToStartThirdIsNeverTouchedButSecondIsCleaned() throws Exception {
         willThrow(new RuntimeException("boom")).given(secondResource).setup();
 
-        assertThatThrownBy(() -> executeAround(callable, firstResource, secondResource, thirdResource))
+        assertThatThrownBy(() -> execute(callable, firstResource, secondResource, thirdResource))
             .hasMessage("boom");
 
         then(callable).should(never()).call();
@@ -100,7 +100,7 @@ class ResourcesTest {
     void whenSecondResourceFailsToCleanThenThirdIsStillCleaned() throws Exception {
         willThrow(new RuntimeException("boom")).given(secondResource).teardown();
 
-        assertThatThrownBy(() -> executeAround(callable, firstResource, secondResource, thirdResource))
+        assertThatThrownBy(() -> execute(callable, firstResource, secondResource, thirdResource))
             .hasMessage("boom");
 
         then(callable).should().call();
@@ -118,7 +118,7 @@ class ResourcesTest {
     void whenRunnableFailsTheErrorIsFromTheRunnable() throws Exception {
         willThrow(new RuntimeException("boom")).given(callable).call();
 
-        assertThatThrownBy(() -> executeAround(callable, firstResource, secondResource, thirdResource))
+        assertThatThrownBy(() -> execute(callable, firstResource, secondResource, thirdResource))
             .hasMessage("boom");
 
         then(callable).should().call();

@@ -2,6 +2,8 @@ package uk.org.webcompere.systemstubs;
 
 import uk.org.webcompere.systemstubs.environment.EnvironmentVariables;
 import uk.org.webcompere.systemstubs.properties.SystemProperties;
+import uk.org.webcompere.systemstubs.resource.Resources;
+import uk.org.webcompere.systemstubs.resource.TestResource;
 import uk.org.webcompere.systemstubs.security.CheckExitCalled;
 import uk.org.webcompere.systemstubs.security.NoExitSecurityManager;
 import uk.org.webcompere.systemstubs.stream.SecurityManagerStub;
@@ -593,8 +595,7 @@ public class SystemStubs {
 	 * been executed.
 	 * <pre>
 	 * &#064;Test
-	 * void execute_code_with_environment_variables(
-	 * ) throws Exception {
+	 * void execute_code_with_environment_variables() throws Exception {
 	 *   {@literal List<String>} values = withEnvironmentVariable("first", "first value")
 	 *     .and("second", "second value")
 	 *     .and("third", null)
@@ -624,21 +625,58 @@ public class SystemStubs {
 	 * @see EnvironmentVariables#execute(Callable)
 	 * @see EnvironmentVariables#execute(ThrowingRunnable)
 	 */
-	public static EnvironmentVariables withEnvironmentVariable(
-		String name,
-		String value
-	) {
-		return new EnvironmentVariables(
-			singletonMap(name, value)
-		);
+	public static EnvironmentVariables withEnvironmentVariable(String name, String value) {
+		return new EnvironmentVariables(singletonMap(name, value));
 	}
+
+    /**
+     * Create an {@link EnvironmentVariables} object with multiple up front values
+     * @param name name of first environment variable
+     * @param value value of first environment variable
+     * @param values pairs of name/values (must be even number of entries)
+     * @return an {@link EnvironmentVariables} object for further use
+     */
+    public static EnvironmentVariables withEnvironmentVariables(String name, String value, String ... values) {
+        return new EnvironmentVariables(name, value, values);
+    }
+
+    /**
+     * Create a blank {@link EnvironmentVariables} object
+     * @return empty {@link EnvironmentVariables} for adding values to
+     */
+    public static EnvironmentVariables withEnvironmentVariables() {
+        return new EnvironmentVariables();
+    }
+
+    /**
+     * Execute a callable with the test resources around it.
+     * @see Resources#execute(Callable, TestResource...)
+     * @param callable callable to call
+     * @param resources resources to set up around it
+     * @param <T> type of return value
+     * @return the result of the callable
+     * @throws Exception on error in any of the resources or the callable
+     */
+    public static <T> T execute(Callable<T> callable, TestResource... resources) throws Exception {
+        return Resources.execute(callable, resources);
+    }
+
+    /**
+     * Execute a runnable with the test resources around it.
+     * @see Resources#execute(Callable, TestResource...)
+     * @param runnable to call
+     * @param resources resources to set up around it
+     * @throws Exception on error in any of the resources or the runnable
+     */
+    public static void execute(ThrowingRunnable runnable, TestResource... resources) throws Exception {
+        Resources.execute(runnable.asCallable(), resources);
+    }
 
     /**
      * Executes the statement with the provided security manager.
      * <pre>
      * &#064;Test
-     * void execute_code_with_specific_SecurityManager(
-	 * ) throws Exception {
+     * void execute_code_with_specific_SecurityManager() throws Exception {
      *   SecurityManager securityManager = new ASecurityManager();
      *   withSecurityManager(
      *     securityManager,

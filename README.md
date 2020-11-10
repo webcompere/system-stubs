@@ -13,13 +13,13 @@ Based on the excellent work by Stefan Birkner in
 of the core techniques, to allow them to be used more
 flexibly.
 
-No longer limited to being a JUnit4 rule (system rules)
+No longer limited to just being a JUnit4 rule (system rules)
 and available as a JUnit 5 plugin, this version comes
 from solving some problems that were hard to solve with the
 originals and were not considered in keeping
 with the trajectory of **System Lambda**.
 
-This version comes with the [assent](https://github.com/stefanbirkner/system-lambda/issues/9) of the original author.
+This version comes with the [agreement](https://github.com/stefanbirkner/system-lambda/issues/9) of the original author.
 The original author has no responsibility for this version.
 
 ### Differences
@@ -44,6 +44,13 @@ home-made alternatives)
 In order to support migration from [System Lambda](https://github.com/stefanbirkner/system-lambda), and
 to enable reuse of the original unit tests, the `SystemStubs` facade supports the original
 [execute around](https://java-design-patterns.com/patterns/execute-around/) idiom.
+
+It also supports direct usage of each of the different resource stubbers, which can be access
+directly as classes, or via the `SystemStubs` facade.
+
+JUnit plugins come with some additional entry points see the guides for:
+
+- [System Stubs JUnit4](system-stubs-junit4/README.md)
 
 Import System Stubs functions by adding
 
@@ -306,7 +313,22 @@ void execute_code_with_specific_SecurityManager() throws Exception {
 After `withSecurityManager(...)` is executed`System.getSecurityManager()`
 returns the original security manager again.
 
+### Execution
 
+The `execute` function can be called with either `void` function or one which
+returns a value. In the latter case, it will return a value. The `execute` function
+is available on the stub objects themselves, but also on `SystemStubs`, where
+it allows you to pass in both the code to execute, and a collection of the stubbing
+objects, each of which is correctly set up and cleaned up around your code:
+
+```java
+String myResult = execute(() -> { ... test code ... },
+    environmentVariablesStub,
+    systemInStub,
+    securityManagerStub);
+```
+
+The set up is in the order the stubs are declared, and the tear down is in reverse order.
 
 ## Contributing
 
