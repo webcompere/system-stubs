@@ -468,7 +468,7 @@ public class SystemStubs {
 	 */
 	public static void restoreSystemProperties(ThrowingRunnable throwingRunnable) throws Exception {
         new SystemProperties()
-            .executeAround(throwingRunnable.asCallable());
+            .execute(throwingRunnable.asCallable());
 	}
 
 	/**
@@ -698,7 +698,7 @@ public class SystemStubs {
     public static void withSecurityManager(SecurityManager securityManager,
         ThrowingRunnable throwingRunnable) throws Exception {
         new SecurityManagerStub(securityManager)
-            .executeAround(throwingRunnable.asCallable());
+            .execute(throwingRunnable.asCallable());
     }
 
 	/**
