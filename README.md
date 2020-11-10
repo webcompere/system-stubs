@@ -124,6 +124,26 @@ void execute_code_that_manipulates_system_properties() throws Exception {
 }
 ```
 
+Alternatively, create an instance of the `SystemProperties` object, providing
+it with some initial properties, and then call `execute` on it:
+
+```java
+SystemProperties someProperties = new SystemProperties(
+    "foo", "bar",
+    "foz", "boz");
+someProperties.execute(() -> {
+    // here we expect the properties to have been set
+
+    // we can also call "set" on the "someProperties"
+    // to set more system properties - these will be
+    // remembered for reuse later with that object
+
+    // any calls to System.setProperty will be undone when
+    // "execute" is finished
+});
+
+// here the system properties are reverted
+```
 
 ### System.out and System.err
 

@@ -150,8 +150,9 @@ public class EnvironmentVariables extends SingularTestResource {
      * @see #and(String, String)
      * @see #execute(ThrowingRunnable)
      */
+    @Override
     public <T> T execute(Callable<T> callable) throws Exception {
-        return Resources.execute(callable, this);
+        return super.execute(callable);
     }
 
     @Override

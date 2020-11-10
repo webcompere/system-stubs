@@ -27,3 +27,22 @@ public void someTest() {
 }
 ```
 
+## System Properties Rule
+
+A plugin which restores system properties to the state they were
+before the test started. Allows for properties to be defined
+before the set to be applied to the system.
+
+```java
+@Rule
+public SystemPropertiesRule rule = new SystemPropertiesRule("property", "value");
+
+@Test
+public void someTest() {
+    // expect the property set in the constructor to be available here
+
+    // expect any calls to SystemPropertiesRule.set
+    // or System.setProperty to change the properties but
+    // be reverted after the test
+}
+```
