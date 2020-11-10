@@ -28,6 +28,7 @@
   <modules>
     <module>system-stubs-core</module>
     <module>system-stubs-junit4</module>
+    <module>system-stubs-jupiter</module>
   </modules>
 
   <dependencyManagement>
