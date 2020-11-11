@@ -6,5 +6,7 @@ build_script:
   - ./mvnw clean package -DskipTest
 test_script:
   - ./mvnw clean verify
+after_test:
+  - sh: CODECOV_TOKEN="78462305-d76b-4bf7-8f31-4f152ed61c02" bash <(curl -s https://codecov.io/bash)
 cache:
   - C:\Users\appveyor\.m2
