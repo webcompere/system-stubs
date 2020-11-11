@@ -1,5 +1,7 @@
 # System Stubs
 
+[![Build status](https://ci.appveyor.com/api/projects/status/r943gjn189rlxts9?svg=true)](https://ci.appveyor.com/project/ashleyfrieze/system-stubs) [![codecov](https://codecov.io/gh/webcompere/system-stubs/branch/master/graph/badge.svg)](https://codecov.io/gh/webcompere/system-stubs)
+
 ## Overview
 System Stubs is a collection of mechanisms for testing code which uses
 `java.lang.System`.
