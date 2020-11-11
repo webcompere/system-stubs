@@ -67,7 +67,10 @@
       <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
-        <version>4.12</version>
+        <!-- compatible with lower versions, but updated to latest
+        to avoid security warning -->
+        <version>4.13.1</version>
+        <!-- provided scope - the client provides their own JUnit -->
         <scope>provided</scope>
       </dependency>
     </dependencies>
