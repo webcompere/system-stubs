@@ -4,7 +4,6 @@ import uk.org.webcompere.systemstubs.environment.EnvironmentVariables;
 import uk.org.webcompere.systemstubs.properties.SystemProperties;
 import uk.org.webcompere.systemstubs.resource.Resources;
 import uk.org.webcompere.systemstubs.resource.TestResource;
-import uk.org.webcompere.systemstubs.security.AbortExecutionException;
 import uk.org.webcompere.systemstubs.security.SecurityManagerStub;
 import uk.org.webcompere.systemstubs.security.SystemExit;
 import uk.org.webcompere.systemstubs.stream.SystemIn;
@@ -360,11 +359,7 @@ public class SystemStubs {
 	 */
 	public static int catchSystemExit(ThrowingRunnable throwingRunnable) throws Exception {
         SystemExit exit = new SystemExit();
-	    try {
-            exit.execute(throwingRunnable);
-        } catch (AbortExecutionException ignored) {
-        }
-
+        exit.execute(throwingRunnable);
 	    return exit.getSecurityManager().checkSystemExit();
 	}
 
