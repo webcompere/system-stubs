@@ -1,6 +1,7 @@
 package uk.org.webcompere.systemstubs.resource;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.Callable;
 
 /**
@@ -30,7 +31,7 @@ public class Resources {
         }
     }
 
-    private static void executeCleanup(LinkedList<TestResource> resourcesSetUp) throws Exception {
+    public static void executeCleanup(List<TestResource> resourcesSetUp) throws Exception {
         Exception firstExceptionThrownOnTidyUp = null;
         for (TestResource resource : resourcesSetUp) {
             try {

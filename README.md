@@ -7,6 +7,13 @@ System Stubs is a collection of mechanisms for testing code which uses
 System Stubs is published under the
 [MIT license](http://opensource.org/licenses/MIT). It requires at least Java 8.
 
+It is divided into:
+
+- `system-stubs-core` - can be used stand-alone to stub system resources around test code
+- [`system-stubs-junit4`](system-stubs-junit4/README.md) - a set of JUnit4 rules that activate the stubs around test code
+- [`system-stubs-jupiter`](system-stubs-jupiter/README.md) - a JUnit 5 extension that automatically injects
+System Stubbing into JUnit 5 tests.
+
 ## History
 Based on the excellent work by Stefan Birkner in
 [System Rules](https://stefanbirkner.github.io/system-rules/index.html) and [System Lambda](https://github.com/stefanbirkner/system-lambda) this is a remix
@@ -28,7 +35,7 @@ The main aims of this version:
 
 - Enable environment variables to be set before child test suites
   - allowing environment details to be set in _beforeAll_ or _beforeEach_ hooks
-  - as can be necessaru for Spring tests
+  - as can be necessary for Spring tests
 - Support JUnit4 and JUnit5 plugins
 - Improve the fluency of the interfaces to reduce boilerplate
 - Modularise the code
@@ -48,10 +55,6 @@ to enable reuse of the original unit tests, the `SystemStubs` facade supports th
 It also supports direct usage of each of the different resource stubbers, which can be access
 directly as classes, or via the `SystemStubs` facade.
 
-JUnit plugins come with some additional entry points see the guides for:
-
-- [System Stubs JUnit4](system-stubs-junit4/README.md)
-
 Import System Stubs functions by adding
 
 ```java
@@ -59,7 +62,6 @@ import static uk.org.webcompere.systemstubs.SystemStubs.*;
 ```
 
 to your tests.
-
 
 ### System.exit
 
@@ -101,12 +103,10 @@ void execute_code_with_environment_variables() throws Exception {
   assertEquals(asList("first value", "second value"), values);
 }
 ```
-
-
 ### System Properties
 
 The method `restoreSystemProperties` guarantees that after executing the test
-code each System property has the same value like before. Therefore you can
+code each System property has the same value as before. Therefore you can
 modify System properties inside of the test code without having an impact on
 other tests.
 
