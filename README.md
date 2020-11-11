@@ -87,6 +87,36 @@ The method `catchSystemExit` throws an `AssertionError` if the code under test
 does not call `System.exit`. Therefore your test fails with the failure message
 "System.exit has not been called."
 
+### `SystemExit` Class
+
+The `SystemExit` class can be used just to ignore a System exit:
+
+```java
+new SystemExit()
+    .execute(() -> {
+        System.exit(0);
+    });
+
+// execution continues without error
+```
+
+Or an instance can be used to capture the return code, or whether there was an
+exit at all.
+
+```java
+SystemExit exit = new SystemExit();
+exit.execute(() -> {
+        System.exit(0);
+    });
+
+assertThat(exit.getExitCode()).isEqualTo(0);
+
+// the exit code will be `null` if no System.exit was called
+```
+
+This allows the system exit stub to be used in conjunction with other stubs via
+the `execute(runnable, stub1, stub2, stub3)` pattern. It also works in conjunction
+with the JUnit plugin/extensions.
 
 ### Environment Variables
 

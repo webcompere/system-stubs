@@ -4,9 +4,9 @@ import uk.org.webcompere.systemstubs.environment.EnvironmentVariables;
 import uk.org.webcompere.systemstubs.properties.SystemProperties;
 import uk.org.webcompere.systemstubs.resource.Resources;
 import uk.org.webcompere.systemstubs.resource.TestResource;
-import uk.org.webcompere.systemstubs.security.CheckExitCalled;
-import uk.org.webcompere.systemstubs.security.NoExitSecurityManager;
-import uk.org.webcompere.systemstubs.stream.SecurityManagerStub;
+import uk.org.webcompere.systemstubs.security.AbortExecutionException;
+import uk.org.webcompere.systemstubs.security.SecurityManagerStub;
+import uk.org.webcompere.systemstubs.security.SystemExit;
 import uk.org.webcompere.systemstubs.stream.SystemIn;
 import uk.org.webcompere.systemstubs.stream.SystemStreams;
 
@@ -344,8 +344,7 @@ public class SystemStubs {
 	 * that the JVM is shut down because of a call to {@code System.exit(int)}.
 	 * <pre>
 	 *{@literal @Test}
-	 * void application_exits_with_status_42(
-	 * ) throws Exception {
+	 * void application_exits_with_status_42() throws Exception {
 	 *   int statusCode = catchSystemExit((){@literal ->} {
 	 *     System.exit(42);
 	 *   });
@@ -359,16 +358,14 @@ public class SystemStubs {
 	 * @throws Exception any exception thrown by the statement.
 	 * @since 1.0.0
 	 */
-	public static int catchSystemExit(
-		ThrowingRunnable throwingRunnable
-	) throws Exception {
-		NoExitSecurityManager noExitSecurityManager
-			= new NoExitSecurityManager(getSecurityManager());
-		try {
-			withSecurityManager(noExitSecurityManager, throwingRunnable);
-		} catch (CheckExitCalled ignored) {
-		}
-		return noExitSecurityManager.checkSystemExit();
+	public static int catchSystemExit(ThrowingRunnable throwingRunnable) throws Exception {
+        SystemExit exit = new SystemExit();
+	    try {
+            exit.execute(throwingRunnable);
+        } catch (AbortExecutionException ignored) {
+        }
+
+	    return exit.getSecurityManager().checkSystemExit();
 	}
 
 	/**
@@ -697,7 +694,7 @@ public class SystemStubs {
      */
     public static void withSecurityManager(SecurityManager securityManager,
         ThrowingRunnable throwingRunnable) throws Exception {
-        new SecurityManagerStub(securityManager)
+        new SecurityManagerStub<>(securityManager)
             .execute(throwingRunnable.asCallable());
     }
 

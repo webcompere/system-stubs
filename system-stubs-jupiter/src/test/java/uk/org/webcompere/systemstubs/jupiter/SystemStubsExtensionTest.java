@@ -4,8 +4,11 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import uk.org.webcompere.systemstubs.environment.EnvironmentVariables;
 import uk.org.webcompere.systemstubs.properties.SystemProperties;
+import uk.org.webcompere.systemstubs.security.AbortExecutionException;
+import uk.org.webcompere.systemstubs.security.SystemExit;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class SystemStubsExtensionTest {
 
@@ -125,6 +128,40 @@ class SystemStubsExtensionTest {
         @Test
         void test4_cannotReachPrivateVariable() {
             assertThat(System.getenv("test3")).isNull();
+        }
+    }
+
+    @Nested
+    @ExtendWith(SystemStubsExtension.class)
+    class SystemExitTest {
+        @SystemStub
+        private SystemExit systemExit;
+
+        @Test
+        void noExitWasCalled() {
+            assertThat(systemExit.getExitCode()).isNull();
+        }
+
+        @Test
+        void exitWasCalled() {
+            assertThatThrownBy(() -> {
+                System.exit(123);
+            }).isInstanceOf(AbortExecutionException.class);
+
+            assertThat(systemExit.getExitCode()).isEqualTo(123);
+        }
+
+        @Test
+        void injectedByParameter(SystemExit localExit) {
+            assertThatThrownBy(() -> {
+                System.exit(21);
+            }).isInstanceOf(AbortExecutionException.class);
+
+
+            assertThat(localExit.getExitCode()).isEqualTo(21);
+
+            // the more global object is unaffected
+            assertThat(systemExit.getExitCode()).isNull();
         }
     }
 }

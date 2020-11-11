@@ -46,3 +46,30 @@ public void someTest() {
     // be reverted after the test
 }
 ```
+
+## System Exit Rule
+
+The `SystemExitRule` will prevent the JVM terminating during a test if something calls
+`System.exit`. Instead, an `AbortExecutionException` will be thrown, which can be caught.
+
+The rule object contains the exit code.
+
+```java
+@Rule
+public SystemExitRule systemExitRule = new SystemExitRule();
+
+@Test
+public void theCodeExitsButTheProgramDoesnt() {
+    assertThatThrownBy(() -> {
+        // some test code performs an exit
+        System.exit(92);
+    }).isInstanceOf(AbortExecutionException.class);
+
+    assertThat(systemExitRule.getExitCode()).isEqualTo(92);
+}
+
+@Test
+public void noSystemExit() {
+    assertThat(systemExitRule.getExitCode()).isNull();
+}
+```
