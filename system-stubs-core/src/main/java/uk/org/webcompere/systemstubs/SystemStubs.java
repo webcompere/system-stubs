@@ -6,13 +6,13 @@ import uk.org.webcompere.systemstubs.resource.Resources;
 import uk.org.webcompere.systemstubs.resource.TestResource;
 import uk.org.webcompere.systemstubs.security.SecurityManagerStub;
 import uk.org.webcompere.systemstubs.security.SystemExit;
-import uk.org.webcompere.systemstubs.stream.SystemIn;
-import uk.org.webcompere.systemstubs.stream.SystemStreams;
+import uk.org.webcompere.systemstubs.stream.*;
+import uk.org.webcompere.systemstubs.stream.output.DisallowWriteStream;
+import uk.org.webcompere.systemstubs.stream.output.NoopStream;
 
 import java.io.*;
 import java.util.concurrent.Callable;
 
-import static uk.org.webcompere.systemstubs.stream.SystemStreams.executeWithSystemErrReplacement;
 import static java.lang.System.*;
 import static java.util.Arrays.stream;
 import static java.util.Collections.singletonMap;
@@ -296,13 +296,9 @@ public class SystemStubs {
 	 * @see #assertNothingWrittenToSystemOut(ThrowingRunnable)
 	 * @since 1.0.0
 	 */
-	public static void assertNothingWrittenToSystemErr(
-		ThrowingRunnable throwingRunnable
-	) throws Exception {
-		executeWithSystemErrReplacement(
-			new DisallowWriteStream(),
-				throwingRunnable
-		);
+	public static void assertNothingWrittenToSystemErr(ThrowingRunnable throwingRunnable) throws Exception {
+		new SystemErr(new DisallowWriteStream())
+            .execute(throwingRunnable);
 	}
 
 	/**
@@ -328,13 +324,9 @@ public class SystemStubs {
 	 * @see #assertNothingWrittenToSystemErr(ThrowingRunnable)
 	 * @since 1.0.0
 	 */
-	public static void assertNothingWrittenToSystemOut(
-		ThrowingRunnable throwingRunnable
-	) throws Exception {
-		SystemStreams.executeWithSystemOutReplacement(
-			new DisallowWriteStream(),
-				throwingRunnable
-		);
+	public static void assertNothingWrittenToSystemOut(ThrowingRunnable throwingRunnable) throws Exception {
+		new SystemOut(new DisallowWriteStream())
+            .execute(throwingRunnable);
 	}
 
 	/**
@@ -383,13 +375,9 @@ public class SystemStubs {
 	 * @see #muteSystemOut(ThrowingRunnable)
 	 * @since 1.0.0
 	 */
-	public static void muteSystemErr(
-		ThrowingRunnable throwingRunnable
-	) throws Exception {
-		executeWithSystemErrReplacement(
-			new NoopStream(),
-				throwingRunnable
-		);
+	public static void muteSystemErr(ThrowingRunnable throwingRunnable) throws Exception {
+	    new SystemErr(new NoopStream())
+            .execute(throwingRunnable);
 	}
 
 	/**
@@ -411,13 +399,9 @@ public class SystemStubs {
 	 * @see #muteSystemErr(ThrowingRunnable)
 	 * @since 1.0.0
 	 */
-	public static void muteSystemOut(
-		ThrowingRunnable throwingRunnable
-	) throws Exception {
-		SystemStreams.executeWithSystemOutReplacement(
-			new NoopStream(),
-				throwingRunnable
-		);
+	public static void muteSystemOut(ThrowingRunnable throwingRunnable) throws Exception {
+		new SystemOut(new NoopStream())
+            .execute(throwingRunnable);
 	}
 
 	/**
@@ -483,18 +467,24 @@ public class SystemStubs {
 	 * @see #tapSystemOut(ThrowingRunnable)
 	 * @since 1.0.0
 	 */
-	public static String tapSystemErr(
-		ThrowingRunnable throwingRunnable
-	) throws Exception {
-		TapStream tapStream = new TapStream();
-		executeWithSystemErrReplacement(
-			tapStream,
-				throwingRunnable
-		);
-		return tapStream.textThatWasWritten();
+	public static String tapSystemErr(ThrowingRunnable throwingRunnable) throws Exception {
+        SystemErr systemErr = executeInTappedSystemError(throwingRunnable);
+        return systemErr.getText();
 	}
 
-	/**
+    private static SystemErr executeInTappedSystemError(ThrowingRunnable throwingRunnable) throws Exception {
+        SystemErr systemErr = new SystemErr();
+        systemErr.execute(throwingRunnable);
+        return systemErr;
+    }
+
+    private static SystemOut executeInTappedSystemOut(ThrowingRunnable throwingRunnable) throws Exception {
+        SystemOut systemOut = new SystemOut();
+        systemOut.execute(throwingRunnable);
+        return systemOut;
+    }
+
+    /**
 	 * Executes the statement and returns the text that was written to
 	 * {@code System.err} by the statement. New line characters are replaced
 	 * with a single {@code \n}.
@@ -515,11 +505,9 @@ public class SystemStubs {
 	 * @see #tapSystemOut(ThrowingRunnable)
 	 * @since 1.0.0
 	 */
-	public static String tapSystemErrNormalized(
-		ThrowingRunnable throwingRunnable
-	) throws Exception {
-		return tapSystemErr(throwingRunnable)
-			.replace(lineSeparator(), "\n");
+	public static String tapSystemErrNormalized(ThrowingRunnable throwingRunnable) throws Exception {
+		return executeInTappedSystemError(throwingRunnable)
+            .getLinesNormalized();
 	}
 
 	/**
@@ -542,15 +530,10 @@ public class SystemStubs {
 	 * @see #tapSystemErr(ThrowingRunnable)
 	 * @since 1.0.0
 	 */
-	public static String tapSystemOut(
-		ThrowingRunnable throwingRunnable
-	) throws Exception {
-		TapStream tapStream = new TapStream();
-		SystemStreams.executeWithSystemOutReplacement(
-			tapStream,
-				throwingRunnable
-		);
-		return tapStream.textThatWasWritten();
+	public static String tapSystemOut(ThrowingRunnable throwingRunnable) throws Exception {
+        SystemOut systemOut = new SystemOut();
+        systemOut.execute(throwingRunnable);
+        return systemOut.getText();
 	}
 
 	/**
@@ -574,11 +557,9 @@ public class SystemStubs {
 	 * @see #tapSystemErr(ThrowingRunnable)
 	 * @since 1.0.0
 	 */
-	public static String tapSystemOutNormalized(
-		ThrowingRunnable throwingRunnable
-	) throws Exception {
-		return tapSystemOut(throwingRunnable)
-			.replace(lineSeparator(), "\n");
+	public static String tapSystemOutNormalized(ThrowingRunnable throwingRunnable) throws Exception {
+		return executeInTappedSystemOut(throwingRunnable)
+            .getLinesNormalized();
 	}
 
 	/**
@@ -764,39 +745,4 @@ public class SystemStubs {
     	return new SystemIn(text);
 	}
 
-    private static class DisallowWriteStream extends OutputStream {
-		@Override
-		public void write(
-			int b
-		) {
-			throw new AssertionError(
-				"Tried to write '"
-					+ (char) b
-					+ "' although this is not allowed."
-			);
-		}
-	}
-
-	private static class NoopStream extends OutputStream {
-		@Override
-		public void write(
-			int b
-		) {
-		}
-	}
-
-	private static class TapStream extends OutputStream {
-		final ByteArrayOutputStream text = new ByteArrayOutputStream();
-
-		@Override
-		public void write(
-			int b
-		) {
-			text.write(b);
-		}
-
-		String textThatWasWritten() {
-			return text.toString();
-		}
-	}
 }
