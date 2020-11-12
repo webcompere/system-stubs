@@ -73,3 +73,39 @@ public void noSystemExit() {
     assertThat(systemExitRule.getExitCode()).isNull();
 }
 ```
+
+## SystemOutRule and SystemErrRule
+
+These rules capture the output to `System.out` and `System.err` during tests. By default
+they use the `TapStream` output, which records output. They can also be constructed with the
+`NoopStream` to discard all output (and save memory and logs), or the `DisallowWriteStream` which
+will cause an assertion error if there is an output.
+
+```java
+@Rule
+public SystemOutRule systemOutRule = new SystemOutRule();
+
+@Test
+public void whenWriteToSystemOutItCanBeSeen() {
+    // imagine the code under test did this
+    System.out.println("I am the system");
+
+    // then the test code can read it
+    assertThat(systemOutRule.getLines()).containsExactly("I am the system");
+}
+```
+
+Both `SystemErrRule` and `SystemOutRule` can be used in the same test, though more than
+one instance of the same rule will cause only the most recent to be active.
+
+Here's an example of how to set up the `DisallowWriteStream`.
+
+```java
+@Rule
+public SystemOutRule noOutput = new SystemOutRule(new DisallowWriteStream());
+
+@Test
+public void someTest() {
+    // calling something that did a System.out.println would result in AssertionError
+}
+```
