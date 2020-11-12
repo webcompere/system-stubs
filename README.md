@@ -423,7 +423,7 @@ want to contribute code then
 The basic coding style is described in the
 [EditorConfig](http://editorconfig.org/) file `.editorconfig`.
 
-System Stubs is built with [travis-ci](https://travis-ci.org/github/webcompere/system-stubs).
+System Stubs is built with Appveyor: [![Build status](https://ci.appveyor.com/api/projects/status/r943gjn189rlxts9?svg=true)](https://ci.appveyor.com/project/ashleyfrieze/system-stubs)
 
 ## Release Guide
 
