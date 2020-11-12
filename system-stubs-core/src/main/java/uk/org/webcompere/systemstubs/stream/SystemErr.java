@@ -1,11 +1,8 @@
 package uk.org.webcompere.systemstubs.stream;
 
-import uk.org.webcompere.systemstubs.resource.TestResource;
+import uk.org.webcompere.systemstubs.stream.output.Output;
 
 import java.io.OutputStream;
-
-import static java.lang.System.err;
-import static java.lang.System.setErr;
 
 /**
  * Replace System.err with an alternative
@@ -14,20 +11,16 @@ public class SystemErr extends SystemStreamBase {
 
     /**
      * Construct with the {@link OutputStream} to use in place of <code>System.err</code>
-     * @param stream new output stream
+     * @param output new output target
      */
-    public SystemErr(OutputStream stream) {
-        super(stream);
+    public SystemErr(Output<? extends OutputStream> output) {
+        super(output, System::setErr, () -> System.err);
     }
 
-    @Override
-    protected void doSetup() throws Exception {
-        originalStream = err;
-        setErr(replacementStream);
-    }
-
-    @Override
-    protected void doTeardown() throws Exception {
-        setErr(originalStream);
+    /**
+     * Default constructor, taps the output
+     */
+    public SystemErr() {
+        super(System::setErr, () -> System.err);
     }
 }

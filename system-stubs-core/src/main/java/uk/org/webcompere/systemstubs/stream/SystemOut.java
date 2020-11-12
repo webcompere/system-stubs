@@ -1,5 +1,7 @@
 package uk.org.webcompere.systemstubs.stream;
 
+import uk.org.webcompere.systemstubs.stream.output.Output;
+
 import java.io.OutputStream;
 
 import static java.lang.System.*;
@@ -10,20 +12,16 @@ import static java.lang.System.*;
 public class SystemOut extends SystemStreamBase {
     /**
      * Construct with the {@link OutputStream} to use in place of <code>System.out</code>
-     * @param stream new output stream
+     * @param output new output target
      */
-    public SystemOut(OutputStream stream) {
-        super(stream);
+    public SystemOut(Output<? extends OutputStream> output) {
+        super(output, System::setOut, () -> System.out);
     }
 
-    @Override
-    protected void doSetup() throws Exception {
-        originalStream = out;
-        setOut(replacementStream);
-    }
-
-    @Override
-    protected void doTeardown() throws Exception {
-        setOut(originalStream);
+    /**
+     * Default constructor, taps the output
+     */
+    public SystemOut() {
+        super(System::setOut, () -> System.out);
     }
 }

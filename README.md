@@ -266,6 +266,27 @@ void nothing_is_written_to_System_out() throws Exception {
 }
 ```
 
+#### Increased Configuration
+
+The methods on the facade provide some useful shortcuts, but there are also
+the classes `SystemOut` and `SystemErr` which can be instantiated
+with the relevant `Output` types of `NoopStream`, `DisallowWriteStream` or `TapStream`. They
+default to using `TapStream`. All of these objects provide functions for getting the text
+that arrived at the stream, sliced into lines or whole.
+
+**Note:** The `DisallowWriteStream` cannot capture text as any writes stop the text with an error.
+The `NoopStream` does not capture text, so it useful for saving memory/log files during a test.
+
+Example:
+
+```java
+SystemOut systemOut = new SystemOut();
+systemOut.execute(() -> System.out.print("hello world"));
+assertThat(systemOut.getText()).isEqualTo("hello world");
+```
+
+The objects can be reused and have a `clear` function to clear captured text between usages.
+
 ### System.in
 
 Interactive command-line applications read from `System.in`. If you write such
