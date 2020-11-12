@@ -9,6 +9,7 @@ import uk.org.webcompere.systemstubs.security.SystemExit;
 import uk.org.webcompere.systemstubs.stream.*;
 import uk.org.webcompere.systemstubs.stream.output.DisallowWriteStream;
 import uk.org.webcompere.systemstubs.stream.output.NoopStream;
+import uk.org.webcompere.systemstubs.stream.output.Output;
 
 import java.io.*;
 import java.util.concurrent.Callable;
@@ -307,8 +308,7 @@ public class SystemStubs {
 	 * <p>The following test fails
 	 * <pre>
 	 * &#064;Test
-	 * void fails_because_something_is_written_to_System_out(
-	 * ) throws Exception {
+	 * void fails_because_something_is_written_to_System_out() throws Exception {
 	 *   assertNothingWrittenToSystemOut((){@literal ->} {
 	 *     System.out.println("some text");
 	 *   });
@@ -328,6 +328,22 @@ public class SystemStubs {
 		new SystemOut(new DisallowWriteStream())
             .execute(throwingRunnable);
 	}
+
+    /**
+     * As with {@link #assertNothingWrittenToSystemOut(ThrowingRunnable)} and
+     * {@link #assertNothingWrittenToSystemErr(ThrowingRunnable)}, this stops the test
+     * with an error if anything is written to either stream
+     * @param throwingRunnable
+     * @param throwingRunnable an arbitrary piece of code.
+     * @throws AssertionError if the statements tries to write to
+     *                        {@code System.out}.
+     * @throws Exception any exception thrown by the statement.
+     * @see #assertNothingWrittenToSystemErr(ThrowingRunnable)
+     */
+    public static void assertNothingWrittenToSystemErrOrOut(ThrowingRunnable throwingRunnable) throws Exception {
+        new SystemErrAndOut(new DisallowWriteStream())
+            .execute(throwingRunnable);
+    }
 
 	/**
 	 * Executes the statement and returns the status code that is provided to
@@ -561,6 +577,48 @@ public class SystemStubs {
 		return executeInTappedSystemOut(throwingRunnable)
             .getLinesNormalized();
 	}
+
+    /**
+     * Get a tap for System out to use with {@link SystemOut#execute}
+     * @return the {@link SystemOut} object to use
+     */
+	public static SystemOut withTapSystemOut() {
+	    return new SystemOut();
+    }
+
+    /**
+     * Get an object which taps both {@link System#err} and {@link System#out} with a
+     * shared {@link Output} for asserting against
+     * @return the {@link SystemErrAndOut} to use with {@link SystemErrAndOut#execute}
+     */
+    public static SystemErrAndOut withTapSystemErrAndOut() {
+	    return new SystemErrAndOut();
+    }
+
+    /**
+     * Get an object which taps both {@link System#err} and {@link System#out} with a
+     * shared {@link Output} for asserting against
+     * @param output the shared target to direct the logging to
+     * @return the {@link SystemErrAndOut} to use with {@link SystemErrAndOut#execute}
+     */
+    public static SystemErrAndOut withSystemErrAndOut(Output output) {
+        return new SystemErrAndOut(output);
+    }
+
+    /**
+     * Tape both {@link System#err} and {@link System#out} and execute the {@link ThrowingRunnable}
+     * then return the composite of any text written via either method. Note {@link #withTapSystemErrAndOut()}
+     * allows return of the {@link SystemErrAndOut} object which has more flexible methods for
+     * retrieving the text written.
+     * @param throwingRunnable the code under test
+     * @return the {@link String} of the text written to the output - non null
+     * @throws Exception on error in the code under test
+     */
+    public static String tapSystemErrAndOut(ThrowingRunnable throwingRunnable) throws Exception {
+        SystemErrAndOut tappedSystem = withTapSystemErrAndOut();
+        tappedSystem.execute(throwingRunnable);
+        return tappedSystem.getText();
+    }
 
 	/**
 	 * Executes the statement with the specified environment variables. All
