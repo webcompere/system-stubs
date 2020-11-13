@@ -325,7 +325,7 @@ void Scanner_reads_text_from_System_in() throws Exception {
   withTextFromSystemIn("first line", "second line")
     .execute(() -> {
       Scanner scanner = new Scanner(System.in);
-      scanner.nextLine();
+      assertEquals("first line", scanner.nextLine());
       assertEquals("second line", scanner.nextLine());
     });
 }
@@ -382,6 +382,51 @@ withTextFromSystemIn()
       () -> scanner.readLine()
     );
   });
+```
+#### `SystemIn` and `AltInputStream`
+
+The `SystemIn` object allows you to compose your own input text. You can
+use it with any `InputStream`.
+
+E.g.
+
+```java
+SystemIn systemIn = new SystemIn(new FileInputStream("someTestFile"));
+systemIn.execute(() -> {
+    // code that uses System.in
+});
+```
+
+The `SystemIn` object can be manipulated to add an exception throw
+for when the calling code reads from `System.in` when it is empty:
+
+```java
+new SystemIn("some text in the input")
+   .andExceptionThrownOnInputEnd(new IOException("file is broken"))
+   .execute(() -> {
+      // some test code
+   });
+```
+
+`SystemIn` can be constructed with a single string, multiple lines
+or any instance of `AltStream` or `InputStream` you wish to create.
+
+Though the method in `SystemStubs` assumes all inputs are multiple lines
+and so uses the `LinesAltStream` to provide both the text and automatic
+line-breaks, the `SystemIn(String)` constructor of `SystemIn`
+resolves the input text to a `TextAltStream` without adding any linebreaks.
+
+While hardcoded lists of strings are often perfect sources of test
+data, `LinesAltStream` allows for many more uses cases, for example,
+`SystemIn` could be hooked up to a random input generator:
+
+```java
+new SystemIn(new LinesAltStream(
+    Stream.generate(() -> UUID.randomUUID().toString())))
+    .execute(() -> {
+        // this test code will be provided with an unlimited
+        // series of lines in System.in containing GUIDs
+    });
 ```
 
 ### Security Manager
