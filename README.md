@@ -182,7 +182,7 @@ someProperties.execute(() -> {
 Command-line applications usually write to the console. If you write such
 applications you need to test the output of these applications. The methods
 `tapSystemErr`, `tapSystemErrNormalized`, `tapSystemOut` and
-`tapSystemOutNormalized` allow you to tap the text that is written to
+`tapSystemOutNormalized` and `tapSystemErrAndOut` allow you to tap the text that is written to
 `System.err`/`System.out`. The methods with the suffix `Normalized` normalize
 line breaks to `\n` so that you can run tests with the same assertions on
 different operating systems.
@@ -220,6 +220,31 @@ void application_writes_mutliple_lines_to_System_out() throws Exception {
     System.out.println("second line");
   });
   assertEquals("first line\nsecond line\n", text);
+}
+```
+
+`System.err` and `System.out` can be directed to a single stream:
+
+```java
+@Test
+void application_writes_text_to_System_err_and_out() throws Exception {
+  String text = tapSystemErrAndOut(() -> {
+    System.err.print("text from err");
+    System.out.print("text from out");
+  });
+  assertEquals("text from errtext from out", text);
+}
+
+// finer control over assertion can be made using the SystemErrAndOut object
+@Test
+void construct_system_err_and_out_tap() throws Exception {
+    SystemErrAndOut stream = withSystemErrAndOut(new TapStream());
+    stream.execute(() -> {
+        System.err.println("text from err");
+        System.out.println("text from out");
+    });
+    assertThat(stream.getLines())
+        .containsExactly("text from err","text from out");
 }
 ```
 

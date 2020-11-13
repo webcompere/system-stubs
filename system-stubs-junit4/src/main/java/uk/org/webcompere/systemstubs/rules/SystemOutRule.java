@@ -3,6 +3,7 @@ package uk.org.webcompere.systemstubs.rules;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
+import uk.org.webcompere.systemstubs.rules.internal.SystemStubTestRule;
 import uk.org.webcompere.systemstubs.stream.SystemOut;
 import uk.org.webcompere.systemstubs.stream.output.Output;
 
@@ -14,7 +15,7 @@ import static uk.org.webcompere.systemstubs.rules.internal.Statements.toStatemen
  * JUnit4 test rule that captures {@link System#out} during tests.
  * @see uk.org.webcompere.systemstubs.stream.SystemOut
  */
-public class SystemOutRule extends SystemOut implements TestRule {
+public class SystemOutRule extends SystemOut implements SystemStubTestRule {
     /**
      * Construct with an alternative {@link Output} to use
      *
@@ -29,10 +30,5 @@ public class SystemOutRule extends SystemOut implements TestRule {
      * tap system out while the rule is active
      */
     public SystemOutRule() {
-    }
-
-    @Override
-    public Statement apply(Statement statement, Description description) {
-        return toStatement(statement, this);
     }
 }

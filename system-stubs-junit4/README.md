@@ -109,3 +109,7 @@ public void someTest() {
     // calling something that did a System.out.println would result in AssertionError
 }
 ```
+
+The `SystemErrAndOutRule` taps both system error and output with a
+single `Output` object. This defaults to `TapStream` but can
+be specified in the constructor.

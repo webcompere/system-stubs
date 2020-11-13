@@ -48,6 +48,9 @@ public class SystemStreamBase extends SingularTestResource implements Output<Out
 
     @Override
     protected void doSetup() throws Exception {
+        // in case this is being reused, it is cleared on setup
+        clear();
+
         originalStream = printStreamGetter.get();
         try {
             printStreamSetter.accept(wrap(target.getOutputStream()));

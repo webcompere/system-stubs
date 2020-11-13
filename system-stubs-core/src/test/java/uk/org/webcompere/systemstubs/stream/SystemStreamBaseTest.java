@@ -17,15 +17,6 @@ class SystemStreamBaseTest {
     }
 
     @Test
-    void canReuseSystemOutput() throws Exception {
-        systemOut.execute(() -> System.out.println("Hello"));
-        systemOut.execute(() -> System.out.println("World"));
-
-        assertThat(systemOut.getLinesNormalized())
-            .isEqualTo("Hello\nWorld\n");
-    }
-
-    @Test
     void canReadLines() throws Exception {
         systemOut.execute(() -> {
             System.out.println("foo");
@@ -36,15 +27,23 @@ class SystemStreamBaseTest {
     }
 
     @Test
-    void canReuseSystemOutputClearingInBetween() throws Exception {
+    void canReuseSystemOutputAsItClearsInBetween() throws Exception {
         systemOut.execute(() -> System.out.println("Hello"));
-
-        systemOut.clear();
 
         systemOut.execute(() -> System.out.println("World"));
 
         assertThat(systemOut.getLinesNormalized())
             .isEqualTo("World\n");
+    }
+
+    @Test
+    void canClearSystemOut() throws Exception {
+        systemOut.execute(() -> System.out.println("Hello"));
+
+        systemOut.clear();
+
+        assertThat(systemOut.getText())
+            .isEmpty();
     }
 
     @Test

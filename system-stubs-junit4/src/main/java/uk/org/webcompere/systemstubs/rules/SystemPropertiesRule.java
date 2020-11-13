@@ -1,18 +1,14 @@
 package uk.org.webcompere.systemstubs.rules;
 
-import org.junit.rules.TestRule;
-import org.junit.runner.Description;
-import org.junit.runners.model.Statement;
 import uk.org.webcompere.systemstubs.properties.SystemProperties;
+import uk.org.webcompere.systemstubs.rules.internal.SystemStubTestRule;
 
 import java.util.Properties;
-
-import static uk.org.webcompere.systemstubs.rules.internal.Statements.toStatement;
 
 /**
  * Returns the system properties to their original state around each test block.
  */
-public class SystemPropertiesRule extends SystemProperties implements TestRule {
+public class SystemPropertiesRule extends SystemProperties implements SystemStubTestRule {
 
     /**
      * {@inheritDoc}
@@ -32,14 +28,6 @@ public class SystemPropertiesRule extends SystemProperties implements TestRule {
      */
     public SystemPropertiesRule(String name, String value, String... nameValues) {
         super(name, value, nameValues);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Statement apply(Statement statement, Description description) {
-        return toStatement(statement, this);
     }
 
     /**
