@@ -27,7 +27,7 @@ public void someTest() {
 }
 ```
 
-## System Properties Rule
+## `SystemPropertiesRule`
 
 A plugin which restores system properties to the state they were
 before the test started. Allows for properties to be defined
@@ -47,9 +47,9 @@ public void someTest() {
 }
 ```
 
-## System Exit Rule
+## `SystemExitRule`
 
-The `SystemExitRule` will prevent the JVM terminating during a test if something calls
+`SystemExitRule` will prevent the JVM terminating during a test if something calls
 `System.exit`. Instead, an `AbortExecutionException` will be thrown, which can be caught.
 
 The rule object contains the exit code.
@@ -74,7 +74,7 @@ public void noSystemExit() {
 }
 ```
 
-## SystemOutRule and SystemErrRule
+## `SystemOutRule` and `SystemErrRule`
 
 These rules capture the output to `System.out` and `System.err` during tests. By default
 they use the `TapStream` output, which records output. They can also be constructed with the
@@ -113,3 +113,26 @@ public void someTest() {
 The `SystemErrAndOutRule` taps both system error and output with a
 single `Output` object. This defaults to `TapStream` but can
 be specified in the constructor.
+
+## `SystemInRule`
+
+`SystemInRule` applies a new input stream to `System.in` within tests.
+It subclasses `SystemIn` which allows the stream to be changed while
+the test is running and allows the stub to throw a specific exception
+when a read operation is performed on it after it runs out of content.
+
+A simple example of `SystemInRule` would be to provide multiple
+lines of text to `System.in` separated by the system's default separator:
+
+```java
+@Rule
+public SystemInRule systemInRule = new SystemInRule("line1", "line2");
+
+@Test
+public void canReadText() {
+    assertThat(readLinesFromSystemIn(2)).containsExactly("line1", "line2");
+}
+```
+
+The source of lines/bytes can be pretty much anything, including a filestream
+or arbitrary `Stream<String>`.
