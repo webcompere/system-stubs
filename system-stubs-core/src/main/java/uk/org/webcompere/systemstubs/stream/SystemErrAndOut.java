@@ -45,6 +45,7 @@ public class SystemErrAndOut implements Output, TestResource {
 
     @Override
     public void clear() {
+        // only clear one of them as they share the same output
         systemErr.clear();
     }
 

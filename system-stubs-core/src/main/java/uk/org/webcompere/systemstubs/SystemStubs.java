@@ -7,7 +7,7 @@ import uk.org.webcompere.systemstubs.resource.TestResource;
 import uk.org.webcompere.systemstubs.security.SecurityManagerStub;
 import uk.org.webcompere.systemstubs.security.SystemExit;
 import uk.org.webcompere.systemstubs.stream.*;
-import uk.org.webcompere.systemstubs.stream.alt.LinesAltStream;
+import uk.org.webcompere.systemstubs.stream.input.LinesAltStream;
 import uk.org.webcompere.systemstubs.stream.output.DisallowWriteStream;
 import uk.org.webcompere.systemstubs.stream.output.NoopStream;
 import uk.org.webcompere.systemstubs.stream.output.Output;
@@ -15,7 +15,6 @@ import uk.org.webcompere.systemstubs.stream.output.Output;
 import java.io.*;
 import java.util.concurrent.Callable;
 
-import static java.lang.System.*;
 import static java.util.Arrays.stream;
 import static java.util.Collections.singletonMap;
 import static java.util.stream.Collectors.joining;

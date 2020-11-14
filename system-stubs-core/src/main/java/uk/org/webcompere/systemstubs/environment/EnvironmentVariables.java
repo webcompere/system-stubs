@@ -92,8 +92,12 @@ public class EnvironmentVariables extends SingularTestResource {
         return this;
     }
 
+    /**
+     * Return a copy of all the variables set for testing
+     * @return a copy of the map
+     */
     public Map<String, String> getVariables() {
-        return variables;
+        return new HashMap<>(variables);
     }
 
     private void validateNotSet(String name, String value) {
