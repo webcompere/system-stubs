@@ -136,3 +136,38 @@ public void canReadText() {
 
 The source of lines/bytes can be pretty much anything, including a filestream
 or arbitrary `Stream<String>`.
+
+## `SecurityManagerRule`
+
+An alternative `SecurityManager` can be set either by providing it
+to the constructor of `SecurityManagerRule`:
+
+```java
+@Rule
+public SecurityManagerRule securityManagerRule = new SecurityManagerRule(mock(SecurityManager.class));
+
+@Test
+public void securityManagerAlreadyMocked() {
+    // the security manager must be a mockito mock for this to work
+    then(System.getSecurityManager())
+        .should(never())
+        .checkLink(any());
+}
+```
+
+or it can be set using `setManager` with an alternative manager created
+during the test:
+
+```java
+// a similar mechanism to SystemExitRule
+willThrow(new RuntimeException("don't go"))
+    .given(mockManager)
+    .checkExit(anyInt());
+
+securityManagerRule.setSecurityManager(mockManager);
+
+assertThatThrownBy(() -> System.exit(123))
+    .hasMessage("don't go");
+
+then(mockManager).should().checkExit(123);
+```

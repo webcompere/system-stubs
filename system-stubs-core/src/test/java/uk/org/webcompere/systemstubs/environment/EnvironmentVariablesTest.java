@@ -2,6 +2,8 @@ package uk.org.webcompere.systemstubs.environment;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.Map;
+
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonMap;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -117,5 +119,25 @@ class EnvironmentVariablesTest {
                 assertThat(System.getenv("TOO")).isEqualTo("tar");
                 assertThat(System.getenv("BOO")).isEqualTo("bar");
             });
+    }
+
+    @Test
+    void canInspectTheVariablesSetSoFar() {
+        Map<String, String> set = new EnvironmentVariables()
+            .set("a", "b")
+            .set("c", "d")
+            .getVariables();
+
+        assertThat(set).containsEntry("a", "b")
+            .containsEntry("c", "d")
+            .hasSize(2);
+    }
+
+    @Test
+    void getVariablesIsImmutable() {
+        EnvironmentVariables variables = new EnvironmentVariables("a", "original");
+        variables.getVariables().put("a", "c");
+
+        assertThat(variables.getVariables().get("a")).isEqualTo("original");
     }
 }

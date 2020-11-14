@@ -3,18 +3,20 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/r943gjn189rlxts9?svg=true)](https://ci.appveyor.com/project/ashleyfrieze/system-stubs) [![codecov](https://codecov.io/gh/webcompere/system-stubs/branch/master/graph/badge.svg)](https://codecov.io/gh/webcompere/system-stubs)
 
 ## Overview
-System Stubs is a collection of mechanisms for testing code which uses
-`java.lang.System`.
+System Stubs is used to test code which depends on methods in `java.lang.System`.
 
-System Stubs is published under the
-[MIT license](http://opensource.org/licenses/MIT). It requires at least Java 8.
+It is published under the
+[MIT license](http://opensource.org/licenses/MIT) and requires at least Java 8.
 
 It is divided into:
 
 - `system-stubs-core` - can be used stand-alone to stub system resources around test code
+  - Using the `SystemStubs` facade to build and execute stubs around test code
+  - Using the subclasses of `TestResource`, like `EnvironmentVariables` or `SystemIn` to create stubs
+  and then execute test code inside them
 - [`system-stubs-junit4`](system-stubs-junit4/README.md) - a set of JUnit4 rules that activate the stubs around test code
 - [`system-stubs-jupiter`](system-stubs-jupiter/README.md) - a JUnit 5 extension that automatically injects
-System Stubbing into JUnit 5 tests.
+System Stubs into JUnit 5 tests.
 
 ## History
 Based on the excellent work by Stefan Birkner in
@@ -22,26 +24,25 @@ Based on the excellent work by Stefan Birkner in
 of the core techniques, to allow them to be used more
 flexibly.
 
-No longer limited to just being a JUnit4 rule (system rules)
-and available as a JUnit 5 plugin, this version comes
-from solving some problems that were hard to solve with the
-originals and were not considered in keeping
-with the trajectory of **System Lambda**.
+No longer limited to just being a JUnit4 rule (SystemRules)
+and available as a JUnit 5 plugin, this version is intended to increase usability
+and configurability, in a way that diverges from the original trajectory of **System Lambda**.
 
 This version comes with the [agreement](https://github.com/stefanbirkner/system-lambda/issues/9) of the original author.
-The original author has no responsibility for this version.
+The original author bears no responsibility for this version.
 
 ### Differences
 
 The main aims of this version:
 
-- Enable environment variables to be set before child test suites
-  - allowing environment details to be set in _beforeAll_ or _beforeEach_ hooks
+- Enable environment variables to be set before child test suites execute
+  - allow environment details to be set in _beforeAll_ or _beforeEach_ hooks
   - as can be necessary for Spring tests
 - Support JUnit4 and JUnit5 plugins
-- Improve the fluency of the interfaces to reduce boilerplate
+  - reduce test boilerplate
+- Provide more configuration and fluent setters
 - Modularise the code
-- Standardise this module's tests around _Mockito_ and _AssertJ_ (removing
+- Standardise testing around _Mockito_ and _AssertJ_ (removing
 home-made alternatives)
 
 ## Installation
@@ -54,24 +55,96 @@ In order to support migration from [System Lambda](https://github.com/stefanbirk
 to enable reuse of the original unit tests, the `SystemStubs` facade supports the original
 [execute around](https://java-design-patterns.com/patterns/execute-around/) idiom.
 
-It also supports direct usage of each of the different resource stubbers, which can be access
-directly as classes, or via the `SystemStubs` facade.
-
-Import System Stubs functions by adding
+To use the `SystemStubs` facade:
 
 ```java
 import static uk.org.webcompere.systemstubs.SystemStubs.*;
 ```
 
-to your tests.
+## Usage of individual System Stubs
+
+You can declare a system stub object:
+
+```java
+EnvironmentVariables environmentVariables = new EnvironmentVariables("a", "b");
+```
+
+Then you can configure it and execute your test code inside it:
+
+```java
+environmentVariables.set("c", "d")
+    .execute(() -> { ... some test code that gets the environment variables ... });
+```
+
+Where necessary, each of the System Stub objects can be manually activated with `setup`
+and turned off again with `teardown`. Where possible, these object also support
+reconfiguration while they're active, allowing you to set environment variables within
+a test, for example:
+
+```java
+EnvironmentVariables env = new EnvironmentVariables();
+env.execute(() -> {
+    env.set("a", "b");
+    // this has affected the environment
+});
+```
+
+### Using multiple stubs
+
+While you can set up stubs inside the `execute` method of a parent stub:
+
+```java
+new EnvironmentVariables("a", "b")
+    .execute(() -> {
+        new SystemProperties("j", "k")
+            .execute(() -> { ... has env and properties ... });
+    });
+```
+
+There is a more convenient way to use multiple stubs together:
+
+```java
+EnvironmentVariables env = new EnvironmentVariables("a", "b");
+SystemProperties props = new SystemProperties("f", "g");
+Resources.execute(() -> { .. some test code .. },
+    env, props);
+```
+
+The convenience method `Resource.with` may make this read more cleanly:
+
+```java
+with(new EnvironmentVariables("HTTP_PROXY", ""),
+    new SystemProperties("http.connections", "123"))
+    .execute(() -> executeTestCode());
+```
+
+**Note:** there are two versions of the `execute` method in `Executable` allowing
+the test code to return values, or not.
+
+**Note:** the JUnit4 and JUnit5 plugins automatically handle multiple test stubs created outside
+of the test methods.
+
+## Exception Handling
+
+As the `execute` methods can be used with code that throws exceptions, they
+declare `throws Exception` so your tests need to declare `throws Exception`, even if
+the code under the test doesn't use checked exceptions.
+
+This is a good argument for using the JUnit4 or JUnit5 plugins, where you do not
+need to specifically turn the stubbing on via the `execute` method.
+
+## Available Stubs
 
 ### System.exit
 
 Command-line applications terminate by calling `System.exit` with some status
 code. If you test such an application then the JVM that executes the test exits
-when the application under test calls `System.exit`. You can avoid this with
-the method `catchSystemExit` which also returns the status code of the
-`System.exit` call.
+when the application under test calls `System.exit`.
+
+#### With `SystemStubs`
+
+The method `catchSystemExit` returns the status code of the
+`System.exit` call rather than ending the JVM
 
 ```java
 @Test
@@ -87,7 +160,7 @@ The method `catchSystemExit` throws an `AssertionError` if the code under test
 does not call `System.exit`. Therefore your test fails with the failure message
 "System.exit has not been called."
 
-### `SystemExit` Class
+#### `SystemExit` Class
 
 The `SystemExit` class can be used just to ignore a System exit:
 
@@ -114,11 +187,9 @@ assertThat(exit.getExitCode()).isEqualTo(0);
 // the exit code will be `null` if no System.exit was called
 ```
 
-This allows the system exit stub to be used in conjunction with other stubs via
-the `execute(runnable, stub1, stub2, stub3)` pattern. It also works in conjunction
-with the JUnit plugin/extensions.
-
 ### Environment Variables
+
+#### With `SystemStubs`
 
 The method `withEnvironmentVariable` allows you to set environment variables
 within your test code that are removed after your code under test is executed.
@@ -135,7 +206,31 @@ void execute_code_with_environment_variables() throws Exception {
   assertEquals(asList("first value", "second value"), values);
 }
 ```
+
+#### With `EnvironmentVariables`
+
+Create an object of `EnvironmentVariables` and use `execute`:
+
+```java
+List<String> values = new EnvironmentVariables("first", "first value")
+    .set("second", "second value")
+    .execute(() -> asList(
+         System.getenv("first"),
+         System.getenv("second")
+       ));
+     assertEquals(asList("first value", "second value"), values);
+```
+
+**Note:** the `SystemStubs` facade creates an identical object and `set` is a
+mutable version of the `and` method used in the first example.
+
+**Note:** calling `set` on `EnvironmentVariables` from inside `execute` will
+affect the runtime environment. Calling it outside of execution will store the
+value for writing into the environent within `execute`.
+
 ### System Properties
+
+#### With `SystemStubs`
 
 The method `restoreSystemProperties` guarantees that after executing the test
 code each System property has the same value as before. Therefore you can
@@ -156,8 +251,12 @@ void execute_code_that_manipulates_system_properties() throws Exception {
 }
 ```
 
-Alternatively, create an instance of the `SystemProperties` object, providing
-it with some initial properties, and then call `execute` on it:
+#### With `SystemProperties`
+
+A `SystemProperties` object allows you to set the system properties that will be provided
+within `execute`. It provides a `set` method which writes to the System while the
+object is _active_, though any other set operations that are performed with
+`System.setProperty` are also reset on clean up:
 
 ```java
 SystemProperties someProperties = new SystemProperties(
@@ -177,7 +276,9 @@ someProperties.execute(() -> {
 // here the system properties are reverted
 ```
 
-### System.out and System.err
+### Stubbing `System.out` and `System.err`
+
+#### With `SystemStubs`
 
 Command-line applications usually write to the console. If you write such
 applications you need to test the output of these applications. The methods
@@ -234,18 +335,6 @@ void application_writes_text_to_System_err_and_out() throws Exception {
   });
   assertEquals("text from errtext from out", text);
 }
-
-// finer control over assertion can be made using the SystemErrAndOut object
-@Test
-void construct_system_err_and_out_tap() throws Exception {
-    SystemErrAndOut stream = withSystemErrAndOut(new TapStream());
-    stream.execute(() -> {
-        System.err.println("text from err");
-        System.out.println("text from out");
-    });
-    assertThat(stream.getLines())
-        .containsExactly("text from err","text from out");
-}
 ```
 
 You can assert that nothing is written to `System.err`/`System.out` by wrapping
@@ -291,13 +380,15 @@ void nothing_is_written_to_System_out() throws Exception {
 }
 ```
 
-#### Increased Configuration
+#### Using `SystemErr`, `SystemOut` and `SystemErrAndOut`
 
 The methods on the facade provide some useful shortcuts, but there are also
 the classes `SystemOut` and `SystemErr` which can be instantiated
 with the relevant `Output` types of `NoopStream`, `DisallowWriteStream` or `TapStream`. They
 default to using `TapStream`. All of these objects provide functions for getting the text
 that arrived at the stream, sliced into lines or whole.
+
+You can plug in an alternative output by implementing your own `Output` subclass.
 
 **Note:** The `DisallowWriteStream` cannot capture text as any writes stop the text with an error.
 The `NoopStream` does not capture text, so it useful for saving memory/log files during a test.
@@ -312,10 +403,35 @@ assertThat(systemOut.getText()).isEqualTo("hello world");
 
 The objects can be reused and have a `clear` function to clear captured text between usages.
 
-### System.in
+**Note:** As the `SystemOut`, `SystemErr` and `SystemErrAndOut` classes are also derived from `Output`
+they have friendlier methods on them for reading the text that was sent to the output. E.g. `getLines`
+which returns a stream of lines, separated from the text captured by the system line separator.
+
+**Note:** The `withSystemErrAndOut` method on the facade also provides a `SystemErrAndOut` object for finer control
+over assertion:
+
+```java
+// finer control over assertion can be made using the SystemErrAndOut object
+@Test
+void construct_system_err_and_out_tap() throws Exception {
+    SystemErrAndOut stream = withSystemErrAndOut(new TapStream());
+    stream.execute(() -> {
+        System.err.println("text from err");
+        System.out.println("text from out");
+    });
+    assertThat(stream.getLines())
+        .containsExactly("text from err","text from out");
+}
+```
+
+### Stubbing `System.in`
 
 Interactive command-line applications read from `System.in`. If you write such
-applications you need to provide input to these applications. You can specify
+applications you need to provide input to these applications.
+
+#### With `SystemStubs`
+
+You can specify
 the lines that are available from `System.in` with the method
 `withTextFromSystemIn`
 
@@ -383,6 +499,7 @@ withTextFromSystemIn()
     );
   });
 ```
+
 #### `SystemIn` and `AltInputStream`
 
 The `SystemIn` object allows you to compose your own input text. You can
@@ -397,8 +514,8 @@ systemIn.execute(() -> {
 });
 ```
 
-The `SystemIn` object can be manipulated to add an exception throw
-for when the calling code reads from `System.in` when it is empty:
+The `SystemIn` object can be manipulated to throw an exception
+when the calling code reads from `System.in` when it has run out of text:
 
 ```java
 new SystemIn("some text in the input")
@@ -408,16 +525,15 @@ new SystemIn("some text in the input")
    });
 ```
 
-`SystemIn` can be constructed with a single string, multiple lines
+`SystemIn` can be constructed with lines of text,
 or any instance of `AltStream` or `InputStream` you wish to create.
 
-Though the method in `SystemStubs` assumes all inputs are multiple lines
-and so uses the `LinesAltStream` to provide both the text and automatic
-line-breaks, the `SystemIn(String)` constructor of `SystemIn`
-resolves the input text to a `TextAltStream` without adding any linebreaks.
+The lines of input are automatically separated by the system line separator
+via the `LinesAltStream` object. But the alternative `TextAltStream` can be used
+where the input is already formatted and should not have an extra line breaks added.
 
 While hardcoded lists of strings are often perfect sources of test
-data, `LinesAltStream` allows for many more uses cases, for example,
+data, `LinesAltStream` also allows for more custom use cases, for example,
 `SystemIn` could be hooked up to a random input generator:
 
 ```java
@@ -429,7 +545,9 @@ new SystemIn(new LinesAltStream(
     });
 ```
 
-### Security Manager
+### Stubbing `SecurityManager`
+
+#### With `SystemStubs`
 
 The function `withSecurityManager` lets you specify the `SecurityManager` that
 is returned by `System.getSecurityManger()` while your code under test is
@@ -456,22 +574,17 @@ void execute_code_with_specific_SecurityManager() throws Exception {
 After `withSecurityManager(...)` is executed`System.getSecurityManager()`
 returns the original security manager again.
 
-### Execution
+#### With `SecurityManagerStub`
 
-The `execute` function can be called with either `void` function or one which
-returns a value. In the latter case, it will return a value. The `execute` function
-is available on the stub objects themselves, but also on `SystemStubs`, where
-it allows you to pass in both the code to execute, and a collection of the stubbing
-objects, each of which is correctly set up and cleaned up around your code:
+The `SecurityManagerStub` allows you to substitute the system security manager with
+another. Provide the alternative manager via the constructor.
 
 ```java
-String myResult = execute(() -> { ... test code ... },
-    environmentVariablesStub,
-    systemInStub,
-    securityManagerStub);
+new SecurityManagerStub(otherManager)
+    .execute(() -> { ... test code ... });
 ```
 
-The set up is in the order the stubs are declared, and the tear down is in reverse order.
+This is used internally by the stubbing for `System.exit`.
 
 ## Contributing
 

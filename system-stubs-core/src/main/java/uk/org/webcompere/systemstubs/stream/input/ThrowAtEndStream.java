@@ -1,4 +1,4 @@
-package uk.org.webcompere.systemstubs.stream.alt;
+package uk.org.webcompere.systemstubs.stream.input;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -48,17 +48,19 @@ public class ThrowAtEndStream extends DecoratingAltStream {
     public int read(byte[] buffer, int offset, int len) throws IOException {
         if (buffer == null) {
             throw new NullPointerException();
-        } else if (offset < 0 || len < 0 || len > buffer.length - offset) {
-            throw new IndexOutOfBoundsException();
-        } else if (len == 0) {
-            return 0;
-        } else {
-            // return only a line at a time to the calling code
-            // this prevents an exception being thrown as a caller reads ahead beyond
-            // the last line
-            return readNextLine(buffer, offset, len);
         }
-    }
+        if (offset < 0 || len < 0 || len > buffer.length - offset) {
+            throw new IndexOutOfBoundsException();
+        }
+        if (len == 0) {
+            return 0;
+        }
+
+        // return only a line at a time to the calling code
+        // this prevents an exception being thrown as a caller reads ahead beyond
+        // the last line
+        return readNextLine(buffer, offset, len);
+}
 
     private int readNextLine(byte[] buffer, int offset, int len) throws IOException {
         byte[] lineSeparator = lineSeparator().getBytes(Charset.defaultCharset());

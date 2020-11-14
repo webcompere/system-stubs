@@ -1,14 +1,12 @@
 package uk.org.webcompere.systemstubs.resource;
 
-import uk.org.webcompere.systemstubs.ThrowingRunnable;
-
 import java.util.concurrent.Callable;
 
 /**
  * A test resource is something that can be set up at the start of a test and
  * torn down at the end.
  */
-public interface TestResource {
+public interface TestResource extends Executable {
     /**
      * Prepare the resource for testing
      * @throws Exception on error starting
@@ -30,14 +28,5 @@ public interface TestResource {
      */
     default <T> T execute(Callable<T> callable) throws Exception {
         return Resources.execute(callable, this);
-    }
-
-    /**
-     * Execute this test resource around a runnnable
-     * @param runnable the runnable to execute
-     * @throws Exception on any error thrown by the callable
-     */
-    default void execute(ThrowingRunnable runnable) throws Exception {
-        execute(runnable.asCallable());
     }
 }

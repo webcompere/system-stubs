@@ -1,8 +1,8 @@
 package uk.org.webcompere.systemstubs.stream;
 
 import org.junit.jupiter.api.Test;
-import uk.org.webcompere.systemstubs.stream.alt.LinesAltStream;
-import uk.org.webcompere.systemstubs.stream.alt.TextAltStream;
+import uk.org.webcompere.systemstubs.stream.input.LinesAltStream;
+import uk.org.webcompere.systemstubs.stream.input.TextAltStream;
 
 import java.io.IOException;
 import java.io.InputStream;

@@ -23,4 +23,19 @@ class SystemErrAndOutTest {
         });
         assertThat(errAndOut.getText()).isEqualTo("hello out");
     }
+
+    @Test
+    void canClearTheOutputWhileStillInUseAndReuse() throws Exception {
+        SystemErrAndOut errAndOut = new SystemErrAndOut();
+        errAndOut.execute(() -> {
+            System.out.print("hello out");
+            assertThat(errAndOut.getText()).isEqualTo("hello out");
+
+            errAndOut.clear();
+
+            System.out.print("hello again");
+            assertThat(errAndOut.getText()).isEqualTo("hello again");
+        });
+
+    }
 }

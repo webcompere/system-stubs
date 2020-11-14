@@ -1,4 +1,4 @@
-package uk.org.webcompere.systemstubs.stream.alt;
+package uk.org.webcompere.systemstubs.stream.input;
 
 import java.io.InputStream;
 

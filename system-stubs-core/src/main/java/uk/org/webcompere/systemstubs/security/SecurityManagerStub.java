@@ -1,11 +1,8 @@
 package uk.org.webcompere.systemstubs.security;
 
-import uk.org.webcompere.systemstubs.ThrowingRunnable;
 import uk.org.webcompere.systemstubs.resource.SingularTestResource;
 
 import java.util.concurrent.Callable;
-
-import static java.lang.System.setSecurityManager;
 
 /**
  * Switch the security manager for an alternative
@@ -17,7 +14,7 @@ public class SecurityManagerStub<T extends SecurityManager> extends SingularTest
     /**
      * Default constructor for subclasses that will provide a create method on the fly
      */
-    protected SecurityManagerStub() {
+    public SecurityManagerStub() {
         this(null);
     }
 
@@ -45,6 +42,17 @@ public class SecurityManagerStub<T extends SecurityManager> extends SingularTest
         this.securityManager = null;
     }
 
+    /**
+     * Set the current security manager
+     * @param securityManager the manager to set
+     */
+    public void setSecurityManager(T securityManager) {
+        this.securityManager = securityManager;
+        if (isActive()) {
+            System.setSecurityManager(securityManager);
+        }
+    }
+
     @Override
     protected void doSetup() throws Exception {
         originalSecurityManager = System.getSecurityManager();
@@ -58,7 +66,7 @@ public class SecurityManagerStub<T extends SecurityManager> extends SingularTest
 
     @Override
     protected void doTeardown() throws Exception {
-        setSecurityManager(originalSecurityManager);
+        System.setSecurityManager(originalSecurityManager);
     }
 
     /**

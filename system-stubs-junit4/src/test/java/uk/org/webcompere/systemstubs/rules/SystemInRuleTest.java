@@ -4,7 +4,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
-import uk.org.webcompere.systemstubs.stream.alt.LinesAltStream;
+import uk.org.webcompere.systemstubs.stream.input.LinesAltStream;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -22,7 +22,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 public class SystemInRuleTest {
     public static class SingleTextBlock {
         @Rule
-        public SystemInRule systemInRule = new SystemInRule("text" + lineSeparator());
+        public SystemInRule systemInRule = new SystemInRule("text" );
 
         @Test
         public void canReadText() {

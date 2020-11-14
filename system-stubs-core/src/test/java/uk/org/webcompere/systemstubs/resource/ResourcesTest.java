@@ -12,6 +12,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.*;
 import static org.mockito.Mockito.never;
 import static uk.org.webcompere.systemstubs.resource.Resources.execute;
+import static uk.org.webcompere.systemstubs.resource.Resources.with;
 
 @ExtendWith(MockitoExtension.class)
 class ResourcesTest {
@@ -66,6 +67,22 @@ class ResourcesTest {
     @Test
     void canRunRunnableWithThreeResources() throws Exception {
         execute(callable, firstResource, secondResource, thirdResource);
+
+        then(callable).should().call();
+        then(firstResource).should().setup();
+        then(firstResource).should().teardown();
+
+        then(secondResource).should().setup();
+        then(secondResource).should().teardown();
+
+        then(thirdResource).should().setup();
+        then(thirdResource).should().teardown();
+    }
+
+    @Test
+    void canRunRunnableWithThreeResourcesUsingWith() throws Exception {
+        with(firstResource, secondResource, thirdResource)
+            .execute(callable);
 
         then(callable).should().call();
         then(firstResource).should().setup();

@@ -2,7 +2,7 @@ package uk.org.webcompere.systemstubs.stream;
 
 import uk.org.webcompere.systemstubs.ThrowingRunnable;
 import uk.org.webcompere.systemstubs.resource.SingularTestResource;
-import uk.org.webcompere.systemstubs.stream.alt.*;
+import uk.org.webcompere.systemstubs.stream.input.*;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,10 +25,6 @@ public class SystemIn extends SingularTestResource {
 
     public SystemIn(String ... lines) {
         this(new LinesAltStream(lines));
-    }
-
-    public SystemIn(String text) {
-        this(new TextAltStream(text));
     }
 
     public SystemIn(InputStream inputStream) {
