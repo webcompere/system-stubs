@@ -21,14 +21,34 @@ public class SystemIn extends SingularTestResource {
     private InputStream originalIn;
     private AltInputStream altInputStream;
 
+    /**
+     * Default constructor for use by reflection
+     */
+    public SystemIn() {
+        this(new String[0]);
+    }
+
+    /**
+     * Construct with the lines of text to provide as input
+     * @param lines lines provided as input using {@link LinesAltStream}
+     */
     public SystemIn(String... lines) {
         this(new LinesAltStream(lines));
     }
 
+    /**
+     * Construct with a specific input stream - e.g. a FileInputStream
+     * @param inputStream the input stream to route to System in
+     */
     public SystemIn(InputStream inputStream) {
         this(new DecoratingAltStream(inputStream));
     }
 
+    /**
+     * Construct with an {@link AltInputStream} - e.g. a {@link TextAltStream}
+     * or custom provider of input.
+     * @param altInputStream the stream ot use
+     */
     public SystemIn(AltInputStream altInputStream) {
         this.altInputStream = altInputStream;
     }
