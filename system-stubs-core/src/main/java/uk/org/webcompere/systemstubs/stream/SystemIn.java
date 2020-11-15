@@ -14,7 +14,7 @@ import static java.lang.System.setIn;
  * {@link #andExceptionThrownOnInputEnd(IOException)} and
  * {@link #andExceptionThrownOnInputEnd(RuntimeException)} can be used to
  * simulate a {@code System.in} that throws an exception.
- * <p>The specified behaviour of {@code System.in} is applied to an
+ * The specified behaviour of {@code System.in} is applied to an
  * arbitrary piece of code that is provided to {@link #execute(ThrowingRunnable)}.
  */
 public class SystemIn extends SingularTestResource {
@@ -23,7 +23,7 @@ public class SystemIn extends SingularTestResource {
     private InputStream originalIn;
     private AltInputStream altInputStream;
 
-    public SystemIn(String ... lines) {
+    public SystemIn(String... lines) {
         this(new LinesAltStream(lines));
     }
 
@@ -62,15 +62,14 @@ public class SystemIn extends SingularTestResource {
      * @param exception the {@code IOException} to be thrown.
      * @return the {@code SystemInStub} itself.
      * @throws IllegalStateException if a {@code RuntimeException} was
-     * already set by
-     * {@link #andExceptionThrownOnInputEnd(RuntimeException)}
+     *     already set by {@link #andExceptionThrownOnInputEnd(RuntimeException)}
      */
     public SystemIn andExceptionThrownOnInputEnd(IOException exception) {
         if (altInputStream.contains(ThrowAtEndStream.class)) {
-            throw new IllegalStateException("You cannot call"
-                + " andExceptionThrownOnInputEnd(IOException) because"
-                + " andExceptionThrownOnInputEnd has"
-                + " already been called.");
+            throw new IllegalStateException("You cannot call" +
+                " andExceptionThrownOnInputEnd(IOException) because" +
+                " andExceptionThrownOnInputEnd has" +
+                " already been called.");
         }
 
         setInputStream(new ThrowAtEndStream(altInputStream, exception));
@@ -83,14 +82,14 @@ public class SystemIn extends SingularTestResource {
      * @param exception the {@code RuntimeException} to be thrown.
      * @return the {@code SystemInStub} itself.
      * @throws IllegalStateException if an {@code IOException} was already
-     * set by {@link #andExceptionThrownOnInputEnd(IOException)}
+     *     set by {@link #andExceptionThrownOnInputEnd(IOException)}
      */
     public SystemIn andExceptionThrownOnInputEnd(RuntimeException exception) {
         if (altInputStream.contains(ThrowAtEndStream.class)) {
-            throw new IllegalStateException("You cannot call"
-                + " andExceptionThrownOnInputEnd(RuntimeException) because"
-                + " andExceptionThrownOnInputEnd has"
-                + " already been called.");
+            throw new IllegalStateException("You cannot call" +
+                " andExceptionThrownOnInputEnd(RuntimeException) because" +
+                " andExceptionThrownOnInputEnd has" +
+                " already been called.");
         }
 
         setInputStream(new ThrowAtEndStream(altInputStream, exception));

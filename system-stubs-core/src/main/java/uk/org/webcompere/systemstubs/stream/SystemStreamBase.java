@@ -55,7 +55,7 @@ public class SystemStreamBase extends SingularTestResource implements Output<Out
         try {
             printStreamSetter.accept(wrap(target.getOutputStream()));
         } catch (UnsupportedEncodingException e) {
-        throw new StreamException("Cannot wrap stream: " + e.getMessage(), e);
+            throw new StreamException("Cannot wrap stream: " + e.getMessage(), e);
         }
     }
 

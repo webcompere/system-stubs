@@ -11,20 +11,24 @@ import java.util.Properties;
 public class SystemPropertiesRule extends SystemProperties implements SystemStubTestRule {
 
     /**
-     * {@inheritDoc}
+     * Default constructor provides restoration of properties
      */
     public SystemPropertiesRule() {
     }
 
     /**
-     * {@inheritDoc}
+     * Construct with some properties to apply when active
+     * @param properties system properties to apply when active
      */
     public SystemPropertiesRule(Properties properties) {
         super(properties);
     }
 
     /**
-     * {@inheritDoc}
+     * Construct with a variable number of properties that will be set when the rule is active
+     * @param name name of the first property
+     * @param value value of the first property
+     * @param nameValues pairs of name/values as Strings
      */
     public SystemPropertiesRule(String name, String value, String... nameValues) {
         super(name, value, nameValues);

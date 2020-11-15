@@ -1,7 +1,6 @@
 package uk.org.webcompere.systemstubs.stream.output;
 
 import java.io.ByteArrayOutputStream;
-import java.io.OutputStream;
 
 /**
  * TapStream is a {@link ByteArrayOutputStream} that satisfies the {@link Output}

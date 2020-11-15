@@ -30,7 +30,8 @@ public class DecoratingAltStream extends AltInputStream {
 
     @Override
     public boolean contains(Class<? extends InputStream> stream) {
-        return super.contains(stream) || stream.isAssignableFrom(decoratee.getClass())
-            || (decoratee instanceof AltInputStream && ((AltInputStream)decoratee).contains(stream));
+        return super.contains(stream) ||
+            stream.isAssignableFrom(decoratee.getClass()) ||
+            (decoratee instanceof AltInputStream && ((AltInputStream)decoratee).contains(stream));
     }
 }

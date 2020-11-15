@@ -23,14 +23,14 @@ public interface ThrowingRunnable {
      */
     default Callable<Void> asCallable() {
         return () -> {
-          try {
-              run();
-          } catch (Error | Exception e) {
-              throw e;
-          } catch (Throwable t) {
-              throw new WrappedThrowable(t);
-          }
-          return null;
+            try {
+                run();
+            } catch (Error | Exception e) {
+                throw e;
+            } catch (Throwable t) {
+                throw new WrappedThrowable(t);
+            }
+            return null;
         };
     }
 
