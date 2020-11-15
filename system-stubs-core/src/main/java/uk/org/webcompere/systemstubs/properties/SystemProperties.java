@@ -2,7 +2,6 @@ package uk.org.webcompere.systemstubs.properties;
 
 import uk.org.webcompere.systemstubs.environment.PropertiesUtils;
 import uk.org.webcompere.systemstubs.resource.SingularTestResource;
-import uk.org.webcompere.systemstubs.stream.SystemStreamBase;
 
 import java.util.Properties;
 
@@ -39,7 +38,7 @@ public class SystemProperties extends SingularTestResource {
      * @param value value of the first property
      * @param nameValues pairs of names and values for further properties
      */
-    public SystemProperties(String name, String value, String ... nameValues) {
+    public SystemProperties(String name, String value, String... nameValues) {
         this();
         if (nameValues.length % 2 != 0) {
             throw new IllegalArgumentException("Must have pairs of values");

@@ -1,8 +1,7 @@
 package uk.org.webcompere.systemstubs.environment;
 
-import uk.org.webcompere.systemstubs.ThrowingRunnable;
 import uk.org.webcompere.systemstubs.SystemStubs;
-import uk.org.webcompere.systemstubs.resource.Resources;
+import uk.org.webcompere.systemstubs.ThrowingRunnable;
 import uk.org.webcompere.systemstubs.resource.SingularTestResource;
 
 import java.lang.reflect.Field;
@@ -40,7 +39,7 @@ public class EnvironmentVariables extends SingularTestResource {
      * @param others must be of even-numbered length. Name/value pairs of the other values to
      *               apply to the environment when this object is active
      */
-    public EnvironmentVariables(String name, String value, String ... others) {
+    public EnvironmentVariables(String name, String value, String... others) {
         if (others.length % 2 != 0) {
             throw new IllegalArgumentException("Must provide even number of parameters");
         }
@@ -61,13 +60,13 @@ public class EnvironmentVariables extends SingularTestResource {
     /**
      * <em>Immutable setter:</em> creates a new {@code WithEnvironmentVariables} object that
      * additionally stores the value for an additional environment variable.
-     * <p>You cannot specify the value of an environment variable twice. An
+     * You cannot specify the value of an environment variable twice. An
      * {@code IllegalArgumentException} when you try.
      * @param name the name of the environment variable.
      * @param value the value of the environment variable.
      * @return a new {@code WithEnvironmentVariables} object.
      * @throws IllegalArgumentException when a value for the environment
-     * variable {@code name} is already specified.
+     *     variable {@code name} is already specified.
      * @see SystemStubs#withEnvironmentVariable(String, String)
      * @see #execute(ThrowingRunnable)
      */
@@ -103,10 +102,9 @@ public class EnvironmentVariables extends SingularTestResource {
     private void validateNotSet(String name, String value) {
         if (variables.containsKey(name)) {
             String currentValue = variables.get(name);
-            throw new IllegalArgumentException(
-                "The environment variable '" + name + "' cannot be set to "
-                    + format(value) + " because it was already set to "
-                    + format(currentValue) + "."
+            throw new IllegalArgumentException("The environment variable '" + name +
+                "' cannot be set to " + format(value) + " because it was already set to " +
+                format(currentValue) + "."
             );
         }
     }
@@ -142,6 +140,7 @@ public class EnvironmentVariables extends SingularTestResource {
      *   );
      * }
      * </pre>
+     *
      * <p><b>Warning:</b> This method uses reflection for modifying internals of the
      * environment variables map. It fails if your {@code SecurityManager} forbids
      * such modifications.
@@ -157,17 +156,6 @@ public class EnvironmentVariables extends SingularTestResource {
     @Override
     public <T> T execute(Callable<T> callable) throws Exception {
         return super.execute(callable);
-    }
-
-    @Override
-    protected void doSetup() {
-        originalEnvironment = new HashMap<>(getenv());
-        setEnvironmentVariables();
-    }
-
-    @Override
-    protected void doTeardown() {
-        restoreOriginalVariables(originalEnvironment);
     }
 
     /**
@@ -196,6 +184,7 @@ public class EnvironmentVariables extends SingularTestResource {
      *     });
      * }
      * </pre>
+     *
      * <p><b>Warning:</b> This method uses reflection for modifying internals of the
      * environment variables map. It fails if your {@code SecurityManager} forbids
      * such modifications.
@@ -207,16 +196,23 @@ public class EnvironmentVariables extends SingularTestResource {
      * @see #execute(Callable)
      */
     public void execute(ThrowingRunnable throwingRunnable) throws Exception {
-        execute(throwingRunnable.asCallable());
+        super.execute(throwingRunnable);
+    }
+
+    @Override
+    protected void doSetup() {
+        originalEnvironment = new HashMap<>(getenv());
+        setEnvironmentVariables();
+    }
+
+    @Override
+    protected void doTeardown() {
+        restoreOriginalVariables(originalEnvironment);
     }
 
     private void setEnvironmentVariables() {
-        overrideVariables(
-            getEditableMapOfVariables()
-        );
-        overrideVariables(
-            getTheCaseInsensitiveEnvironment()
-        );
+        overrideVariables(getEditableMapOfVariables());
+        overrideVariables(getTheCaseInsensitiveEnvironment());
     }
 
     private void overrideVariables(Map<String, String> existingVariables) {
@@ -238,23 +234,17 @@ public class EnvironmentVariables extends SingularTestResource {
         }
     }
 
-    void restoreOriginalVariables(
-        Map<String, String> originalVariables
-    ) {
+    void restoreOriginalVariables(Map<String, String> originalVariables) {
         restoreVariables(
             getEditableMapOfVariables(),
-            originalVariables
-        );
+            originalVariables);
         restoreVariables(
             getTheCaseInsensitiveEnvironment(),
-            originalVariables
-        );
+            originalVariables);
     }
 
-    void restoreVariables(
-        Map<String, String> variables,
-        Map<String, String> originalVariables
-    ) {
+    void restoreVariables(Map<String, String> variables,
+        Map<String, String> originalVariables) {
         if (variables != null) { //theCaseInsensitiveEnvironment may be null
             variables.clear();
             variables.putAll(originalVariables);
@@ -266,11 +256,11 @@ public class EnvironmentVariables extends SingularTestResource {
         try {
             return getFieldValue(classOfMap, getenv(), "m");
         } catch (IllegalAccessException e) {
-            throw new RuntimeException("System Rules cannot access the field"
-                + " 'm' of the map System.getenv().", e);
+            throw new RuntimeException("Cannot access the field" +
+                " 'm' of the map System.getenv().", e);
         } catch (NoSuchFieldException e) {
-            throw new RuntimeException("System Rules expects System.getenv() to"
-                + " have a field 'm' but it has not.", e);
+            throw new RuntimeException("Expects System.getenv() to" +
+                " have a field 'm' but it has not.", e);
         }
     }
 
@@ -285,24 +275,22 @@ public class EnvironmentVariables extends SingularTestResource {
             return getFieldValue(
                 processEnvironment, null, "theCaseInsensitiveEnvironment");
         } catch (ClassNotFoundException e) {
-            throw new RuntimeException("System Rules expects the existence of"
-                + " the class java.lang.ProcessEnvironment but it does not"
-                + " exist.", e);
+            throw new RuntimeException("System Rules expects the existence of" +
+                " the class java.lang.ProcessEnvironment but it does not" +
+                " exist.", e);
         } catch (IllegalAccessException e) {
-            throw new RuntimeException("System Rules cannot access the static"
-                + " field 'theCaseInsensitiveEnvironment' of the class"
-                + " java.lang.ProcessEnvironment.", e);
+            throw new RuntimeException("System Rules cannot access the static" +
+                " field 'theCaseInsensitiveEnvironment' of the class" +
+                " java.lang.ProcessEnvironment.", e);
         } catch (NoSuchFieldException e) {
             //this field is only available for Windows
             return null;
         }
     }
 
-    private static Map<String, String> getFieldValue(
-        Class<?> klass,
-        Object object,
-        String name
-    ) throws NoSuchFieldException, IllegalAccessException {
+    private static Map<String, String> getFieldValue(Class<?> klass,
+            Object object,
+            String name) throws NoSuchFieldException, IllegalAccessException {
         Field field = klass.getDeclaredField(name);
         field.setAccessible(true);
         return (Map<String, String>) field.get(object);

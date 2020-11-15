@@ -15,20 +15,24 @@ import static uk.org.webcompere.systemstubs.rules.internal.Statements.toStatemen
 public class EnvironmentVariablesRule extends EnvironmentVariables implements TestRule {
 
     /**
-     * {@inheritDoc}
+     * Default constructor provides restoration of the environment and the ability to set values
      */
     public EnvironmentVariablesRule() {
     }
 
     /**
-     * {@inheritDoc}
+     * Construct with variables that will be set when the rule is active
+     * @param name name of the first variable
+     * @param value value of the first variable
+     * @param others pairs of name/values as Strings
      */
     public EnvironmentVariablesRule(String name, String value, String... others) {
         super(name, value, others);
     }
 
     /**
-     * {@inheritDoc}
+     * Construct with some variables to apply when active
+     * @param variables map of variables to apply when active
      */
     public EnvironmentVariablesRule(Map<String, String> variables) {
         super(variables);

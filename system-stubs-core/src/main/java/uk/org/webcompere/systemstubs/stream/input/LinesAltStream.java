@@ -19,7 +19,7 @@ public class LinesAltStream extends AltInputStream {
      * Given a stream of lines, supply them as an input stream
      * @param lines lines as a stream
      */
-    public LinesAltStream(String ... lines) {
+    public LinesAltStream(String... lines) {
         this(Arrays.stream(lines), true);
     }
 

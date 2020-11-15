@@ -60,7 +60,7 @@ public class ThrowAtEndStream extends DecoratingAltStream {
         // this prevents an exception being thrown as a caller reads ahead beyond
         // the last line
         return readNextLine(buffer, offset, len);
-}
+    }
 
     private int readNextLine(byte[] buffer, int offset, int len) throws IOException {
         byte[] lineSeparator = lineSeparator().getBytes(Charset.defaultCharset());

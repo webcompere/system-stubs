@@ -4,8 +4,6 @@ import uk.org.webcompere.systemstubs.stream.output.Output;
 
 import java.io.OutputStream;
 
-import static java.lang.System.*;
-
 /**
  * Replace System.out with an alternative
  */

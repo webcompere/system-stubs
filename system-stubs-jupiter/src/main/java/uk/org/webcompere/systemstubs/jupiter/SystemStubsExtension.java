@@ -38,12 +38,14 @@ public class SystemStubsExtension implements TestInstancePostProcessor,
     }
 
     @Override
-    public boolean supportsParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
+    public boolean supportsParameter(ParameterContext parameterContext,
+                                     ExtensionContext extensionContext) throws ParameterResolutionException {
         return TestResource.class.isAssignableFrom(parameterContext.getParameter().getType());
     }
 
     @Override
-    public Object resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
+    public Object resolveParameter(ParameterContext parameterContext,
+                                   ExtensionContext extensionContext) throws ParameterResolutionException {
         try {
             // create using default constructor, turn it on and remember it for cleanup
             TestResource resource = (TestResource)parameterContext.getParameter().getType().newInstance();

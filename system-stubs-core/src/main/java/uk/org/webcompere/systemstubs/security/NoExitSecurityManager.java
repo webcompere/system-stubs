@@ -29,6 +29,10 @@ public class NoExitSecurityManager extends SecurityManager {
         return statusOfFirstExitCall != null;
     }
 
+    /**
+     * Validate that a system exit was called. Throws an AssertionError if not
+     * @return the exit code
+     */
     public int checkSystemExit() {
         if (isCheckExitCalled()) {
             return getStatusOfFirstCheckExitCall();
@@ -57,8 +61,7 @@ public class NoExitSecurityManager extends SecurityManager {
 
     @Override
     public boolean getInCheck() {
-        return (originalSecurityManager != null)
-            && originalSecurityManager.getInCheck();
+        return originalSecurityManager != null && originalSecurityManager.getInCheck();
     }
 
     @Override
@@ -104,26 +107,30 @@ public class NoExitSecurityManager extends SecurityManager {
 
     @Override
     public void checkExec(String cmd) {
-        if (originalSecurityManager != null)
+        if (originalSecurityManager != null) {
             originalSecurityManager.checkExec(cmd);
+        }
     }
 
     @Override
     public void checkLink(String lib) {
-        if (originalSecurityManager != null)
+        if (originalSecurityManager != null) {
             originalSecurityManager.checkLink(lib);
+        }
     }
 
     @Override
     public void checkRead(FileDescriptor fd) {
-        if (originalSecurityManager != null)
+        if (originalSecurityManager != null) {
             originalSecurityManager.checkRead(fd);
+        }
     }
 
     @Override
     public void checkRead(String file) {
-        if (originalSecurityManager != null)
+        if (originalSecurityManager != null) {
             originalSecurityManager.checkRead(file);
+        }
     }
 
     @Override
