@@ -13,7 +13,8 @@ Add the extension to a test class:
 
 This will resolve parameters and fields.
 
-## By Parameter
+## Using the Extension
+### By Parameter
 
 Provides a stub to the unit test which has already captured the necessary
 restore settings and is active. Will tidy up after the test:
@@ -29,7 +30,7 @@ void method1(SystemProperties properties) {
 Supports all the System Stub objects that can be constructed without
 parameters, including `SystemProperties` and `EnvironmentVariables`.
 
-## By Field
+### By Field
 
 Any field marked with `@SystemStub` will be instantiated and activated before
 each test if not already instantiated. If already instantiated it
@@ -55,7 +56,7 @@ The `@SystemStub` annotation is required for the automatic use of the
 system stub objects so that it is also possible to manually set up and tear down
 the objects in other parts of the lifecycle as required.
 
-### Single Test Instance
+### Fields with Single Test Instance
 
 In cases where `@TestInstance(TestInstance.Lifecycle.PER_CLASS)` is used,
 the system stub objects in the test instance fields are shared across multiple tests.
@@ -63,17 +64,21 @@ the system stub objects in the test instance fields are shared across multiple t
 This means that the following is possible:
 
 ```java
-@SystemStub
-private EnvironmentVariables environment;
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+class SomeTest {
 
-@Test
-void test1_canSetUpEnvironment() {
-    environment.set("shared", "instance");
-}
+    @SystemStub
+    private EnvironmentVariables environment;
 
-@Test
-void test2_canReceiveEnviroment() {
-    assertThat(System.getenv("shared")).isEqualTo("instance");
+    @Test
+    void test1_canSetUpEnvironment() {
+        environment.set("shared", "instance");
+    }
+
+    @Test
+    void test2_canReceiveEnviroment() {
+        assertThat(System.getenv("shared")).isEqualTo("instance");
+    }
 }
 ```
 
@@ -101,7 +106,6 @@ void thisTestRunsWithTheEnvironment() {
     // tests
 }
 ```
-
 ## Use Cases
 
 A strong use case for dynamic environment variables and system properties is
@@ -116,6 +120,14 @@ on the System Stub resource objects can allow the environment
 to be set at the right moment before other tests depend on it.
 
 See [the SpringBoot example test](src/test/java/uk/org/webcompere/systemstubs/jupiter/examples/SpringAppWithDynamicPropertiesTest.java) for an example.
+
+## Examples
+
+- [EnvironmentVariables declared before test](src/test/java/uk/org/webcompere/systemstubs/jupiter/examples/WithEnvironmentVariables.java)
+- [EnvironmentVariables, System Properties and TappingSystemOut](src/test/java/uk/org/webcompere/systemstubs/jupiter/examples/MultipleTestResources.java) - demonstrating
+multiple resources being set up with their defaults
+- [Injecting Resources by Parameter](src/test/java/uk/org/webcompere/systemstubs/jupiter/examples/InjectByParameter.java)
+- [SpringBoot dynamic property setting](src/test/java/uk/org/webcompere/systemstubs/jupiter/examples/SpringAppWithDynamicPropertiesTest.java)
 
 ## Extensibility
 
@@ -143,5 +155,5 @@ class SomeTest {
 }
 ```
 
-**Note: The extension requires a default constructor to create
+**Note: The extension requires the test resource to provide a default constructor to enable it to create
 instances for parameter injection and automatic field creation.**

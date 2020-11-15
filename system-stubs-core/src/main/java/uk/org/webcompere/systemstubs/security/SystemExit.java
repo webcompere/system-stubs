@@ -4,7 +4,9 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * A {@link uk.org.webcompere.systemstubs.resource.TestResource} which provides the exit code called when it was active.
- * Gives access to the {@link NoExitSecurityManager} object inside via {@link SecurityManagerStub#getSecurityManager()}
+ * Gives access to the {@link NoExitSecurityManager} object inside via {@link SecurityManagerStub#getSecurityManager()}.
+ * When the {@link NoExitSecurityManager} is in use, any calls to {@link System#exit(int)} are converted
+ * to an {@link AbortExecutionException} which the surrounding test can catch.
  */
 public class SystemExit extends SecurityManagerStub<NoExitSecurityManager> {
     /**

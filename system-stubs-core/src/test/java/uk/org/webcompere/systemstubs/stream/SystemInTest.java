@@ -21,6 +21,12 @@ class SystemInTest {
     private List<String> linesRead;
 
     @Test
+    void canConstructWithDefaultConstructorWithNoData() throws Exception {
+        new SystemIn()
+            .execute(() -> assertThat(System.in.read()).isEqualTo(-1));
+    }
+
+    @Test
     void canReadASingleLineOfTextFromSystemInA() throws Exception {
         new SystemIn("Hello world")
             .execute(() -> linesRead = readLinesFromSystemIn(1));
