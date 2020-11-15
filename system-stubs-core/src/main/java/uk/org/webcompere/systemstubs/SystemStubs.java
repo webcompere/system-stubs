@@ -15,8 +15,11 @@ import uk.org.webcompere.systemstubs.stream.input.LinesAltStream;
 import uk.org.webcompere.systemstubs.stream.output.DisallowWriteStream;
 import uk.org.webcompere.systemstubs.stream.output.NoopStream;
 import uk.org.webcompere.systemstubs.stream.output.Output;
+import uk.org.webcompere.systemstubs.time.ClockStub;
 
 import java.io.IOException;
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.concurrent.Callable;
 
 import static java.util.Collections.singletonMap;
@@ -819,4 +822,12 @@ public class SystemStubs {
         return new SystemIn(new LinesAltStream(lines));
     }
 
+    /**
+     * Stub the system clock with the {@link ClockStub} object
+     * @param startTime the time to start the clock
+     * @return a new {@link ClockStub} to use for keeping the time fixed
+     */
+    public static ClockStub withClock(LocalDateTime startTime) {
+        return new ClockStub(startTime);
+    }
 }
