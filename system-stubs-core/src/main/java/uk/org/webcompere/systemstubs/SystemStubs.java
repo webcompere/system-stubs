@@ -1,5 +1,6 @@
 package uk.org.webcompere.systemstubs;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import uk.org.webcompere.systemstubs.environment.EnvironmentVariables;
 import uk.org.webcompere.systemstubs.properties.SystemProperties;
 import uk.org.webcompere.systemstubs.resource.Resources;
@@ -370,6 +371,7 @@ public class SystemStubs {
      * @throws Exception      any exception thrown by the statement.
      * @since 1.0.0
      */
+    @SuppressFBWarnings("BC_UNCONFIRMED_CAST_OF_RETURN_VALUE")
     public static int catchSystemExit(ThrowingRunnable throwingRunnable) throws Exception {
         SystemExit exit = new SystemExit();
         exit.execute(throwingRunnable);

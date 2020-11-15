@@ -18,8 +18,6 @@ import static java.lang.System.setIn;
  * arbitrary piece of code that is provided to {@link #execute(ThrowingRunnable)}.
  */
 public class SystemIn extends SingularTestResource {
-    private IOException ioException;
-    private RuntimeException runtimeException;
     private InputStream originalIn;
     private AltInputStream altInputStream;
 
