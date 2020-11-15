@@ -426,8 +426,10 @@ void construct_system_err_and_out_tap() throws Exception {
 
 ### Stubbing `System.in`
 
-Interactive command-line applications read from `System.in`. If you write such
-applications you need to provide input to these applications.
+Interactive command-line applications read from `System.in`. You can
+supply the application with input at test time as lines of text, delimited by
+the system line separator, or by hooking `System.in` up to a
+specific `InputStream`.
 
 #### With `SystemStubs`
 
@@ -485,7 +487,7 @@ void System_in_throws_RuntimeException() throws Exception {
 }
 ```
 
-You can write a test that throws an exception immediately by not providing any
+You might also write a test that throws an exception immediately by not providing any
 text.
 
 ```java
@@ -499,6 +501,10 @@ withTextFromSystemIn()
     );
   });
 ```
+
+The `SystemStubs` implementation only allows you to specify
+text for stubbing `System.in`, the `SystemIn` object is more
+configurable.
 
 #### `SystemIn` and `AltInputStream`
 
