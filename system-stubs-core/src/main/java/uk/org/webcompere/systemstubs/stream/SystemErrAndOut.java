@@ -12,6 +12,7 @@ import static java.util.Arrays.asList;
 /**
  * Composite of both {@link SystemErr} and {@link SystemOut} for when directing
  * both of them to the same stream
+ * @since 1.0.0
  */
 public class SystemErrAndOut implements Output, TestResource {
     private SystemErr systemErr;

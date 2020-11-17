@@ -8,6 +8,7 @@ import java.security.Permission;
  * A {@code NoExitSecurityManager} throws a {@link AbortExecutionException}
  * exception whenever {@link #checkExit(int)} is called. All other method
  * calls are delegated to the original security manager.
+ * @since 1.0.0
  */
 public class NoExitSecurityManager extends SecurityManager {
     private final SecurityManager originalSecurityManager;

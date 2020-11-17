@@ -6,6 +6,7 @@ import java.util.concurrent.Callable;
 
 /**
  * Switch the security manager for an alternative
+ * @since 1.0.0
  */
 public class SecurityManagerStub<T extends SecurityManager> extends SingularTestResource {
     private SecurityManager originalSecurityManager;

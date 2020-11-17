@@ -25,6 +25,7 @@ public interface TestResource extends Executable {
      * @param <T> the type of object to return
      * @return the result of the operation
      * @throws Exception on any error thrown by the callable
+     * @since 1.0.0
      */
     default <T> T execute(Callable<T> callable) throws Exception {
         return Resources.execute(callable, this);

@@ -617,10 +617,14 @@ System Stubs is built with Appveyor: [![Build status](https://ci.appveyor.com/ap
 
 ## Release Guide
 
-* Select a new version according to the
+* Move the snapshot version number if necessary using
   [Semantic Versioning 2.0.0 Standard](http://semver.org/).
-* Set the new version in `pom.xml` and in the `Installation` section of
-  this readme.
-* Commit the modified `pom.xml` and `README.md`.
-* Run `mvnw clean deploy` with JDK 8.
-* Add a tag for the release: `git tag system-stubs-X.X.X`
+* With `gpg` installed
+* With env variables
+  - `JAVA_HOME` set to JDK8
+  - `GPG_TTY=$(tty)`
+  - `GPG_AGENT_INFO`
+* With the nexus credentials set in the `.m2/settings.xml`
+* Run `mvn -Prelease-sign-artifacts clean -Dgpg.passphrase=<passphrase> release:prepare release:perform -f pom.xml`
+* Update the installation guide in the README
+* Push a new version to the README

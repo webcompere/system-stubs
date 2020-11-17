@@ -2,7 +2,9 @@ package uk.org.webcompere.systemstubs.resource;
 
 /**
  * Adds reference counting to the {@link TestResource} interface in case something tries to perform
- * multiple setup or teardown calls on the same resource. Promises only a single instance.
+ * multiple setup or teardown calls on the same resource. Promises only a single instance of the
+ * set up at a time.
+ * @since 1.0.0
  */
 public abstract class SingularTestResource implements TestResource {
     private int refCount = 0;

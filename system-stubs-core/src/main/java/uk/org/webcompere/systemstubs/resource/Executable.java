@@ -4,6 +4,12 @@ import uk.org.webcompere.systemstubs.ThrowingRunnable;
 
 import java.util.concurrent.Callable;
 
+/**
+ * The execution interface. Defines the <em>execute-around</em> pattern
+ * where an object can set up and tear down some sort of resource in a try-finally block
+ * around calling some inner operation, returning its value.
+ * @since 1.0.0
+ */
 @FunctionalInterface
 public interface Executable {
     /**

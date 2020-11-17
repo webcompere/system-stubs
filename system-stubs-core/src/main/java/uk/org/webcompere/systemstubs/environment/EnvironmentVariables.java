@@ -7,7 +7,6 @@ import uk.org.webcompere.systemstubs.resource.SingularTestResource;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.Callable;
 
 import static java.lang.Class.forName;
 import static java.lang.System.getenv;
@@ -17,7 +16,22 @@ import static java.util.Collections.emptyMap;
  * A collection of values for environment variables. New values can be
  * added by {@link #and(String, String)}. The {@code EnvironmentVariables}
  * object is then used to execute an arbitrary piece of code with these
- * environment variables being present.
+ * environment variables being present. Use {@link #execute}
+ * to wrap around test code:
+ * <pre>
+ * &#064;Test
+ * void execute_code_with_environment_variables() throws Exception {
+ *   withEnvironmentVariable("first", "first value")
+ *     .and("second", "second value")
+ *     .and("third", null)
+ *     .execute((){@literal ->} {
+ *       assertEquals("first value", System.getenv("first"));
+ *       assertEquals("second value", System.getenv("second"));
+ *       assertNull(System.getenv("third"));
+ *     });
+ * }
+ * </pre>
+ * @since 1.0.0
  */
 public class EnvironmentVariables extends SingularTestResource {
     protected final Map<String, String> variables;
@@ -115,88 +129,6 @@ public class EnvironmentVariables extends SingularTestResource {
         } else {
             return "'" + text + "'";
         }
-    }
-
-    /**
-     * Executes a {@code Callable} with environment variable values
-     * according to what was set before. It exposes the return value of the
-     * {@code Callable}. All changes to environment variables are reverted
-     * after the {@code Callable} has been executed.
-     * <pre>
-     * &#064;Test
-     * void execute_code_with_environment_variables(
-     * ) throws Exception {
-     *   {@literal List<String>} values = withEnvironmentVariable("first", "first value")
-     *     .and("second", "second value")
-     *     .and("third", null)
-     *     .execute((){@literal ->} asList(
-     *         System.getenv("first"),
-     *         System.getenv("second"),
-     *         System.getenv("third")
-     *     ));
-     *   assertEquals(
-     *     asList("first value", "second value", null),
-     *     values
-     *   );
-     * }
-     * </pre>
-     *
-     * <p><b>Warning:</b> This method uses reflection for modifying internals of the
-     * environment variables map. It fails if your {@code SecurityManager} forbids
-     * such modifications.
-     * @param <T> the type of {@code callable}'s result
-     * @param callable an arbitrary piece of code.
-     * @return the return value of {@code callable}.
-     * @throws Exception any exception thrown by the callable.
-     * @since 1.1.0
-     * @see SystemStubs#withEnvironmentVariable(String, String)
-     * @see #and(String, String)
-     * @see #execute(ThrowingRunnable)
-     */
-    @Override
-    public <T> T execute(Callable<T> callable) throws Exception {
-        return super.execute(callable);
-    }
-
-    /**
-     * Executes a statement with environment variable values according to
-     * what was set before. All changes to environment variables are
-     * reverted after the statement has been executed.
-     * <pre>
-     * &#064;Test
-     * void execute_code_with_environment_variables(
-     * ) throws Exception {
-     *   withEnvironmentVariable("first", "first value")
-     *     .and("second", "second value")
-     *     .and("third", null)
-     *     .execute((){@literal ->} {
-     *       assertEquals(
-     *         "first value",
-     *         System.getenv("first")
-     *       );
-     *       assertEquals(
-     *         "second value",
-     *         System.getenv("second")
-     *       );
-     *       assertNull(
-     *         System.getenv("third")
-     *       );
-     *     });
-     * }
-     * </pre>
-     *
-     * <p><b>Warning:</b> This method uses reflection for modifying internals of the
-     * environment variables map. It fails if your {@code SecurityManager} forbids
-     * such modifications.
-     * @param throwingRunnable an arbitrary piece of code.
-     * @throws Exception any exception thrown by the statement.
-     * @since 1.0.0
-     * @see SystemStubs#withEnvironmentVariable(String, String)
-     * @see EnvironmentVariables#and(String, String)
-     * @see #execute(Callable)
-     */
-    public void execute(ThrowingRunnable throwingRunnable) throws Exception {
-        super.execute(throwingRunnable);
     }
 
     @Override

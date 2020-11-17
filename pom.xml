@@ -4,7 +4,7 @@
 
   <groupId>uk.org.webcompere</groupId>
   <artifactId>system-stubs-parent</artifactId>
-  <version>0.0.1</version>
+  <version>1.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>System Stubs Parent</name>
@@ -19,10 +19,20 @@
     </license>
   </licenses>
 
+  <developers>
+    <developer>
+      <name>Ashley Frieze</name>
+      <email>ashley@ashleyfrieze.co.uk</email>
+      <organization>webcompere.org.uk</organization>
+      <organizationUrl>https://github.com/webcompere</organizationUrl>
+    </developer>
+  </developers>
+
   <scm>
     <connection>scm:git:git://github.com/webcompere/system-stubs.git</connection>
     <developerConnection>scm:git:git@github.com:webcompere/system-stubs.git</developerConnection>
     <url>https://github.com/webcompere/system-stubs/</url>
+    <tag>system-stubs-parent-1.0.0</tag>
   </scm>
 
   <modules>
@@ -31,12 +41,24 @@
     <module>system-stubs-jupiter</module>
   </modules>
 
+  <properties>
+    <version.maven-scm-provider-gitexe>1.11.2</version.maven-scm-provider-gitexe>
+    <gpg.passphrase>providedfromoutside</gpg.passphrase>
+    <version.maven-gpg-plugin>1.6</version.maven-gpg-plugin>
+    <version.maven-javadoc-plugin>3.2.0</version.maven-javadoc-plugin>
+    <version.maven-source-plugin>3.2.1</version.maven-source-plugin>
+    <version.maven-deploy-plugin>3.0.0-M1</version.maven-deploy-plugin>
+    <version.nexus-staging-maven-plugin>1.6.8</version.nexus-staging-maven-plugin>
+    <version.maven-release-plugin>3.0.0-M1</version.maven-release-plugin>
+    <version.maven-compiler-plugin>3.8.1</version.maven-compiler-plugin>
+  </properties>
+
   <dependencyManagement>
     <dependencies>
       <dependency>
         <groupId>uk.org.webcompere</groupId>
         <artifactId>system-stubs-core</artifactId>
-        <version>0.0.1</version>
+        <version>1.0.0-SNAPSHOT</version>
       </dependency>
 
       <dependency>
@@ -91,6 +113,15 @@
   <build>
     <pluginManagement>
       <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>${version.maven-compiler-plugin}</version>
+          <configuration>
+            <source>1.8</source>
+            <target>1.8</target>
+          </configuration>
+        </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
@@ -162,39 +193,135 @@
             </execution>
           </executions>
         </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-source-plugin</artifactId>
+          <version>${version.maven-source-plugin}</version>
+          <executions>
+            <execution>
+              <id>attach-sources</id>
+              <goals>
+                <goal>jar</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-javadoc-plugin</artifactId>
+          <version>${version.maven-javadoc-plugin}</version>
+          <configuration>
+            <encoding>UTF-8</encoding>
+          </configuration>
+          <executions>
+            <execution>
+              <id>attach-javadoc</id>
+              <goals>
+                <goal>jar</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <artifactId>maven-deploy-plugin</artifactId>
+          <version>${version.maven-deploy-plugin}</version>
+          <executions>
+            <execution>
+              <id>default-deploy</id>
+              <phase>deploy</phase>
+              <goals>
+                <goal>deploy</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.sonatype.plugins</groupId>
+          <artifactId>nexus-staging-maven-plugin</artifactId>
+          <version>${version.nexus-staging-maven-plugin}</version>
+          <extensions>true</extensions>
+          <configuration>
+            <serverId>ossrh</serverId>
+            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+            <autoReleaseAfterClose>true</autoReleaseAfterClose>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-release-plugin</artifactId>
+          <version>${version.maven-release-plugin}</version>
+          <configuration>
+            <localCheckout>true</localCheckout>
+            <pushChanges>false</pushChanges>
+          </configuration>
+          <dependencies>
+            <dependency>
+              <groupId>org.apache.maven.scm</groupId>
+              <artifactId>maven-scm-provider-gitexe</artifactId>
+              <version>${version.maven-scm-provider-gitexe}</version>
+            </dependency>
+          </dependencies>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-site-plugin</artifactId>
+          <version>3.9.1</version>
+        </plugin>
       </plugins>
     </pluginManagement>
   </build>
 
-<!--  <profiles>-->
-<!--    <profile>-->
-<!--      <id>nonrelease</id>-->
-<!--      <activation>-->
-<!--        <activeByDefault>true</activeByDefault>-->
-<!--      </activation>-->
-<!--      <build>-->
-<!--        <plugins>-->
-<!--          <plugin>-->
-<!--            <groupId>org.apache.maven.plugins</groupId>-->
-<!--            <artifactId>maven-gpg-plugin</artifactId>-->
-<!--            <configuration>-->
-<!--              <skip>true</skip>-->
-<!--            </configuration>-->
-<!--          </plugin>-->
-<!--        </plugins>-->
-<!--      </build>-->
-<!--    </profile>-->
-<!--    <profile>-->
-<!--      <id>release</id>-->
-<!--      <build>-->
-<!--        <plugins>-->
-<!--          <plugin>-->
-<!--            <groupId>org.apache.maven.plugins</groupId>-->
-<!--            <artifactId>maven-gpg-plugin</artifactId>-->
-<!--          </plugin>-->
-<!--        </plugins>-->
-<!--      </build>-->
-<!--    </profile>-->
-<!--  </profiles>-->
+  <distributionManagement>
+    <snapshotRepository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
+    <repository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+    </repository>
+  </distributionManagement>
+
+  <issueManagement>
+    <system>Github</system>
+    <url>https://github.com/webcompere/system-stubs/issues</url>
+  </issueManagement>
+
+  <ciManagement>
+    <system>AppVeyor</system>
+    <url>https://ci.appveyor.com/project/ashleyfrieze/system-stubs</url>
+  </ciManagement>
+
+  <profiles>
+    <!-- GPG Signature on release -->
+    <profile>
+      <id>release-sign-artifacts</id>
+      <activation>
+        <property>
+          <name>performRelease</name>
+          <value>true</value>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <version>${version.maven-gpg-plugin}</version>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 
 </project>

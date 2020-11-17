@@ -6,6 +6,7 @@ import java.io.OutputStream;
 
 /**
  * Replace System.out with an alternative
+ * @since 1.0.0
  */
 public class SystemOut extends SystemStreamBase {
     /**

@@ -7,6 +7,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * Gives access to the {@link NoExitSecurityManager} object inside via {@link SecurityManagerStub#getSecurityManager()}.
  * When the {@link NoExitSecurityManager} is in use, any calls to {@link System#exit(int)} are converted
  * to an {@link AbortExecutionException} which the surrounding test can catch.
+ * @since 1.0.0
  */
 public class SystemExit extends SecurityManagerStub<NoExitSecurityManager> {
     /**
