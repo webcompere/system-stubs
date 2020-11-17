@@ -5,6 +5,14 @@ This is the System Stubs native equivalent to [System Rules](https://stefanbirkn
 The code for this version originated with the [System Lambda](https://github.com/stefanbirkner/system-lambda)
 project and have been rebuilt from the ground up for this version.
 
+```xml
+<dependency>
+  <groupId>uk.org.webcompere</groupId>
+  <artifactId>system-stubs-junit4</artifactId>
+  <version>1.0.0</version>
+</dependency>
+```
+
 ## Environment Variables
 
 Provides a plugin to allow environment variables to be managed during a test:
