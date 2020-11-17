@@ -590,6 +590,7 @@ public class SystemStubs {
      * Get a tap for System out to use with {@link SystemOut#execute}
      *
      * @return the {@link SystemOut} object to use
+     * @since 1.0.0
      */
     public static SystemOut withTapSystemOut() {
         return new SystemOut();
@@ -600,6 +601,7 @@ public class SystemStubs {
      * shared {@link Output} for asserting against
      *
      * @return the {@link SystemErrAndOut} to use with {@link SystemErrAndOut#execute}
+     * @since 1.0.0
      */
     public static SystemErrAndOut withTapSystemErrAndOut() {
         return new SystemErrAndOut();
@@ -611,6 +613,7 @@ public class SystemStubs {
      *
      * @param output the shared target to direct the logging to
      * @return the {@link SystemErrAndOut} to use with {@link SystemErrAndOut#execute}
+     * @since 1.0.0
      */
     public static SystemErrAndOut withSystemErrAndOut(Output output) {
         return new SystemErrAndOut(output);
@@ -625,6 +628,7 @@ public class SystemStubs {
      * @param throwingRunnable the code under test
      * @return the {@link String} of the text written to the output - non null
      * @throws Exception on error in the code under test
+     * @since 1.0.0
      */
     public static String tapSystemErrAndOut(ThrowingRunnable throwingRunnable) throws Exception {
         SystemErrAndOut tappedSystem = withTapSystemErrAndOut();
@@ -682,6 +686,7 @@ public class SystemStubs {
      * @param value  value of first environment variable
      * @param values pairs of name/values (must be even number of entries)
      * @return an {@link EnvironmentVariables} object for further use
+     * @since 1.0.0
      */
     public static EnvironmentVariables withEnvironmentVariables(String name, String value, String... values) {
         return new EnvironmentVariables(name, value, values);
@@ -691,6 +696,7 @@ public class SystemStubs {
      * Create a blank {@link EnvironmentVariables} object
      *
      * @return empty {@link EnvironmentVariables} for adding values to
+     * @since 1.0.0
      */
     public static EnvironmentVariables withEnvironmentVariables() {
         return new EnvironmentVariables();
@@ -705,6 +711,7 @@ public class SystemStubs {
      * @return the result of the callable
      * @throws Exception on error in any of the resources or the callable
      * @see Resources#execute(Callable, TestResource...)
+     * @since 1.0.0
      */
     public static <T> T execute(Callable<T> callable, TestResource... resources) throws Exception {
         return Resources.execute(callable, resources);
@@ -717,6 +724,7 @@ public class SystemStubs {
      * @param resources resources to set up around it
      * @throws Exception on error in any of the resources or the runnable
      * @see Resources#execute(Callable, TestResource...)
+     * @since 1.0.0
      */
     public static void execute(ThrowingRunnable runnable, TestResource... resources) throws Exception {
         Resources.execute(runnable.asCallable(), resources);

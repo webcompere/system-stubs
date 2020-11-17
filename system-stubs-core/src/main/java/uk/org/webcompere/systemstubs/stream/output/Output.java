@@ -8,7 +8,10 @@ import java.util.stream.Stream;
 import static java.util.stream.Collectors.joining;
 
 /**
- * A source of text output
+ * A target for output. This can be plugged into a {@link uk.org.webcompere.systemstubs.stream.SystemStreamBase}
+ * derived class to be converted to a {@link java.io.PrintStream} for use with <code>System.out</code>
+ * etc.
+ * @since 1.0.0
  */
 public interface Output<T extends OutputStream> {
     /**

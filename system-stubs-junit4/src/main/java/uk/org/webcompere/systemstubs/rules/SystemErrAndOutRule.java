@@ -7,6 +7,7 @@ import uk.org.webcompere.systemstubs.stream.output.Output;
 /**
  * JUnit4 rule for tapping both {@link System#err} and {@link System#out} at the same
  * time with the same {@link Output}
+ * @since 1.0.0
  */
 public class SystemErrAndOutRule extends SystemErrAndOut implements SystemStubTestRule {
     /**

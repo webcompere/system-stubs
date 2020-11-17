@@ -17,6 +17,7 @@ import static java.nio.charset.Charset.defaultCharset;
  * in place of the intended stream while active. Presents methods to access the output.
  * When active converts the output into a {@link PrintStream} and applies it to the
  * environment.
+ * @since 1.0.0
  */
 public class SystemStreamBase extends SingularTestResource implements Output<OutputStream> {
     private static final boolean AUTO_FLUSH = true;

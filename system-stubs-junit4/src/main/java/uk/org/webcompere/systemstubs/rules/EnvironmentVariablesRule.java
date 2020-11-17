@@ -1,18 +1,15 @@
 package uk.org.webcompere.systemstubs.rules;
 
-import org.junit.rules.TestRule;
-import org.junit.runner.Description;
-import org.junit.runners.model.Statement;
 import uk.org.webcompere.systemstubs.environment.EnvironmentVariables;
+import uk.org.webcompere.systemstubs.rules.internal.SystemStubTestRule;
 
 import java.util.Map;
 
-import static uk.org.webcompere.systemstubs.rules.internal.Statements.toStatement;
-
 /**
  * JUnit 4 rule which sets up the environment variables around whatever JUnit 4 is running
+ * @since 1.0.0
  */
-public class EnvironmentVariablesRule extends EnvironmentVariables implements TestRule {
+public class EnvironmentVariablesRule extends EnvironmentVariables implements SystemStubTestRule {
 
     /**
      * Default constructor provides restoration of the environment and the ability to set values
@@ -36,14 +33,6 @@ public class EnvironmentVariablesRule extends EnvironmentVariables implements Te
      */
     public EnvironmentVariablesRule(Map<String, String> variables) {
         super(variables);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Statement apply(Statement statement, Description description) {
-        return toStatement(statement, this);
     }
 
     /**

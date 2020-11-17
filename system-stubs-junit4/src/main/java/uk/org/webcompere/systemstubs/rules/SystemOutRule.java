@@ -9,6 +9,7 @@ import java.io.OutputStream;
 /**
  * JUnit4 test rule that captures {@link System#out} during tests.
  * @see uk.org.webcompere.systemstubs.stream.SystemOut
+ * @since 1.0.0
  */
 public class SystemOutRule extends SystemOut implements SystemStubTestRule {
     /**

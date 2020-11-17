@@ -48,7 +48,35 @@ home-made alternatives)
 
 ## Installation
 
-... tbc - when published to maven central
+### Core
+
+```xml
+<dependency>
+  <groupId>uk.org.webcompere</groupId>
+  <artifactId>system-stubs-core</artifactId>
+  <version>1.0.0</version>
+</dependency>
+```
+
+### JUnit 4 Plugin
+
+```xml
+<dependency>
+  <groupId>uk.org.webcompere</groupId>
+  <artifactId>system-stubs-junit4</artifactId>
+  <version>1.0.0</version>
+</dependency>
+```
+
+### JUnit 5 Extension
+
+```xml
+<dependency>
+  <groupId>uk.org.webcompere</groupId>
+  <artifactId>system-stubs-jupiter</artifactId>
+  <version>1.0.0</version>
+</dependency>
+```
 
 ## Usage with Execute Around
 
@@ -617,10 +645,15 @@ System Stubs is built with Appveyor: [![Build status](https://ci.appveyor.com/ap
 
 ## Release Guide
 
-* Select a new version according to the
+* Move the snapshot version number if necessary using
   [Semantic Versioning 2.0.0 Standard](http://semver.org/).
-* Set the new version in `pom.xml` and in the `Installation` section of
-  this readme.
-* Commit the modified `pom.xml` and `README.md`.
-* Run `mvnw clean deploy` with JDK 8.
-* Add a tag for the release: `git tag system-stubs-X.X.X`
+* With `gpg` installed
+* May need to login to `gpg` to set the passphrase
+* With env variables
+  - `JAVA_HOME` set to JDK8
+  - `GPG_TTY=$(tty)`
+  - `GPG_AGENT_INFO`
+* With the nexus credentials set in the `.m2/settings.xml`
+* Run `mvn clean -Dgpg.executable=gpg -Prelease-sign-artifacts -Dgpg.passphrase=<biscuit leet> release:prepare release:perform`
+* Update the installation guide in the README
+* Push a new version to the README

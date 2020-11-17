@@ -3,6 +3,14 @@
 Supports two methods of providing System Stub `TestResource` objects to
 JUnit 5 unit test.
 
+```xml
+<dependency>
+  <groupId>uk.org.webcompere</groupId>
+  <artifactId>system-stubs-jupiter</artifactId>
+  <version>1.0.0</version>
+</dependency>
+```
+
 ## Extension
 
 Add the extension to a test class:

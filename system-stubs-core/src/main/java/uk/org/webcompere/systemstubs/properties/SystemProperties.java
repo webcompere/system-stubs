@@ -1,6 +1,5 @@
 package uk.org.webcompere.systemstubs.properties;
 
-import uk.org.webcompere.systemstubs.environment.PropertiesUtils;
 import uk.org.webcompere.systemstubs.resource.SingularTestResource;
 
 import java.util.Properties;
@@ -18,7 +17,9 @@ public class SystemProperties extends SingularTestResource {
     private Properties properties;
 
     /**
-     * Default constructor with no properties
+     * Default constructor with no properties. Use {@link #set} to set properties
+     * either while active or before activation.
+     * @since 1.0.0
      */
     public SystemProperties() {
         this.properties = new Properties();
@@ -27,6 +28,7 @@ public class SystemProperties extends SingularTestResource {
     /**
      * Construct with a specific set of properties.
      * @param properties properties to use
+     * @since 1.0.0
      */
     public SystemProperties(Properties properties) {
         this.properties = PropertiesUtils.copyOf(properties);
@@ -37,6 +39,7 @@ public class SystemProperties extends SingularTestResource {
      * @param name name of the first property
      * @param value value of the first property
      * @param nameValues pairs of names and values for further properties
+     * @since 1.0.0
      */
     public SystemProperties(String name, String value, String... nameValues) {
         this();
@@ -58,6 +61,7 @@ public class SystemProperties extends SingularTestResource {
      * @param name name of the property
      * @param value value to set
      * @return this object for fluent use
+     * @since 1.0.0
      */
     public SystemProperties set(String name, String value) {
         properties.setProperty(name, value);

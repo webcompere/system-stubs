@@ -8,6 +8,7 @@ import java.io.InputStream;
 
 /**
  * The {@link SystemIn} system stub as a JUnit 4 test rule
+ * @since 1.0.0
  */
 public class SystemInRule extends SystemIn implements SystemStubTestRule {
     /**

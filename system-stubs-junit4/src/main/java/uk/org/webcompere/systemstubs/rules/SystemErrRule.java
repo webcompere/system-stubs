@@ -9,6 +9,7 @@ import java.io.OutputStream;
 /**
  * JUnit4 test rule that captures {@link System#err} during tests.
  * @see uk.org.webcompere.systemstubs.stream.SystemErr
+ * @since 1.0.0
  */
 public class SystemErrRule extends SystemErr implements SystemStubTestRule {
     /**

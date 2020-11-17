@@ -6,7 +6,9 @@ import uk.org.webcompere.systemstubs.rules.internal.SystemStubTestRule;
 import java.util.Properties;
 
 /**
- * Returns the system properties to their original state around each test block.
+ * Returns the system properties to their original state around each test block. Provides
+ * the ability for properties to be prepared before the test starts, via {@link #set}.
+ * @since 1.0.0
  */
 public class SystemPropertiesRule extends SystemProperties implements SystemStubTestRule {
 

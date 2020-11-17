@@ -18,6 +18,7 @@ import static uk.org.webcompere.systemstubs.resource.Resources.executeCleanup;
  * {@link uk.org.webcompere.systemstubs.resource.TestResource} objects provided by System Stubs.
  * Parameters to functions will be injected as live test resources, and fields marked as
  * {@link SystemStub} will be active during the test and cleaned up automatically after.
+ * @since 1.0.0
  */
 public class SystemStubsExtension implements TestInstancePostProcessor,
     TestInstancePreDestroyCallback, ParameterResolver, AfterEachCallback,

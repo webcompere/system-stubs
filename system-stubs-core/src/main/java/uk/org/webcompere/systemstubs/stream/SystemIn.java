@@ -16,6 +16,7 @@ import static java.lang.System.setIn;
  * simulate a {@code System.in} that throws an exception.
  * The specified behaviour of {@code System.in} is applied to an
  * arbitrary piece of code that is provided to {@link #execute(ThrowingRunnable)}.
+ * @since 1.0.0
  */
 public class SystemIn extends SingularTestResource {
     private InputStream originalIn;

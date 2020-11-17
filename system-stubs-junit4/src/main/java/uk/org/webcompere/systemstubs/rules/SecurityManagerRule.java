@@ -5,6 +5,7 @@ import uk.org.webcompere.systemstubs.security.SecurityManagerStub;
 
 /**
  * Set an alternative security manager within tests
+ * @since 1.0.0
  */
 public class SecurityManagerRule extends SecurityManagerStub<SecurityManager> implements SystemStubTestRule {
     /**

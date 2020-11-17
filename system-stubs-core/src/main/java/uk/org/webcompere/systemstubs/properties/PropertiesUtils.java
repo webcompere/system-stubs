@@ -1,4 +1,4 @@
-package uk.org.webcompere.systemstubs.environment;
+package uk.org.webcompere.systemstubs.properties;
 
 import java.util.Properties;
 
