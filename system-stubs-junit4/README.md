@@ -13,7 +13,51 @@ project and have been rebuilt from the ground up for this version.
 </dependency>
 ```
 
-## Environment Variables
+## Using JUnit 4 Test Rules
+
+Each of the stubs in System Stubs Core has a corresponding test rule subclass in this module.
+You can use a rule by declaring it in your test class with the `@Rule` annotation:
+
+```java
+public class SomeTestClass {
+    @Rule
+    public EnvironmentVariablesRule rule = new EnvironmentVariablesRule();
+}
+```
+
+**Note:** the rule object must be declared `public`.
+
+### `static` / `@ClassRule`
+
+If it's necessary for the stubbing to stay active between tests, or perhaps to be set up earlier than
+some other static code that the test calls, then you can use the `@ClassRule` annotation
+on a static member of the class:
+
+```java
+public class SomeTestClass {
+    @ClassRule
+    public static EnvironmentVariablesRule rule =
+        new EnvironmentVariablesRule("NO_PROXY", "http://www.google.com");
+}
+```
+
+**Note:** while it may be useful to declare a stubbing rule and then set it up while it is active,
+you may wish to ensure your rule has all of its initial values on construction when using it with
+`@ClassRule`. The constructors and fluent setters on each rule object should help with that.
+
+There's an example test class with `@ClassRule` [here](src/test/java/uk/org/webcompere/systemstubs/rules/ClassRuleTest.java).
+
+### Warning on `static` fields
+
+If some of your production code initializes static fields from the environment or system properties,
+then your test needs to set the correct values for those properties before the class of the production code
+is first referenced. It will not be possible for the field to get a new test value in a different
+unit test either, as all the tests are likely to be run in the same JVM which initializes the static
+fields once only.
+
+## Available JUnit 4 Rules
+
+### Environment Variables
 
 Provides a plugin to allow environment variables to be managed during a test:
 
@@ -35,7 +79,7 @@ public void someTest() {
 }
 ```
 
-## `SystemPropertiesRule`
+### `SystemPropertiesRule`
 
 A plugin which restores system properties to the state they were
 before the test started. Allows for properties to be defined
@@ -55,7 +99,7 @@ public void someTest() {
 }
 ```
 
-## `SystemExitRule`
+### `SystemExitRule`
 
 `SystemExitRule` will prevent the JVM terminating during a test if something calls
 `System.exit`. Instead, an `AbortExecutionException` will be thrown, which can be caught.
@@ -82,7 +126,7 @@ public void noSystemExit() {
 }
 ```
 
-## `SystemOutRule` and `SystemErrRule`
+### `SystemOutRule` and `SystemErrRule`
 
 These rules capture the output to `System.out` and `System.err` during tests. By default
 they use the `TapStream` output, which records output. They can also be constructed with the
@@ -122,7 +166,7 @@ The `SystemErrAndOutRule` taps both system error and output with a
 single `Output` object. This defaults to `TapStream` but can
 be specified in the constructor.
 
-## `SystemInRule`
+### `SystemInRule`
 
 `SystemInRule` applies a new input stream to `System.in` within tests.
 It subclasses `SystemIn` which allows the stream to be changed while
@@ -145,7 +189,7 @@ public void canReadText() {
 The source of lines/bytes can be pretty much anything, including a filestream
 or arbitrary `Stream<String>`.
 
-## `SecurityManagerRule`
+### `SecurityManagerRule`
 
 An alternative `SecurityManager` can be set either by providing it
 to the constructor of `SecurityManagerRule`:
@@ -179,3 +223,12 @@ assertThatThrownBy(() -> System.exit(123))
 
 then(mockManager).should().checkExit(123);
 ```
+
+## Custom Rules
+
+You can use System Stubs to help you make your own rules by inheriting `SystemStubTestRule`.
+
+In practice, this is no better than subclassing JUnit's own `ExternalResource`
+to create a custom rule, but may be useful if you have already created a subclass
+of `TestResource` or `SingularTestResource` in order to use System Stubs functionality in
+other situations, and need to make these work in JUnit 4 also.
