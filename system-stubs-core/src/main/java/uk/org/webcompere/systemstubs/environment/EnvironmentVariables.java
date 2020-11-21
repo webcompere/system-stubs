@@ -2,15 +2,19 @@ package uk.org.webcompere.systemstubs.environment;
 
 import uk.org.webcompere.systemstubs.SystemStubs;
 import uk.org.webcompere.systemstubs.ThrowingRunnable;
+import uk.org.webcompere.systemstubs.resource.NameValuePairSetter;
 import uk.org.webcompere.systemstubs.resource.SingularTestResource;
 
 import java.lang.reflect.Field;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 import static java.lang.Class.forName;
 import static java.lang.System.getenv;
 import static java.util.Collections.emptyMap;
+import static uk.org.webcompere.systemstubs.properties.PropertiesUtils.toStringMap;
 
 /**
  * A collection of values for environment variables. New values can be
@@ -33,7 +37,7 @@ import static java.util.Collections.emptyMap;
  * </pre>
  * @since 1.0.0
  */
-public class EnvironmentVariables extends SingularTestResource {
+public class EnvironmentVariables extends SingularTestResource implements NameValuePairSetter<EnvironmentVariables> {
     protected final Map<String, String> variables;
     private Map<String, String> originalEnvironment = null;
 
@@ -66,6 +70,17 @@ public class EnvironmentVariables extends SingularTestResource {
 
     /**
      * Construct with an initial map of variables as name value pairs
+     * @param properties name value pairs as {@link Properties} object, perhaps
+     *     loaded via
+     *     {@link uk.org.webcompere.systemstubs.resource.PropertySource#fromFile(Path)}
+     */
+    public EnvironmentVariables(Properties properties) {
+        this(toStringMap(properties));
+    }
+
+    /**
+     * Construct with an initial map of variables as name value pairs
+     * @param variables initial variables
      */
     public EnvironmentVariables(Map<String, String> variables) {
         this.variables = new HashMap<>(variables);
@@ -96,6 +111,7 @@ public class EnvironmentVariables extends SingularTestResource {
      * @param value value to set
      * @return this for fluent calling
      */
+    @Override
     public EnvironmentVariables set(String name, String value) {
         variables.put(name, value);
 

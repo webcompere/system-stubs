@@ -3,6 +3,7 @@ package uk.org.webcompere.systemstubs.rules;
 import uk.org.webcompere.systemstubs.properties.SystemProperties;
 import uk.org.webcompere.systemstubs.rules.internal.SystemStubTestRule;
 
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -42,5 +43,13 @@ public class SystemPropertiesRule extends SystemProperties implements SystemStub
     @Override
     public SystemPropertiesRule set(String name, String value) {
         return (SystemPropertiesRule)super.set(name, value);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public SystemPropertiesRule set(Map<Object, Object> properties) {
+        return (SystemPropertiesRule)super.set(properties);
     }
 }

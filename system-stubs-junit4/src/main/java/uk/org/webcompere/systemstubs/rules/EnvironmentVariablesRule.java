@@ -4,6 +4,7 @@ import uk.org.webcompere.systemstubs.environment.EnvironmentVariables;
 import uk.org.webcompere.systemstubs.rules.internal.SystemStubTestRule;
 
 import java.util.Map;
+import java.util.Properties;
 
 /**
  * JUnit 4 rule which sets up the environment variables around whatever JUnit 4 is running
@@ -15,6 +16,14 @@ public class EnvironmentVariablesRule extends EnvironmentVariables implements Sy
      * Default constructor provides restoration of the environment and the ability to set values
      */
     public EnvironmentVariablesRule() {
+    }
+
+    /**
+     * Construct with some variables to apply when active
+     * @param properties map of variables to apply when active
+     */
+    public EnvironmentVariablesRule(Properties properties) {
+        super(properties);
     }
 
     /**
@@ -49,5 +58,13 @@ public class EnvironmentVariablesRule extends EnvironmentVariables implements Sy
     @Override
     public EnvironmentVariablesRule set(String name, String value) {
         return (EnvironmentVariablesRule)super.set(name, value);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public EnvironmentVariablesRule set(Map<Object, Object> properties) {
+        return (EnvironmentVariablesRule)super.set(properties);
     }
 }

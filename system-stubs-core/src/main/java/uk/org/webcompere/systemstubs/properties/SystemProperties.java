@@ -1,5 +1,6 @@
 package uk.org.webcompere.systemstubs.properties;
 
+import uk.org.webcompere.systemstubs.resource.NameValuePairSetter;
 import uk.org.webcompere.systemstubs.resource.SingularTestResource;
 
 import java.util.Properties;
@@ -12,7 +13,7 @@ import static java.lang.System.setProperties;
  * existing properties when started, and restores them when complete. Allows for a list of properties
  * that will be applied to the system to be set before the stubbing is triggered.
  */
-public class SystemProperties extends SingularTestResource {
+public class SystemProperties extends SingularTestResource implements NameValuePairSetter<SystemProperties> {
     private Properties originalProperties;
     private Properties properties;
 
@@ -63,6 +64,7 @@ public class SystemProperties extends SingularTestResource {
      * @return this object for fluent use
      * @since 1.0.0
      */
+    @Override
     public SystemProperties set(String name, String value) {
         properties.setProperty(name, value);
         if (isActive()) {
