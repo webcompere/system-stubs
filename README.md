@@ -54,7 +54,7 @@ home-made alternatives)
 <dependency>
   <groupId>uk.org.webcompere</groupId>
   <artifactId>system-stubs-core</artifactId>
-  <version>1.0.0</version>
+  <version>1.1.0</version>
 </dependency>
 ```
 
@@ -64,7 +64,7 @@ home-made alternatives)
 <dependency>
   <groupId>uk.org.webcompere</groupId>
   <artifactId>system-stubs-junit4</artifactId>
-  <version>1.0.0</version>
+  <version>1.1.0</version>
 </dependency>
 ```
 
@@ -74,7 +74,7 @@ home-made alternatives)
 <dependency>
   <groupId>uk.org.webcompere</groupId>
   <artifactId>system-stubs-jupiter</artifactId>
-  <version>1.0.0</version>
+  <version>1.1.0</version>
 </dependency>
 ```
 
@@ -331,7 +331,7 @@ Or from a file:
 SystemProperties props = new SystemProperties();
 props.execute(() -> {
     // do something
-  
+
     // now set the system properties from a file
     props.set(fromFile("src/test/resources/test.properties"));
 });
@@ -345,7 +345,7 @@ Or from a map:
 EnvironmentVariables env = new EnvironmentVariables();
 env.execute(() -> {
     // do something
-  
+
     // now set some environment variables
     env.set(Map.of("VAL", "value1",
                   "VAL2", "value"));

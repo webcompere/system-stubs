@@ -9,7 +9,7 @@ project and have been rebuilt from the ground up for this version.
 <dependency>
   <groupId>uk.org.webcompere</groupId>
   <artifactId>system-stubs-junit4</artifactId>
-  <version>1.0.0</version>
+  <version>1.1.0</version>
 </dependency>
 ```
 
