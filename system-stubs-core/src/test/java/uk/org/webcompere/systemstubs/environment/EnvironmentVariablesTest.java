@@ -3,6 +3,7 @@ package uk.org.webcompere.systemstubs.environment;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
+import java.util.Properties;
 
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonMap;
@@ -139,5 +140,16 @@ class EnvironmentVariablesTest {
         variables.getVariables().put("a", "c");
 
         assertThat(variables.getVariables().get("a")).isEqualTo("original");
+    }
+
+    @Test
+    void constructEnvironmentVariablesFromProperties() throws Exception {
+        Properties props = new Properties();
+        props.setProperty("A", "B");
+
+        new EnvironmentVariables(props)
+            .execute(() -> {
+                assertThat(System.getenv("A")).isEqualTo("B");
+            });
     }
 }

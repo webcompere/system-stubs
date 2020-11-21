@@ -305,6 +305,76 @@ someProperties.execute(() -> {
 // here the system properties are reverted
 ```
 
+### Sources of `Properties` for `EnvironmentVariables` and `SystemProperties`
+
+Once you have constructed an `EnvironmentVariables` or `SystemProperties` object, you can use the `set` method to apply properties. If these objects are presently _active_
+then the values are applied to the running environment immediately, otherwise they
+are kept until the object is activated either by `execute` or within the JUnit test
+lifecycle, as part of the JUnit 4 or JUnit 5 plugins.
+
+There is a `set` function for name/value pairs, and also a `set` function that
+takes `Map<Object, Object>`, which is the base class of `Properties`. There are helper
+functions within `PropertySource` for loading `Properties` from file or resources.
+
+So you can initialise one of these stubs from a resource:
+
+```java
+// Note, we have statically imported `PropertySource.fromResource`
+EnvironmentVariables env = new EnvironmentVariables()
+    .set(fromResource("test.properties"))
+    .execute(() -> {... test code });
+```
+
+Or from a file:
+
+```java
+SystemProperties props = new SystemProperties();
+props.execute(() -> {
+    // do something
+  
+    // now set the system properties from a file
+    props.set(fromFile("src/test/resources/test.properties"));
+});
+```
+
+Or from a map:
+
+```java
+// Map.of is available in later Java versions
+// ImmutableMap.of from Guava is a similar alternative
+EnvironmentVariables env = new EnvironmentVariables();
+env.execute(() -> {
+    // do something
+  
+    // now set some environment variables
+    env.set(Map.of("VAL", "value1",
+                  "VAL2", "value"));
+});
+```
+
+The name/value pair constructors in both `EnvironmentVariables` and `SystemProperties` are probably easier than using `set` with a `Map` where it's possible to use them.
+
+The `EnvironmentVariables` and `SystemProperties` objects both accept a `Properties` object via their constructor. It's a question of preference whether to use the constructor or set method:
+
+```java
+new EnvironmentVariables()
+   .set(fromFile("somefile"));
+
+// vs
+
+new EnvironmentVariables(fromFile("someFile"));
+```
+
+If you have the properties to set in memory already as a series of `String` objects in the `name=value` format used by properties files, you can use `LinesAltStream` to provide them to the property loader as an `InputStream`:
+
+```java
+EnvironmentVariables env = new EnvironmentVariables()
+   .set(fromInputStream(new LinesAltStream("PROXY_HOSTS=foo.bar.com")))
+   .execute(() -> {
+      // the PROXY_HOSTS environment variable is set here
+   });
+```
+
 ### Stubbing `System.out` and `System.err`
 
 #### With `SystemStubs`

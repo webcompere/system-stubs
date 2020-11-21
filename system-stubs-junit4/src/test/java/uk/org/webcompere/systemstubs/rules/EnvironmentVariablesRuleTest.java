@@ -7,6 +7,7 @@ import org.junit.runner.RunWith;
 
 import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
+import static uk.org.webcompere.systemstubs.resource.PropertySource.fromResource;
 
 @RunWith(Enclosed.class)
 public class EnvironmentVariablesRuleTest {
@@ -47,6 +48,28 @@ public class EnvironmentVariablesRuleTest {
         public void withMultipleEnvironmentVariablesSetByConstructor() {
             assertThat(System.getenv("SOME")).isEqualTo("value2");
             assertThat(System.getenv("OTHER")).isEqualTo("thing2");
+        }
+    }
+
+    public static class UsingTestResources {
+        @Rule
+        public EnvironmentVariablesRule environmentVariablesRule = new EnvironmentVariablesRule()
+            .set(fromResource("test.properties"));
+
+        @Test
+        public void withMultipleEnvironmentVariablesSetByConstructor() {
+            assertThat(System.getenv("value1")).isEqualTo("foo");
+        }
+    }
+
+    public static class UsingTestResourcesViaConstructor {
+        @Rule
+        public EnvironmentVariablesRule environmentVariablesRule =
+            new EnvironmentVariablesRule(fromResource("test.properties"));
+
+        @Test
+        public void withMultipleEnvironmentVariablesSetByConstructor() {
+            assertThat(System.getenv("value1")).isEqualTo("foo");
         }
     }
 }
