@@ -5,12 +5,12 @@
   <parent>
     <groupId>uk.org.webcompere</groupId>
     <artifactId>system-stubs-parent</artifactId>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.1.0</version>
     <relativePath>../</relativePath>
   </parent>
 
   <artifactId>system-stubs-junit4</artifactId>
-  <version>1.0.1-SNAPSHOT</version>
+  <version>1.1.0</version>
   <packaging>jar</packaging>
 
   <name>System Stubs JUnit4</name>
