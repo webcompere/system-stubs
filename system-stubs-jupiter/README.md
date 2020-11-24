@@ -136,6 +136,7 @@ See [the SpringBoot example test](src/test/java/uk/org/webcompere/systemstubs/ju
 multiple resources being set up with their defaults
 - [Injecting Resources by Parameter](src/test/java/uk/org/webcompere/systemstubs/jupiter/examples/InjectByParameter.java)
 - [SpringBoot dynamic property setting](src/test/java/uk/org/webcompere/systemstubs/jupiter/examples/SpringAppWithDynamicPropertiesTest.java)
+- [System.Exit managed by the extension](src/test/java/uk/org/webcompere/systemstubs/jupiter/examples/SystemExitUseCase.java)
 
 ## Extensibility
 
