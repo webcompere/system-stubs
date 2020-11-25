@@ -7,6 +7,7 @@ import org.junit.runner.RunWith;
 import uk.org.webcompere.systemstubs.stream.output.TapStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static uk.org.webcompere.systemstubs.stream.output.OutputFactories.tapAndOutput;
 
 @RunWith(Enclosed.class)
 public class SystemErrAndOutRuleTest {
@@ -41,6 +42,23 @@ public class SystemErrAndOutRuleTest {
         public void whenNothingIsWrittenNoTextIsFound() {
             assertThat(errAndOutRule.getText()).isEmpty();
         }
+
+        @Test
+        public void whenWriteToOutThenItCanBeFound() {
+            System.out.println("Some text");
+            assertThat(errAndOutRule.getLines()).contains("Some text");
+        }
+
+        @Test
+        public void whenWriteToErrThenItCanBeFound() {
+            System.err.println("Some text");
+            assertThat(errAndOutRule.getLines()).contains("Some text");
+        }
+    }
+
+    public static class TapWhileAlsoWritingToConsole {
+        @Rule
+        public SystemErrAndOutRule errAndOutRule = new SystemErrAndOutRule(tapAndOutput());
 
         @Test
         public void whenWriteToOutThenItCanBeFound() {

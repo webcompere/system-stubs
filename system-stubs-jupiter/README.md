@@ -135,7 +135,7 @@ See [the SpringBoot example test](src/test/java/uk/org/webcompere/systemstubs/ju
 - [EnvironmentVariables, System Properties and TappingSystemOut](src/test/java/uk/org/webcompere/systemstubs/jupiter/examples/MultipleTestResources.java) - demonstrating
 multiple resources being set up with their defaults
 - [Injecting Resources by Parameter](src/test/java/uk/org/webcompere/systemstubs/jupiter/examples/InjectByParameter.java)
-- [SpringBoot dynamic property setting](src/test/java/uk/org/webcompere/systemstubs/jupiter/examples/SpringAppWithDynamicPropertiesTest.java)
+- [SpringBoot dynamic property setting](src/test/java/uk/org/webcompere/systemstubs/jupiter/examples/SpringAppWithDynamicPropertiesTest.java) - including use of `SystemOut` to capture log output
 - [System.Exit managed by the extension](src/test/java/uk/org/webcompere/systemstubs/jupiter/examples/SystemExitUseCase.java)
 
 ## Extensibility

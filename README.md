@@ -482,9 +482,13 @@ void nothing_is_written_to_System_out() throws Exception {
 #### Using `SystemErr`, `SystemOut` and `SystemErrAndOut`
 
 The methods on the facade provide some useful shortcuts, but there are also
-the classes `SystemOut` and `SystemErr` which can be instantiated
-with the relevant `Output` types of `NoopStream`, `DisallowWriteStream` or `TapStream`. They
-default to using `TapStream`. All of these objects provide functions for getting the text
+the classes `SystemOut` and `SystemErr` which can be used independently.
+
+##### Providing a Single Output Target
+
+When creating a `SystemOut` object, its constructor can be passed the relevant `Output` types of `NoopStream`, `DisallowWriteStream` or `TapStream`. The default is `TapStream`.
+
+Once output has been captured, all of the objects provide functions for getting the text
 that arrived at the stream, sliced into lines or whole.
 
 You can plug in an alternative output by implementing your own `Output` subclass.
@@ -502,12 +506,10 @@ assertThat(systemOut.getText()).isEqualTo("hello world");
 
 The objects can be reused and have a `clear` function to clear captured text between usages.
 
-**Note:** As the `SystemOut`, `SystemErr` and `SystemErrAndOut` classes are also derived from `Output`
-they have friendlier methods on them for reading the text that was sent to the output. E.g. `getLines`
+**Note:** As the `SystemOut`, `SystemErr` and `SystemErrAndOut` classes are also derived from `Output`, they have friendlier methods on them for reading the text that was sent to the output. E.g. `getLines`
 which returns a stream of lines, separated from the text captured by the system line separator.
 
-**Note:** The `withSystemErrAndOut` method on the facade also provides a `SystemErrAndOut` object for finer control
-over assertion:
+**Note:** The `withSystemErrAndOut` method on the facade constructs a `SystemErrAndOut` object for use with the `execute` method and for assertion via `getLines` or `getText`:
 
 ```java
 // finer control over assertion can be made using the SystemErrAndOut object
@@ -522,6 +524,48 @@ void construct_system_err_and_out_tap() throws Exception {
         .containsExactly("text from err","text from out");
 }
 ```
+
+##### Multiple Outputs - Tapping `System.out` in Combinations
+
+One of the advantages of tapping the `System.out` and `System.err` streams is that the tests can assert what was output. However, seeing the output of the application during the test can also be helpful for debugging.
+
+There is an alternative way to provide the `Output` object for the `SystemOut`, `SystemErr` and `SystemErrAndOut` objects to use. If you pass an `OutputFactory` then this can be used to construct the final `Output` object using the original `OutputStream` that was being used before the stubbing started. This allows the output to reuse the original console `PrintStream` alongside any other streams.
+
+There is also a `MultiplexOutput` class which is able to direct the output to more than one `Output` object. **Note:** the first `Output` will be the default used for `getText` and related operations. Though if you created and stored references to all of the `Output` objects in the multiplex, you can interact with them directly.
+
+Though the lower level classes may be useful for building custom configurations, the most common options are within the `OutputFactories` class.
+
+For example, you can both capture `System.out` and allow it to continue writing to the console like this:
+
+```java
+SystemOut systemOut = new SystemOut(tapAndOutput());
+systemOut.execute(() -> System.out.println("I write to the console and the tap"));
+assertThat(systemOut.getLines()).containsExactly("I write to the console and the tap");
+```
+
+The `tapAndOutput` function produces a multiplex of both `TapStream` and writing to the original stream.
+
+When using the `execute` method (as above), rather than any of the JUnit plugins, it's also possible to capture the output to a file using `writeToFile` as the `OutputFactory`:
+
+```java
+File target = new File(tempDir, "file");
+new SystemOut(ofMultiplePlusOriginal(writeToFile(target)))
+  .execute(() -> {
+    System.out.println("This is going into a file");
+  });
+
+assertThat(target).hasContent("This is going into a file" + System.lineSeparator());
+```
+
+While the file output does not depend itself on the original stream, it hooks its creation and closure of the `OutputStream` into the lifecycle of the execute method.
+
+Technically this could also be used with the JUnit plugins, but the written file could not be accessed within the test that it logged.
+
+The `OutputFactories` class provides various methods for adding together multiple `Output` objects. The `Output.fromStream` and `Output.fromCloseableStream` methods provide `Output` wrappers of your own `OutputStream` objects.
+
+**Note:** you can compose multiple `Output` objects or multiple `OutputFactory` objects. If you have a mixture, then convert the `Output` objects into `OutputFactory` objects using `Output.factoryOfSelf`.
+
+There are some worked examples in the [tests of `OutputFactories`](system-stubs-core/src/test/java/uk/org/webcompere/systemstubs/stream/output/OutputFactoriesTest.java).
 
 ### Stubbing `System.in`
 

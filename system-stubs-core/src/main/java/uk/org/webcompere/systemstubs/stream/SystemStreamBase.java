@@ -2,6 +2,7 @@ package uk.org.webcompere.systemstubs.stream;
 
 import uk.org.webcompere.systemstubs.resource.SingularTestResource;
 import uk.org.webcompere.systemstubs.stream.output.Output;
+import uk.org.webcompere.systemstubs.stream.output.OutputFactory;
 import uk.org.webcompere.systemstubs.stream.output.TapStream;
 
 import java.io.OutputStream;
@@ -24,7 +25,8 @@ public class SystemStreamBase extends SingularTestResource implements Output<Out
     private static final String DEFAULT_ENCODING = defaultCharset().name();
 
     protected PrintStream originalStream;
-    protected Output<? extends OutputStream> target;
+    protected Output<? extends OutputStream> currentTarget;
+    protected OutputFactory<? extends OutputStream> targetFactory;
     protected Consumer<PrintStream> printStreamSetter;
     protected Supplier<PrintStream> printStreamGetter;
 
@@ -33,15 +35,27 @@ public class SystemStreamBase extends SingularTestResource implements Output<Out
         this(new TapStream(), printStreamSetter, printStreamGetter);
     }
 
-    protected <T extends OutputStream> SystemStreamBase(Output<? extends OutputStream> target,
+    protected <T extends OutputStream> SystemStreamBase(Output<T> target,
                                                         Consumer<PrintStream> printStreamSetter,
                                                         Supplier<PrintStream> printStreamGetter) {
-        this.target = target;
+        this(target.factoryOfSelf(), printStreamSetter, printStreamGetter);
+    }
+
+    protected <T extends OutputStream> SystemStreamBase(OutputFactory<T> targetFactory,
+                                                        Consumer<PrintStream> printStreamSetter,
+                                                        Supplier<PrintStream> printStreamGetter) {
+        this.targetFactory = targetFactory;
         this.printStreamSetter = printStreamSetter;
         this.printStreamGetter = printStreamGetter;
     }
 
-    private static PrintStream wrap(OutputStream outputStream) throws UnsupportedEncodingException {
+    /**
+     * Convert an output stream to a {@link PrintStream}
+     * @param outputStream the output stream to use
+     * @return a {@link PrintStream} that can be written to
+     * @throws UnsupportedEncodingException on errors constructing the stream (unlikely)
+     */
+    public static PrintStream wrap(OutputStream outputStream) throws UnsupportedEncodingException {
         return new PrintStream(outputStream,
             AUTO_FLUSH,
             DEFAULT_ENCODING);
@@ -54,7 +68,8 @@ public class SystemStreamBase extends SingularTestResource implements Output<Out
 
         originalStream = printStreamGetter.get();
         try {
-            printStreamSetter.accept(wrap(target.getOutputStream()));
+            currentTarget = targetFactory.apply(originalStream);
+            printStreamSetter.accept(wrap(currentTarget.getOutputStream()));
         } catch (UnsupportedEncodingException e) {
             throw new StreamException("Cannot wrap stream: " + e.getMessage(), e);
         }
@@ -63,20 +78,28 @@ public class SystemStreamBase extends SingularTestResource implements Output<Out
     @Override
     protected void doTeardown() throws Exception {
         printStreamSetter.accept(originalStream);
+
+        // for outputs like files, that need to be closed
+        currentTarget.closeOutput();
     }
 
     @Override
     public String getText() {
-        return target.getText();
+        return currentTarget.getText();
     }
 
     @Override
     public void clear() {
-        target.clear();
+        if (currentTarget != null) {
+            currentTarget.clear();
+        }
     }
 
     @Override
     public OutputStream getOutputStream() {
-        return target.getOutputStream();
+        if (currentTarget == null) {
+            return null;
+        }
+        return currentTarget.getOutputStream();
     }
 }

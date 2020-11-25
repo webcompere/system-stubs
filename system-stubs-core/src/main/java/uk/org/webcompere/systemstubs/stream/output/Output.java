@@ -15,6 +15,39 @@ import static java.util.stream.Collectors.joining;
  */
 public interface Output<T extends OutputStream> {
     /**
+     * Convert an existing {@link OutputStream} into an {@link Output}. Providing no
+     * ability to clear or get the text of that output stream.
+     * @param stream the target stream
+     * @param <S> the type of stream
+     * @return an {@link Output} object
+     */
+    static <S extends OutputStream> Output<S> fromStream(S stream) {
+        return () -> stream;
+    }
+
+    /**
+     * Convert an existing {@link OutputStream} into an {@link Output}. Providing no
+     * ability to clear or get the text of that output stream.
+     * @param stream the target stream
+     * @param <S> the type of stream
+     * @return an {@link Output} object
+     */
+    static <S extends OutputStream> Output<S> fromCloseableStream(S stream) {
+        return new Output<S>() {
+
+            @Override
+            public void closeOutput() throws Exception {
+                stream.close();
+            }
+
+            @Override
+            public S getOutputStream() {
+                return stream;
+            }
+        };
+    }
+
+    /**
      * Get the plaintext
      * @return the output as a single string - not null
      */
@@ -30,10 +63,25 @@ public interface Output<T extends OutputStream> {
     }
 
     /**
+     * When the target stream is meant to be closed, then close it
+     */
+    default void closeOutput() throws Exception {
+        // does nothing here
+    }
+
+    /**
      * Access the output stream that's behind this
-     * @return get the output stream
+     * @return get the output stream - can be <code>null</code> if the object hasn't been activated
      */
     T getOutputStream();
+
+    /**
+     * Access the current output object
+     * @return this if an {@link Output} object, or the child {@link Output} otherwise
+     */
+    default Output<T> getOutput() {
+        return this;
+    }
 
     /**
      * Get the plain text broken into lines by the system's line separator
@@ -63,5 +111,13 @@ public interface Output<T extends OutputStream> {
         }
         // the split process removes a trailing linebreak/implied end linebreak
         return combined + linebreak;
+    }
+
+    /**
+     * Convert this {@link Output} into a factory which does nothing except return this
+     * @return a factory
+     */
+    default OutputFactory<T> factoryOfSelf() {
+        return original -> this;
     }
 }

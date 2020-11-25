@@ -19,10 +19,13 @@ import org.springframework.web.client.RestTemplate;
 import uk.org.webcompere.systemstubs.environment.EnvironmentVariables;
 import uk.org.webcompere.systemstubs.jupiter.SystemStub;
 import uk.org.webcompere.systemstubs.jupiter.SystemStubsExtension;
+import uk.org.webcompere.systemstubs.stream.SystemOut;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static io.restassured.RestAssured.given;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.is;
+import static uk.org.webcompere.systemstubs.stream.output.OutputFactories.tapAndOutput;
 
 @ExtendWith(SystemStubsExtension.class)
 public class SpringAppWithDynamicPropertiesTest {
@@ -31,6 +34,9 @@ public class SpringAppWithDynamicPropertiesTest {
     // sets the environment before Spring even starts
     @SystemStub
     private static EnvironmentVariables environmentVariables;
+
+    @SystemStub
+    private static SystemOut systemOut = new SystemOut(tapAndOutput());
 
     @BeforeAll
     static void beforeAll() {
@@ -95,6 +101,12 @@ public class SpringAppWithDynamicPropertiesTest {
                 .statusCode(200)
                 .body(is("from wiremock"));
 
+        }
+
+        @Test
+        void canSeeLoggingOutputInSystemOutObject() {
+            assertThat(systemOut.getText())
+                .contains(":: Spring Boot ::        (v2.3.5.RELEASE)");
         }
     }
 }
