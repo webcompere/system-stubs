@@ -106,7 +106,7 @@ environmentVariables.set("c", "d")
 ```
 
 Where necessary, each of the System Stub objects can be manually activated with `setup`
-and turned off again with `teardown`. Where possible, these object also support
+and turned off again with `teardown`. Where possible, these objects also support
 reconfiguration while they're active, allowing you to set environment variables within
 a test, for example:
 
