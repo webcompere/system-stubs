@@ -7,4 +7,4 @@ build_script:
 test_script:
   - ./mvnw clean verify
 after_test:
-  - sh: CODECOV_TOKEN="78462305-d76b-4bf7-8f31-4f152ed61c02" bash <(curl -s https://codecov.io/bash)
+  - sh: CODECOV_TOKEN="be37aef1-3b14-4433-9d91-c8dd3af65285" bash <(curl -s https://codecov.io/bash)
