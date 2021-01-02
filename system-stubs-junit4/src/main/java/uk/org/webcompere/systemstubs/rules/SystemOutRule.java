@@ -3,6 +3,7 @@ package uk.org.webcompere.systemstubs.rules;
 import uk.org.webcompere.systemstubs.rules.internal.SystemStubTestRule;
 import uk.org.webcompere.systemstubs.stream.SystemOut;
 import uk.org.webcompere.systemstubs.stream.output.Output;
+import uk.org.webcompere.systemstubs.stream.output.OutputFactory;
 
 import java.io.OutputStream;
 
@@ -19,6 +20,15 @@ public class SystemOutRule extends SystemOut implements SystemStubTestRule {
      */
     public SystemOutRule(Output<? extends OutputStream> output) {
         super(output);
+    }
+
+    /**
+     * Construct with a {@link OutputFactory} for creating output objects from the existing output
+     *
+     * @param outputFactory the factory to use
+     */
+    public SystemOutRule(OutputFactory<? extends OutputStream> outputFactory) {
+        super(outputFactory);
     }
 
     /**

@@ -1,6 +1,7 @@
 package uk.org.webcompere.systemstubs.stream;
 
 import uk.org.webcompere.systemstubs.stream.output.Output;
+import uk.org.webcompere.systemstubs.stream.output.OutputFactory;
 
 import java.io.OutputStream;
 
@@ -15,6 +16,14 @@ public class SystemOut extends SystemStreamBase {
      */
     public SystemOut(Output<? extends OutputStream> output) {
         super(output, System::setOut, () -> System.out);
+    }
+
+    /**
+     * Construct with a {@link OutputFactory} for creating output objects from the existing output
+     * @param outputFactory the factory to use
+     */
+    public SystemOut(OutputFactory<? extends OutputStream> outputFactory) {
+        super(outputFactory, System::setOut, () -> System.out);
     }
 
     /**

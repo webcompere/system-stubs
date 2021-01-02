@@ -3,7 +3,7 @@
 This is the System Stubs native equivalent to [System Rules](https://stefanbirkner.github.io/system-rules/index.html).
 
 The code for this version originated with the [System Lambda](https://github.com/stefanbirkner/system-lambda)
-project and have been rebuilt from the ground up for this version.
+project and has been rebuilt from the ground up for this version.
 
 ```xml
 <dependency>
@@ -166,6 +166,19 @@ The `SystemErrAndOutRule` taps both system error and output with a
 single `Output` object. This defaults to `TapStream` but can
 be specified in the constructor.
 
+**Note:** the factory methods in `OutputFactories` allow more complex output chains to be constructed, including tapping the output while allowing it to still about in `stdout`:
+
+```java
+// the output is still tapped for checking what was written
+// but it can also be seen on the console
+@Rule
+public SystemOutRule systemOutRule = new SystemOutRule(tapAndOutput());
+```
+
+For more examples, see the [core documentation](../README.md).
+
+**Note:** writing output to file with the JUnit rule may work, but would be hard to assert on, since the file would still be open during the test case doing the writing.
+
 ### `SystemInRule`
 
 `SystemInRule` applies a new input stream to `System.in` within tests.
@@ -232,3 +245,9 @@ In practice, this is no better than subclassing JUnit's own `ExternalResource`
 to create a custom rule, but may be useful if you have already created a subclass
 of `TestResource` or `SingularTestResource` in order to use System Stubs functionality in
 other situations, and need to make these work in JUnit 4 also.
+
+## When The Rules Don't Fit
+
+There are extensive tests demonstrating each of the JUnit rules. However, in some situations, you may need finer control of the System Stub objects. You can always mix using rules and core objects via the `execute` pattern. It may also be easier to combine methods from `SystemStubs` with some common rules.
+
+It is worth noting that putting common set up into a `@Rule` object is useful unless there is nothing common between test cases. In that instance, consider having multiple test classes for each configuration, or using only the most essential common setup within rules, and adding the `execute` pattern for variations.

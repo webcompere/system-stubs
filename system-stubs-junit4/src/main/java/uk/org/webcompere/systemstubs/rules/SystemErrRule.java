@@ -3,6 +3,7 @@ package uk.org.webcompere.systemstubs.rules;
 import uk.org.webcompere.systemstubs.rules.internal.SystemStubTestRule;
 import uk.org.webcompere.systemstubs.stream.SystemErr;
 import uk.org.webcompere.systemstubs.stream.output.Output;
+import uk.org.webcompere.systemstubs.stream.output.OutputFactory;
 
 import java.io.OutputStream;
 
@@ -18,6 +19,15 @@ public class SystemErrRule extends SystemErr implements SystemStubTestRule {
      */
     public SystemErrRule(Output<? extends OutputStream> output) {
         super(output);
+    }
+
+    /**
+     * Construct with a {@link OutputFactory} for creating output objects from the existing output
+     *
+     * @param outputFactory the factory to use
+     */
+    public SystemErrRule(OutputFactory<? extends OutputStream> outputFactory) {
+        super(outputFactory);
     }
 
     /**

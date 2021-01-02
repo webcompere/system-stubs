@@ -3,6 +3,9 @@ package uk.org.webcompere.systemstubs.rules;
 import uk.org.webcompere.systemstubs.rules.internal.SystemStubTestRule;
 import uk.org.webcompere.systemstubs.stream.SystemErrAndOut;
 import uk.org.webcompere.systemstubs.stream.output.Output;
+import uk.org.webcompere.systemstubs.stream.output.OutputFactory;
+
+import java.io.OutputStream;
 
 /**
  * JUnit4 rule for tapping both {@link System#err} and {@link System#out} at the same
@@ -22,5 +25,13 @@ public class SystemErrAndOutRule extends SystemErrAndOut implements SystemStubTe
      */
     public SystemErrAndOutRule(Output output) {
         super(output);
+    }
+
+    /**
+     * Construct with an output shared from the an output created against the <code>System.out</code> original
+     * @param outputFactory the output factory to create the output
+     */
+    public SystemErrAndOutRule(OutputFactory<? extends OutputStream> outputFactory) {
+        super(outputFactory);
     }
 }
