@@ -54,7 +54,7 @@ home-made alternatives)
 <dependency>
   <groupId>uk.org.webcompere</groupId>
   <artifactId>system-stubs-core</artifactId>
-  <version>1.1.0</version>
+  <version>1.2.0</version>
 </dependency>
 ```
 
@@ -64,7 +64,7 @@ home-made alternatives)
 <dependency>
   <groupId>uk.org.webcompere</groupId>
   <artifactId>system-stubs-junit4</artifactId>
-  <version>1.1.0</version>
+  <version>1.2.0</version>
 </dependency>
 ```
 
@@ -74,7 +74,7 @@ home-made alternatives)
 <dependency>
   <groupId>uk.org.webcompere</groupId>
   <artifactId>system-stubs-jupiter</artifactId>
-  <version>1.1.0</version>
+  <version>1.2.0</version>
 </dependency>
 ```
 
