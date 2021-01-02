@@ -118,6 +118,12 @@ env.execute(() -> {
 });
 ```
 
+**Note:** there are two versions of the `execute` method in `Executable` allowing
+the test code to return values, or not.
+
+**Note:** the JUnit4 and JUnit5 plugins automatically handle multiple test stubs created outside
+of the test methods.
+
 ### Using multiple stubs
 
 While you can set up stubs inside the `execute` method of a parent stub:
@@ -146,12 +152,6 @@ with(new EnvironmentVariables("HTTP_PROXY", ""),
     new SystemProperties("http.connections", "123"))
     .execute(() -> executeTestCode());
 ```
-
-**Note:** there are two versions of the `execute` method in `Executable` allowing
-the test code to return values, or not.
-
-**Note:** the JUnit4 and JUnit5 plugins automatically handle multiple test stubs created outside
-of the test methods.
 
 ## Exception Handling
 
@@ -566,6 +566,28 @@ The `OutputFactories` class provides various methods for adding together multipl
 **Note:** you can compose multiple `Output` objects or multiple `OutputFactory` objects. If you have a mixture, then convert the `Output` objects into `OutputFactory` objects using `Output.factoryOfSelf`.
 
 There are some worked examples in the [tests of `OutputFactories`](system-stubs-core/src/test/java/uk/org/webcompere/systemstubs/stream/output/OutputFactoriesTest.java).
+
+##### Asserting Log Output
+
+The `SystemOut` stub allows logging output to be captured in situations where the logging framework is configured to write to the console.
+
+Let's say the code under test contained this line:
+
+```java
+LOGGER.info("Saving to database");
+```
+
+We could imagine testing that with a `SystemOut` object:
+
+```java
+SystemOut systemOut = new SystemOut();
+
+// then either in the execute method, or via JUnit4 or JUnit5 integration
+
+realCode.doThingThatLogs();
+assertThat(systemOut.getLines())
+  .anyMatch(line -> line.contains("Saving to database"));
+```
 
 ### Stubbing `System.in`
 
