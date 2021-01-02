@@ -4,47 +4,21 @@
  [![codecov](https://codecov.io/gh/webcompere/system-stubs/branch/master/graph/badge.svg?token=J0N9VCXFQ1)](https://codecov.io/gh/webcompere/system-stubs)
 
 ## Overview
-System Stubs is used to test code which depends on methods in `java.lang.System`.
+System Stubs is used to test code which depends on methods in `java.lang.System`. 
 
-It is published under the
-[MIT license](http://opensource.org/licenses/MIT) and requires at least Java 8.
+It is published under the [MIT license](http://opensource.org/licenses/MIT) and requires at least Java 8. There is a [walkthrough of its main features](https://www.baeldung.com/java-system-stubs) over on [Baeldung.com](https://www.baeldung.com).
 
 It is divided into:
 
 - `system-stubs-core` - can be used stand-alone to stub system resources around test code
   - Using the `SystemStubs` facade to build and execute stubs around test code
   - Using the subclasses of `TestResource`, like `EnvironmentVariables` or `SystemIn` to create stubs
-  and then execute test code inside them
+  and then execute test code via `execute`
 - [`system-stubs-junit4`](system-stubs-junit4/README.md) - a set of JUnit4 rules that activate the stubs around test code
 - [`system-stubs-jupiter`](system-stubs-jupiter/README.md) - a JUnit 5 extension that automatically injects
 System Stubs into JUnit 5 tests.
 
-## History
-Based on the excellent work by Stefan Birkner in
-[System Rules](https://stefanbirkner.github.io/system-rules/index.html) and [System Lambda](https://github.com/stefanbirkner/system-lambda) this is a remix
-of the core techniques, to allow them to be used more
-flexibly.
-
-No longer limited to just being a JUnit4 rule (SystemRules)
-and available as a JUnit 5 plugin, this version is intended to increase usability
-and configurability, in a way that diverges from the original trajectory of **System Lambda**.
-
-This version comes with the [agreement](https://github.com/stefanbirkner/system-lambda/issues/9) of the original author.
-The original author bears no responsibility for this version.
-
-### Differences
-
-The main aims of this version:
-
-- Enable environment variables to be set before child test suites execute
-  - allow environment details to be set in _beforeAll_ or _beforeEach_ hooks
-  - as can be necessary for Spring tests
-- Support JUnit4 and JUnit5 plugins
-  - reduce test boilerplate
-- Provide more configuration and fluent setters
-- Modularise the code
-- Standardise testing around _Mockito_ and _AssertJ_ (removing
-home-made alternatives)
+System Stubs [originated](History.md) as a fork of System Lambda.
 
 ## Installation
 
@@ -80,9 +54,7 @@ home-made alternatives)
 
 ## Usage with Execute Around
 
-In order to support migration from [System Lambda](https://github.com/stefanbirkner/system-lambda), and
-to enable reuse of the original unit tests, the `SystemStubs` facade supports the original
-[execute around](https://java-design-patterns.com/patterns/execute-around/) idiom.
+In order to support migration from [System Lambda](https://github.com/stefanbirkner/system-lambda), and to enable reuse of the original unit tests, the `SystemStubs` facade supports the [execute around](https://java-design-patterns.com/patterns/execute-around/) idiom.
 
 To use the `SystemStubs` facade:
 
@@ -111,18 +83,32 @@ reconfiguration while they're active, allowing you to set environment variables 
 a test, for example:
 
 ```java
-EnvironmentVariables env = new EnvironmentVariables();
-env.execute(() -> {
-    env.set("a", "b");
-    // this has affected the environment
-});
+EnvironmentVariables env = new EnvironmentVariables("HOST", "localhost");
+// start controlling the environment
+env.setup();
+
+// the HOST variable is currently set
+
+env.set("a", "b");
+// this has set "a" as "b" in the environment
+
+// tidy up
+env.teardown();
+```
+
+It should not be necessary to use `setup` and `teardown` as the `execute` method handles this more cleanly, avoiding accidentally leaving the stubbing active:
+
+```java
+new EnvironmentVariables("HOST", "localhost")
+  .execute(() -> {
+     // in here the environment is temporarily set
+  });
+
+// out here everything has been tidied away
 ```
 
 **Note:** there are two versions of the `execute` method in `Executable` allowing
 the test code to return values, or not.
-
-**Note:** the JUnit4 and JUnit5 plugins automatically handle multiple test stubs created outside
-of the test methods.
 
 ### Using multiple stubs
 
@@ -152,6 +138,8 @@ with(new EnvironmentVariables("HTTP_PROXY", ""),
     new SystemProperties("http.connections", "123"))
     .execute(() -> executeTestCode());
 ```
+
+**Note:** the JUnit4 and JUnit5 plugins make it easier to use multiple test stubs, as they set all the stubs up before the test method and then tidy them up at the end.
 
 ## Exception Handling
 
