@@ -243,7 +243,7 @@ mutable version of the `and` method used in the first example.
 
 **Note:** calling `set` on `EnvironmentVariables` from inside `execute` will
 affect the runtime environment. Calling it outside of execution will store the
-value for writing into the environent within `execute`.
+value for writing into the environment within `execute`.
 
 ### System Properties
 
@@ -402,7 +402,7 @@ void application_writes_text_to_System_out() throws Exception {
 }
 
 @Test
-void application_writes_mutliple_lines_to_System_out() throws Exception {
+void application_writes_multiple_lines_to_System_out() throws Exception {
   String text = tapSystemOutNormalized(() -> {
     System.out.println("first line");
     System.out.println("second line");
