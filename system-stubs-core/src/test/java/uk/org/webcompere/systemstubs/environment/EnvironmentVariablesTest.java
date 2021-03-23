@@ -22,7 +22,7 @@ class EnvironmentVariablesTest {
     }
 
     @Test
-    void environmentVariablesAddedDontTakeImmediateEffect() throws Exception {
+    void environmentVariablesAddedDontTakeImmediateEffect() {
         new EnvironmentVariables(singletonMap("FOO", "bar"));
         assertThat(System.getenv("FOO")).isNull();
     }
@@ -151,5 +151,26 @@ class EnvironmentVariablesTest {
             .execute(() -> {
                 assertThat(System.getenv("A")).isEqualTo("B");
             });
+    }
+
+    @Test
+    void setVariablesWithVarArgsSetter() {
+        Map<String, String> set = new EnvironmentVariables()
+            .set("a", "b",
+                "c", "d",
+                "e", 1234)
+            .getVariables();
+
+        assertThat(set).containsEntry("a", "b")
+            .containsEntry("c", "d")
+            .containsEntry("e", "1234")
+            .hasSize(3);
+    }
+
+    @Test
+    void setVariablesWithVarArgsSetterOddInputs() {
+        assertThatThrownBy(() -> new EnvironmentVariables()
+            .set("a"))
+            .isInstanceOf(IllegalArgumentException.class);
     }
 }
