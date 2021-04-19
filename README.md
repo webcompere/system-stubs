@@ -1,10 +1,10 @@
 # System Stubs
 
-[![Build status](https://ci.appveyor.com/api/projects/status/r943gjn189rlxts9/branch/master?svg=true)](https://ci.appveyor.com/project/ashleyfrieze/system-stubs/branch/master)
- [![codecov](https://codecov.io/gh/webcompere/system-stubs/branch/master/graph/badge.svg?token=J0N9VCXFQ1)](https://codecov.io/gh/webcompere/system-stubs)
+[![Build status](https://ci.appveyor.com/api/projects/status/r943gjn189rlxts9/branch/main?svg=true)](https://ci.appveyor.com/project/ashleyfrieze/system-stubs/branch/main)
+ [![codecov](https://codecov.io/gh/webcompere/system-stubs/branch/main/graph/badge.svg?token=J0N9VCXFQ1)](https://codecov.io/gh/webcompere/system-stubs)
 
 ## Overview
-System Stubs is used to test code which depends on methods in `java.lang.System`. 
+System Stubs is used to test code which depends on methods in `java.lang.System`.
 
 It is published under the [MIT license](http://opensource.org/licenses/MIT) and requires at least Java 8. There is a [walkthrough of its main features](https://www.baeldung.com/java-system-stubs) over on [Baeldung.com](https://www.baeldung.com).
 
