@@ -5,7 +5,7 @@
 
 > **⚠ WARNING: JDK Compatibility.**  
 > From JDK16 onwards, there's deep restrictons on the ability to use reflection to modify the Unmodifiable `Map` where `System` stores the
-> environment variables. We're looking for a fix to this. Until then, this library is not recommended for environment variable settings.
+> environment variables. We're looking for a fix to this. Until then, this library is not recommended for environment variable settings in Java 16+.
 
 ## Overview
 System Stubs is used to test code which depends on methods in `java.lang.System`.
