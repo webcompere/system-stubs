@@ -4,7 +4,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
+import org.mockito.Answers;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -35,7 +37,7 @@ public class SecurityManagerRuleTest {
         @Rule
         public SecurityManagerRule securityManagerRule = new SecurityManagerRule();
 
-        @Mock
+        @Mock(answer = Answers.RETURNS_DEEP_STUBS)
         public SecurityManager mockManager;
 
         @Test

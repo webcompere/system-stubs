@@ -2,6 +2,10 @@ version: '{build}'
 image:
   - Visual Studio 2015
   - Ubuntu
+stack: jdk 8
+cache:
+  - /home/appveyor/.m2
+  - C:\Users\appveyor\.m2
 build_script:
   - ./mvnw clean package -DskipTests
 test_script:

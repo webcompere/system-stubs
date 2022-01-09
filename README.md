@@ -3,14 +3,31 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/r943gjn189rlxts9/branch/main?svg=true)](https://ci.appveyor.com/project/ashleyfrieze/system-stubs/branch/main)
  [![codecov](https://codecov.io/gh/webcompere/system-stubs/branch/main/graph/badge.svg?token=J0N9VCXFQ1)](https://codecov.io/gh/webcompere/system-stubs)
 
-> **⚠ WARNING: JDK Compatibility.**  
-> From JDK16 onwards, there's deep restrictons on the ability to use reflection to modify the Unmodifiable `Map` where `System` stores the
-> environment variables. We're looking for a fix to this. Until then, this library is not recommended for environment variable settings in Java 16+.
+> **⚠ WARNING: JDK Compatibility.**
+> From JDK16 onwards, there's deep restrictons on the ability to use reflection.
+>
+> Consequently, this library now uses `mockito-inline` version 3.x to enable
+> the interception of calls for reading environment variables. This requires consumers
+> to both use a compatible version of Mockito AND be prepared for the _inline_
+> implementation of Mockito mocks.
+>
+> Where this isn't appropriate, the [v1.x](https://github.com/webcompere/system-stubs/tree/1.x)
+> version of this will still work for Java versions below 16, and may also be
+> co-erced into working with via the java [command line](https://github.com/stefanbirkner/system-lambda/issues/23#issuecomment-1007608124).
+>
+> The long-term plan for this library is to use more interceptors of system
+> functions with Mockito where possible, unless a more direct route becomes available.
+> While this library will continue to be built for Java 8 at the moment, in future it
+> may also move to a higher base version. The v1.x branch will stay on Java 8.
 
 ## Overview
 System Stubs is used to test code which depends on methods in `java.lang.System`.
 
 It is published under the [MIT license](http://opensource.org/licenses/MIT) and requires at least Java 8. There is a [walkthrough of its main features](https://www.baeldung.com/java-system-stubs) over on [Baeldung.com](https://www.baeldung.com).
+
+System Stubs [originated](History.md) as a fork of System Lambda,
+originally by Stefan Birkner, and is a partial rewrite and refactor of it. It has diverged in implementation
+from the original, but largely retains compatibility.
 
 It is divided into:
 
@@ -22,9 +39,23 @@ It is divided into:
 - [`system-stubs-jupiter`](system-stubs-jupiter/README.md) - a JUnit 5 extension that automatically injects
 System Stubs into JUnit 5 tests.
 
-System Stubs [originated](History.md) as a fork of System Lambda.
-
 ## Installation
+
+### Dependencies
+
+This library now depends heavily on `mockito-inline`. This is to
+avoid the Illegal Reflective Access from previous attempts to override
+`System.getenv`. To use this library, you need a version of `mockito-inline`
+of `3.12.4` or later.
+
+```xml
+<dependency>
+  <groupId>org.mockito</groupId>
+  <artifactId>mockito-inline</artifactId>
+  <version>3.12.4</version>
+  <scope>test</scope>
+</dependency>
+```
 
 ### Core
 
@@ -32,7 +63,7 @@ System Stubs [originated](History.md) as a fork of System Lambda.
 <dependency>
   <groupId>uk.org.webcompere</groupId>
   <artifactId>system-stubs-core</artifactId>
-  <version>1.2.0</version>
+  <version>2.0.0</version>
 </dependency>
 ```
 
@@ -42,7 +73,7 @@ System Stubs [originated](History.md) as a fork of System Lambda.
 <dependency>
   <groupId>uk.org.webcompere</groupId>
   <artifactId>system-stubs-junit4</artifactId>
-  <version>1.2.0</version>
+  <version>2.0.0</version>
 </dependency>
 ```
 
@@ -52,7 +83,7 @@ System Stubs [originated](History.md) as a fork of System Lambda.
 <dependency>
   <groupId>uk.org.webcompere</groupId>
   <artifactId>system-stubs-jupiter</artifactId>
-  <version>1.2.0</version>
+  <version>2.0.0</version>
 </dependency>
 ```
 
@@ -749,6 +780,20 @@ new SecurityManagerStub(otherManager)
 
 This is used internally by the stubbing for `System.exit`.
 
+## Thread Safety
+
+**⚠ WARNING: Don't Break Your Parallel Tests!**
+
+If you are using System Stubs alongside concurrent test execution, then you MUST ensure that
+the concurrency is achieved by forking multiple JVMs to run different test classes,
+rather than running multiple threads within the same JVMs executing tests in parallel.
+
+This is because many of the stubs modify global system properties which would bleed to
+other tests in the same JVM runtime and **cannot** be localised to just the current test.
+
+Build tools allow the test runner to fork separate processes for running subsets of the
+test classes, and this is the only safe way to use System Stubs with concurrent testing.
+
 ## Contributing
 
 You have two options if you have a feature request, found a bug or
@@ -759,8 +804,10 @@ simply have a question.
 
 ## Development Guide
 
-System Stubs is built with [Maven](http://maven.apache.org/). If you
-want to contribute code then
+System Stubs is built with [Maven](http://maven.apache.org/). **It requires JDK8
+to build** as it depends on some deprecated system class functions.
+
+If you want to contribute code then:
 
 * Please write a test for your change.
 * Ensure that you didn't break the build by running `mvnw test`.
