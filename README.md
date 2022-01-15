@@ -4,7 +4,9 @@
  [![codecov](https://codecov.io/gh/webcompere/system-stubs/branch/main/graph/badge.svg?token=J0N9VCXFQ1)](https://codecov.io/gh/webcompere/system-stubs)
 
 > **⚠ WARNING: JDK Compatibility.**
-> From JDK16 onwards, there's deep restrictons on the ability to use reflection.
+> From JDK16 onwards, there are deeper restrictons on the ability to use reflection. Previous versions of this library, and others in the space, encounter
+> an Illegal Reflective Access warning, or even a runtime error such as `java.lang.reflect.InaccessibleObjectException` when trying to manipulate
+> the `Map` behind the system's environment variables.
 >
 > Consequently, this library now uses `mockito-inline` version 3.x to enable
 > the interception of calls for reading environment variables. This requires consumers
