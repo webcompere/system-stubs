@@ -173,4 +173,20 @@ class EnvironmentVariablesTest {
             .set("a"))
             .isInstanceOf(IllegalArgumentException.class);
     }
+
+    @Test
+    void environmentVariablesWhenAccessingOtherWays() throws Exception {
+        new EnvironmentVariables(singletonMap("FOO", "bar"))
+            .execute(() -> {
+                assertThat(System.getenv()).containsEntry("FOO", "bar");
+            });
+    }
+
+    @Test
+    void environmentVariablesInProcessBuilder() throws Exception {
+        new EnvironmentVariables(singletonMap("FOO", "bar"))
+            .execute(() -> {
+                assertThat(new ProcessBuilder().environment()).containsEntry("FOO", "bar");
+            });
+    }
 }
