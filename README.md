@@ -2,6 +2,7 @@
 
 [![Build status](https://ci.appveyor.com/api/projects/status/r943gjn189rlxts9/branch/main?svg=true)](https://ci.appveyor.com/project/ashleyfrieze/system-stubs/branch/main)
  [![codecov](https://codecov.io/gh/webcompere/system-stubs/branch/main/graph/badge.svg?token=J0N9VCXFQ1)](https://codecov.io/gh/webcompere/system-stubs)
+ [![Maven Central](https://maven-badges.herokuapp.com/maven-central/uk.org.webcompere/system-stubs-parent/badge.svg)](https://maven-badges.herokuapp.com/maven-central/uk.org.webcompere/system-stubs-parent/)
 
 > **⚠ WARNING: JDK Compatibility.**
 > From JDK16 onwards, there are deeper restrictons on the ability to use reflection. Previous versions of this library, and others in the space, encounter
@@ -65,7 +66,7 @@ of `3.12.4` or later.
 <dependency>
   <groupId>uk.org.webcompere</groupId>
   <artifactId>system-stubs-core</artifactId>
-  <version>2.0.0</version>
+  <version>2.0.1</version>
 </dependency>
 ```
 
@@ -75,7 +76,7 @@ of `3.12.4` or later.
 <dependency>
   <groupId>uk.org.webcompere</groupId>
   <artifactId>system-stubs-junit4</artifactId>
-  <version>2.0.0</version>
+  <version>2.0.1</version>
 </dependency>
 ```
 
@@ -85,7 +86,7 @@ of `3.12.4` or later.
 <dependency>
   <groupId>uk.org.webcompere</groupId>
   <artifactId>system-stubs-jupiter</artifactId>
-  <version>2.0.0</version>
+  <version>2.0.1</version>
 </dependency>
 ```
 
