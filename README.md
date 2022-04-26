@@ -14,6 +14,8 @@
 > to both use a compatible version of Mockito AND be prepared for the _inline_
 > implementation of Mockito mocks.
 >
+> Note: Groovy users may need Mockito >= 4.5.0 for compatibility.
+>
 > Where this isn't appropriate, the [v1.x](https://github.com/webcompere/system-stubs/tree/1.x)
 > version of this will still work for Java versions below 16, and may also be
 > co-erced into working with via the java [command line](https://github.com/stefanbirkner/system-lambda/issues/23#issuecomment-1007608124).
