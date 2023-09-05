@@ -68,7 +68,7 @@ of `3.12.4` or later.
 <dependency>
   <groupId>uk.org.webcompere</groupId>
   <artifactId>system-stubs-core</artifactId>
-  <version>2.0.2</version>
+  <version>2.0.3</version>
 </dependency>
 ```
 
@@ -78,7 +78,7 @@ of `3.12.4` or later.
 <dependency>
   <groupId>uk.org.webcompere</groupId>
   <artifactId>system-stubs-junit4</artifactId>
-  <version>2.0.2</version>
+  <version>2.0.3</version>
 </dependency>
 ```
 
@@ -88,7 +88,7 @@ of `3.12.4` or later.
 <dependency>
   <groupId>uk.org.webcompere</groupId>
   <artifactId>system-stubs-jupiter</artifactId>
-  <version>2.0.2</version>
+  <version>2.0.3</version>
 </dependency>
 ```
 
