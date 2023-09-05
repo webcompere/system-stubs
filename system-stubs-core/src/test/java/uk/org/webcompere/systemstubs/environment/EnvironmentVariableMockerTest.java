@@ -123,6 +123,20 @@ class EnvironmentVariableMockerTest {
         assertThat(output).contains("BING=bong");
     }
 
+    @EnabledOnOs(WINDOWS)
+    @Test
+    void windowsProcessBuilderEnvironmentCanReadEnvironmentFromMockAlone() throws Exception {
+        Map<String, String> newMap = new HashMap<>();
+        newMap.put("FOO", "bar");
+
+        EnvironmentVariableMocker.connect(newMap);
+
+        ProcessBuilder builder = new ProcessBuilder(Arrays.asList("cmd.exe", "/c", "set"));
+        String output = executeProcessAndGetOutput(builder);
+
+        assertThat(output).contains("FOO=bar");
+    }
+
     private String executeProcessAndGetOutput(ProcessBuilder builder) throws IOException {
         Process process = builder.start();
 

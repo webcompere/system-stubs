@@ -74,16 +74,18 @@ public class EnvironmentVariableMocker {
     }
 
     /**
-     * Ripped from the JDK implementatioin
+     * Ripped from the JDK implementation
      * @param m the map to convert
      * @return string representation
      */
     private static String toEnvironmentBlockWindows(Map<String, String> m) {
         // Sort Unicode-case-insensitively by name
-        List<Map.Entry<String,String>> list = new ArrayList<>(m.entrySet());
+        List<Map.Entry<String,String>> list = m != null ?
+            new ArrayList<>(m.entrySet()) :
+            new ArrayList<>(getenv().entrySet());
         Collections.sort(list, (e1, e2) -> NameComparator.compareNames(e1.getKey(), e2.getKey()));
 
-        StringBuilder sb = new StringBuilder(m.size() * 30);
+        StringBuilder sb = new StringBuilder(list.size() * 30);
         int cmp = -1;
 
         // Some versions of MSVCRT.DLL require SystemRoot to be set.
