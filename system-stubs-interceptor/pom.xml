@@ -9,12 +9,12 @@
     <relativePath>../</relativePath>
   </parent>
 
-  <artifactId>system-stubs-core</artifactId>
+  <artifactId>system-stubs-interceptor</artifactId>
   <version>2.0.4-SNAPSHOT</version>
   <packaging>jar</packaging>
 
-  <name>System Stubs Core</name>
-  <description>A collection of functions for testing code which uses java.lang.System.</description>
+  <name>System Stubs Interceptor</name>
+  <description>The jar used for byte buddy stubbing</description>
 
   <properties>
     <maven.compiler.source>11</maven.compiler.source>
@@ -23,53 +23,13 @@
 
   <dependencies>
     <dependency>
-      <groupId>uk.org.webcompere</groupId>
-      <artifactId>system-stubs-interceptor</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-lang3</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.assertj</groupId>
-      <artifactId>assertj-core</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-junit-jupiter</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>net.bytebuddy</groupId>
-      <artifactId>byte-buddy</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>net.bytebuddy</groupId>
-      <artifactId>byte-buddy-agent</artifactId>
-    </dependency>
-    <dependency>
       <groupId>com.github.spotbugs</groupId>
       <artifactId>spotbugs-annotations</artifactId>
     </dependency>
   </dependencies>
 
   <build>
-      <resources>
-        <resource>
-          <directory>../system-stubs-interceptor/target/</directory>
-          <includes>
-            <include>system-stubs-interceptor.jar</include>
-          </includes>
-        </resource>
-      </resources>
+    <finalName>system-stubs-interceptor</finalName>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

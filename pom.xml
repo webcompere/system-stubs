@@ -36,6 +36,7 @@
   </scm>
 
   <modules>
+    <module>system-stubs-interceptor</module>
     <module>system-stubs-core</module>
     <module>system-stubs-junit4</module>
     <module>system-stubs-jupiter</module>
@@ -57,10 +58,15 @@
     <dependencies>
       <dependency>
         <groupId>uk.org.webcompere</groupId>
+        <artifactId>system-stubs-interceptor</artifactId>
+        <version>2.0.4-SNAPSHOT</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>uk.org.webcompere</groupId>
         <artifactId>system-stubs-core</artifactId>
         <version>2.0.4-SNAPSHOT</version>
       </dependency>
-
       <dependency>
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-lang3</artifactId>
@@ -74,6 +80,16 @@
         <scope>test</scope>
       </dependency>
       <dependency>
+        <groupId>net.bytebuddy</groupId>
+        <artifactId>byte-buddy</artifactId>
+        <version>1.14.7</version>
+      </dependency>
+      <dependency>
+        <groupId>net.bytebuddy</groupId>
+        <artifactId>byte-buddy-agent</artifactId>
+        <version>1.14.7</version>
+      </dependency>
+      <dependency>
         <groupId>org.junit.jupiter</groupId>
         <artifactId>junit-jupiter</artifactId>
         <version>5.6.2</version>
@@ -82,13 +98,13 @@
       <dependency>
         <groupId>org.mockito</groupId>
         <artifactId>mockito-junit-jupiter</artifactId>
-        <version>3.12.4</version>
+        <version>4.2.0</version>
         <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.mockito</groupId>
-        <artifactId>mockito-inline</artifactId>
-        <version>3.12.4</version>
+        <artifactId>mockito-core</artifactId>
+        <version>5.5.0</version>
       </dependency>
       <dependency>
         <groupId>com.github.spotbugs</groupId>
@@ -117,8 +133,8 @@
           <artifactId>maven-compiler-plugin</artifactId>
           <version>${version.maven-compiler-plugin}</version>
           <configuration>
-            <source>1.8</source>
-            <target>1.8</target>
+            <source>11</source>
+            <target>11</target>
           </configuration>
         </plugin>
         <plugin>
@@ -133,7 +149,7 @@
         <plugin>
           <groupId>com.github.spotbugs</groupId>
           <artifactId>spotbugs-maven-plugin</artifactId>
-          <version>4.1.4</version>
+          <version>4.7.3.0</version>
           <configuration>
             <effort>Max</effort>
             <threshold>Low</threshold>
@@ -176,7 +192,7 @@
         <plugin>
           <groupId>org.jacoco</groupId>
           <artifactId>jacoco-maven-plugin</artifactId>
-          <version>0.8.6</version>
+          <version>0.8.8</version>
           <executions>
             <execution>
               <goals>
@@ -191,6 +207,12 @@
               </goals>
             </execution>
           </executions>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-resources-plugin</artifactId>
+          <version>3.3.1</version>
         </plugin>
 
         <plugin>

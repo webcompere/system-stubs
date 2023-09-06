@@ -5,25 +5,20 @@
  [![Maven Central](https://maven-badges.herokuapp.com/maven-central/uk.org.webcompere/system-stubs-parent/badge.svg)](https://maven-badges.herokuapp.com/maven-central/uk.org.webcompere/system-stubs-parent/)
 
 > **⚠ WARNING: JDK Compatibility.**
-> From JDK16 onwards, there are deeper restrictons on the ability to use reflection. Previous versions of this library, and others in the space, encounter
+> From JDK16 onwards, there are deeper restrictions on the ability to use reflection. Previous versions of this library, and others in the space, encounter
 > an Illegal Reflective Access warning, or even a runtime error such as `java.lang.reflect.InaccessibleObjectException` when trying to manipulate
 > the `Map` behind the system's environment variables.
 >
-> Consequently, this library now uses `mockito-inline` version 3.x to enable
-> the interception of calls for reading environment variables. This requires consumers
-> to both use a compatible version of Mockito AND be prepared for the _inline_
-> implementation of Mockito mocks.
+> Consequently, this library now uses `bytebuddy` to enable
+> the interception of calls for reading environment variables. This might interact with your
+> chosen version of Mockito or other libraries.
 >
-> Note: Groovy users may need Mockito >= 4.5.0 for compatibility.
+> **⚠ WARNING: JDK Support.**
+> > _This project has now moved to a JDK11 minimum version_
 >
-> Where this isn't appropriate, the [v1.x](https://github.com/webcompere/system-stubs/tree/1.x)
+> Where these aren't appropriate, the [v1.x](https://github.com/webcompere/system-stubs/tree/1.x)
 > version of this will still work for Java versions below 16, and may also be
 > co-erced into working with via the java [command line](https://github.com/stefanbirkner/system-lambda/issues/23#issuecomment-1007608124).
->
-> The long-term plan for this library is to use more interceptors of system
-> functions with Mockito where possible, unless a more direct route becomes available.
-> While this library will continue to be built for Java 8 at the moment, in future it
-> may also move to a higher base version. The v1.x branch will stay on Java 8.
 
 ## Overview
 System Stubs is used to test code which depends on methods in `java.lang.System`.
@@ -45,22 +40,6 @@ It is divided into:
 System Stubs into JUnit 5 tests.
 
 ## Installation
-
-### Dependencies
-
-This library now depends heavily on `mockito-inline`. This is to
-avoid the Illegal Reflective Access from previous attempts to override
-`System.getenv`. To use this library, you need a version of `mockito-inline`
-of `3.12.4` or later.
-
-```xml
-<dependency>
-  <groupId>org.mockito</groupId>
-  <artifactId>mockito-inline</artifactId>
-  <version>3.12.4</version>
-  <scope>test</scope>
-</dependency>
-```
 
 ### Core
 
@@ -809,8 +788,8 @@ simply have a question.
 
 ## Development Guide
 
-System Stubs is built with [Maven](http://maven.apache.org/). **It requires JDK8
-to build** as it depends on some deprecated system class functions.
+System Stubs is built with [Maven](http://maven.apache.org/). **It requires JDK11
+to build**.
 
 If you want to contribute code then:
 
@@ -830,7 +809,7 @@ System Stubs is built with Appveyor: [![Build status](https://ci.appveyor.com/ap
 * With `gpg` installed
 * May need to login to `gpg` to set the passphrase
 * With env variables
-  - `JAVA_HOME` set to JDK8
+  - `JAVA_HOME` set to JDK11
   - `GPG_TTY=$(tty)`
   - `GPG_AGENT_INFO`
 * With the nexus credentials set in the `.m2/settings.xml`

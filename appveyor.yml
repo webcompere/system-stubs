@@ -1,14 +1,23 @@
 version: '{build}'
-image:
-  - Visual Studio 2015
-  - Ubuntu
-stack: jdk 8
+
+stack: jdk 11
+environment:
+  matrix:
+    - job_name: Windows build JDK 11
+      appveyor_build_worker_image: Visual Studio 2015
+      JAVA_HOME: C:\Program Files\Java\jdk11
+#    - job_name: Windows build JDK 17
+#      appveyor_build_worker_image: Visual Studio 2019
+#      JAVA_HOME: C:\Program Files\Java\jdk17
+    - job_name: Linux build
+      appveyor_build_worker_image: Ubuntu
+
 cache:
   - /home/appveyor/.m2
   - C:\Users\appveyor\.m2
 build_script:
   - ./mvnw clean package -DskipTests
 test_script:
-  - ./mvnw clean verify
+  - ./mvnw verify
 after_test:
   - sh: CODECOV_TOKEN="be37aef1-3b14-4433-9d91-c8dd3af65285" bash <(curl -s https://codecov.io/bash)

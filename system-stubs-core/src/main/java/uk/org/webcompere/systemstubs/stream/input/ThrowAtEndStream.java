@@ -1,5 +1,7 @@
 package uk.org.webcompere.systemstubs.stream.input;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Objects;
@@ -20,6 +22,7 @@ public class ThrowAtEndStream extends DecoratingAltStream {
      * @param decoratee real source of the bytes
      * @param ioException the {@link IOException} to throw when running out of data
      */
+    @SuppressFBWarnings("EI_EXPOSE_REP2")
     public ThrowAtEndStream(AltInputStream decoratee, IOException ioException) {
         super(decoratee);
         this.ioException = Objects.requireNonNull(ioException);
@@ -30,6 +33,7 @@ public class ThrowAtEndStream extends DecoratingAltStream {
      * @param decoratee real source of the bytes
      * @param runtimeException the {@link RuntimeException} to throw when running out of data
      */
+    @SuppressFBWarnings("EI_EXPOSE_REP2")
     public ThrowAtEndStream(AltInputStream decoratee, RuntimeException runtimeException) {
         super(decoratee);
         this.runtimeException = Objects.requireNonNull(runtimeException);

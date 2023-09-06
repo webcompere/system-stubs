@@ -10,8 +10,11 @@ import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import static java.lang.System.getenv;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.condition.OS.*;
 
@@ -46,6 +49,26 @@ class EnvironmentVariableMockerTest {
 
         assertThat(System.getenv().get("foo")).isEqualTo("bar");
         assertThat(System.getenv("foo")).isEqualTo("bar");
+    }
+
+    @Test
+    void theVariablesAreVisibleToWorkerThreads() throws Exception {
+        Map<String, String> result = new HashMap<>();
+
+        Map<String, String> newMap = new HashMap<>();
+        newMap.put("foo", "bar");
+        EnvironmentVariableMocker.connect(newMap);
+
+        CountDownLatch latch = new CountDownLatch(1);
+
+        new Thread(() -> {
+            result.put("foo", getenv("foo"));
+            latch.countDown();
+        }).start();
+
+        latch.await(10, TimeUnit.SECONDS);
+
+        assertThat(result).containsEntry("foo", "bar");
     }
 
     @Test

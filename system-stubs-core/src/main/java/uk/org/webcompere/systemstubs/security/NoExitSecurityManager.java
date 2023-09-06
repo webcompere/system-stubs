@@ -61,11 +61,6 @@ public class NoExitSecurityManager extends SecurityManager {
     }
 
     @Override
-    public boolean getInCheck() {
-        return originalSecurityManager != null && originalSecurityManager.getInCheck();
-    }
-
-    @Override
     public Object getSecurityContext() {
         return (originalSecurityManager == null) ? super.getSecurityContext()
             : originalSecurityManager.getSecurityContext();
@@ -219,29 +214,9 @@ public class NoExitSecurityManager extends SecurityManager {
     }
 
     @Override
-    public boolean checkTopLevelWindow(Object window) {
-        return (originalSecurityManager == null) ? super.checkTopLevelWindow(window)
-            : originalSecurityManager.checkTopLevelWindow(window);
-    }
-
-    @Override
     public void checkPrintJobAccess() {
         if (originalSecurityManager != null) {
             originalSecurityManager.checkPrintJobAccess();
-        }
-    }
-
-    @Override
-    public void checkSystemClipboardAccess() {
-        if (originalSecurityManager != null) {
-            originalSecurityManager.checkSystemClipboardAccess();
-        }
-    }
-
-    @Override
-    public void checkAwtEventQueueAccess() {
-        if (originalSecurityManager != null) {
-            originalSecurityManager.checkAwtEventQueueAccess();
         }
     }
 
@@ -263,13 +238,6 @@ public class NoExitSecurityManager extends SecurityManager {
     public void checkSetFactory() {
         if (originalSecurityManager != null) {
             originalSecurityManager.checkSetFactory();
-        }
-    }
-
-    @Override
-    public void checkMemberAccess(Class<?> clazz, int which) {
-        if (originalSecurityManager != null) {
-            originalSecurityManager.checkMemberAccess(clazz, which);
         }
     }
 
