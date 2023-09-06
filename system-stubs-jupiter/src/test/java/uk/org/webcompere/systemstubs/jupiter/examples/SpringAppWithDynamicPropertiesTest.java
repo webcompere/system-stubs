@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,7 +29,7 @@ import static uk.org.webcompere.systemstubs.stream.output.OutputFactories.tapAnd
 
 @ExtendWith(SystemStubsExtension.class)
 public class SpringAppWithDynamicPropertiesTest {
-    private static WireMockServer wireMock = new WireMockServer(Options.DYNAMIC_PORT);
+    private static final WireMockServer wireMock = new WireMockServer(Options.DYNAMIC_PORT);
 
     // sets the environment before Spring even starts
     @SystemStub
@@ -106,7 +106,7 @@ public class SpringAppWithDynamicPropertiesTest {
         @Test
         void canSeeLoggingOutputInSystemOutObject() {
             assertThat(systemOut.getText())
-                .contains(":: Spring Boot ::        (v2.3.5.RELEASE)");
+                .contains(":: Spring Boot ::               (v2.7.15)");
         }
     }
 }

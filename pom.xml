@@ -43,15 +43,15 @@
   </modules>
 
   <properties>
-    <version.maven-scm-provider-gitexe>1.11.2</version.maven-scm-provider-gitexe>
+    <version.maven-scm-provider-gitexe>2.0.1</version.maven-scm-provider-gitexe>
     <gpg.passphrase>providedfromoutside</gpg.passphrase>
-    <version.maven-gpg-plugin>1.6</version.maven-gpg-plugin>
-    <version.maven-javadoc-plugin>3.2.0</version.maven-javadoc-plugin>
-    <version.maven-source-plugin>3.2.1</version.maven-source-plugin>
-    <version.maven-deploy-plugin>3.0.0-M1</version.maven-deploy-plugin>
-    <version.nexus-staging-maven-plugin>1.6.8</version.nexus-staging-maven-plugin>
-    <version.maven-release-plugin>3.0.0-M1</version.maven-release-plugin>
-    <version.maven-compiler-plugin>3.8.1</version.maven-compiler-plugin>
+    <version.maven-gpg-plugin>3.1.0</version.maven-gpg-plugin>
+    <version.maven-javadoc-plugin>3.5.0</version.maven-javadoc-plugin>
+    <version.maven-source-plugin>3.3.0</version.maven-source-plugin>
+    <version.maven-deploy-plugin>3.1.1</version.maven-deploy-plugin>
+    <version.nexus-staging-maven-plugin>1.6.13</version.nexus-staging-maven-plugin>
+    <version.maven-release-plugin>3.0.1</version.maven-release-plugin>
+    <version.maven-compiler-plugin>3.11.0</version.maven-compiler-plugin>
   </properties>
 
   <dependencyManagement>
@@ -70,13 +70,13 @@
       <dependency>
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-lang3</artifactId>
-        <version>3.10</version>
+        <version>3.13.0</version>
         <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.assertj</groupId>
         <artifactId>assertj-core</artifactId>
-        <version>3.16.1</version>
+        <version>3.24.2</version>
         <scope>test</scope>
       </dependency>
       <dependency>
@@ -90,26 +90,23 @@
         <version>1.14.7</version>
       </dependency>
       <dependency>
-        <groupId>org.junit.jupiter</groupId>
-        <artifactId>junit-jupiter</artifactId>
-        <version>5.6.2</version>
-        <scope>test</scope>
+        <groupId>org.junit</groupId>
+        <artifactId>junit-bom</artifactId>
+        <version>5.10.0</version>
+        <type>pom</type>
+        <scope>import</scope>
       </dependency>
       <dependency>
         <groupId>org.mockito</groupId>
-        <artifactId>mockito-junit-jupiter</artifactId>
-        <version>4.2.0</version>
-        <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.mockito</groupId>
-        <artifactId>mockito-core</artifactId>
+        <artifactId>mockito-bom</artifactId>
         <version>5.5.0</version>
+        <type>pom</type>
+        <scope>import</scope>
       </dependency>
       <dependency>
         <groupId>com.github.spotbugs</groupId>
         <artifactId>spotbugs-annotations</artifactId>
-        <version>4.1.4</version>
+        <version>4.7.3</version>
         <scope>provided</scope>
       </dependency>
       <!-- For JUnit plugin -->
@@ -118,7 +115,7 @@
         <artifactId>junit</artifactId>
         <!-- compatible with lower versions, but updated to latest
         to avoid security warning -->
-        <version>4.13.1</version>
+        <version>4.13.2</version>
         <!-- provided scope - the client provides their own JUnit -->
         <scope>provided</scope>
       </dependency>
@@ -133,6 +130,7 @@
           <artifactId>maven-compiler-plugin</artifactId>
           <version>${version.maven-compiler-plugin}</version>
           <configuration>
+            <encoding>UTF-8</encoding>
             <source>11</source>
             <target>11</target>
           </configuration>
@@ -140,7 +138,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>3.0.0-M5</version>
+          <version>3.1.2</version>
           <configuration>
             <forkCount>1</forkCount>
             <reuseForks>false</reuseForks>
@@ -149,7 +147,7 @@
         <plugin>
           <groupId>com.github.spotbugs</groupId>
           <artifactId>spotbugs-maven-plugin</artifactId>
-          <version>4.7.3.0</version>
+          <version>4.7.3.5</version>
           <configuration>
             <effort>Max</effort>
             <threshold>Low</threshold>
@@ -167,12 +165,12 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-checkstyle-plugin</artifactId>
-          <version>3.1.1</version>
+          <version>3.3.0</version>
           <dependencies>
             <dependency>
               <groupId>com.puppycrawl.tools</groupId>
               <artifactId>checkstyle</artifactId>
-              <version>8.29</version>
+              <version>10.12.3</version>
             </dependency>
           </dependencies>
           <executions>
@@ -192,7 +190,7 @@
         <plugin>
           <groupId>org.jacoco</groupId>
           <artifactId>jacoco-maven-plugin</artifactId>
-          <version>0.8.8</version>
+          <version>0.8.10</version>
           <executions>
             <execution>
               <goals>
@@ -286,8 +284,20 @@
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-gpg-plugin</artifactId>
+          <version>${version.maven-gpg-plugin}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-site-plugin</artifactId>
-          <version>3.9.1</version>
+          <version>3.12.1</version>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>versions-maven-plugin</artifactId>
+          <version>2.16.0</version>
+          <configuration>
+          </configuration>
         </plugin>
       </plugins>
     </pluginManagement>

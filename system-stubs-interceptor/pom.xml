@@ -6,7 +6,7 @@
     <groupId>uk.org.webcompere</groupId>
     <artifactId>system-stubs-parent</artifactId>
     <version>2.1.1-SNAPSHOT</version>
-    <relativePath>../</relativePath>
+    <relativePath>../pom.xml</relativePath>
   </parent>
 
   <artifactId>system-stubs-interceptor</artifactId>
