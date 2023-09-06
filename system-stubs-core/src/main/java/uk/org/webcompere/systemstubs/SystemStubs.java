@@ -778,7 +778,7 @@ public class SystemStubs {
      * }
      * </pre>
      *
-     * <h3>Throwing Exceptions</h3>
+     * <b>Throwing Exceptions</b>
      *
      * <p>You can also simulate a {@code System.in} that throws an
      * {@code IOException} or {@code RuntimeException}. Use

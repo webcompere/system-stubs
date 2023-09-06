@@ -64,6 +64,7 @@ public interface Output<T extends OutputStream> {
 
     /**
      * When the target stream is meant to be closed, then close it
+     * @throws Exception on any error closing
      */
     default void closeOutput() throws Exception {
         // does nothing here
