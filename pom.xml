@@ -4,7 +4,7 @@
 
   <groupId>uk.org.webcompere</groupId>
   <artifactId>system-stubs-parent</artifactId>
-  <version>2.1.1-SNAPSHOT</version>
+  <version>2.1.1</version>
   <packaging>pom</packaging>
 
   <name>System Stubs Parent</name>
@@ -32,7 +32,7 @@
     <connection>scm:git:git://github.com/webcompere/system-stubs.git</connection>
     <developerConnection>scm:git:git@github.com:webcompere/system-stubs.git</developerConnection>
     <url>https://github.com/webcompere/system-stubs/</url>
-    <tag>system-stubs-parent-2.1.0</tag>
+    <tag>system-stubs-parent-2.1.1</tag>
   </scm>
 
   <modules>
@@ -59,13 +59,13 @@
       <dependency>
         <groupId>uk.org.webcompere</groupId>
         <artifactId>system-stubs-interceptor</artifactId>
-        <version>2.1.1-SNAPSHOT</version>
+        <version>2.1.1</version>
         <scope>provided</scope>
       </dependency>
       <dependency>
         <groupId>uk.org.webcompere</groupId>
         <artifactId>system-stubs-core</artifactId>
-        <version>2.1.1-SNAPSHOT</version>
+        <version>2.1.1</version>
       </dependency>
       <dependency>
         <groupId>org.apache.commons</groupId>
