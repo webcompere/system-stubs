@@ -7,7 +7,7 @@ JUnit 5 unit test.
 <dependency>
   <groupId>uk.org.webcompere</groupId>
   <artifactId>system-stubs-jupiter</artifactId>
-  <version>2.1.0</version>
+  <version>2.1.1</version>
 </dependency>
 ```
 

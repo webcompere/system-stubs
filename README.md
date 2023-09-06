@@ -47,7 +47,7 @@ System Stubs into JUnit 5 tests.
 <dependency>
   <groupId>uk.org.webcompere</groupId>
   <artifactId>system-stubs-core</artifactId>
-  <version>2.1.0</version>
+  <version>2.1.1</version>
 </dependency>
 ```
 
@@ -57,7 +57,7 @@ System Stubs into JUnit 5 tests.
 <dependency>
   <groupId>uk.org.webcompere</groupId>
   <artifactId>system-stubs-junit4</artifactId>
-  <version>2.1.0</version>
+  <version>2.1.1</version>
 </dependency>
 ```
 
@@ -67,7 +67,7 @@ System Stubs into JUnit 5 tests.
 <dependency>
   <groupId>uk.org.webcompere</groupId>
   <artifactId>system-stubs-jupiter</artifactId>
-  <version>2.1.0</version>
+  <version>2.1.1</version>
 </dependency>
 ```
 

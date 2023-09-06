@@ -9,6 +9,10 @@ import java.io.InputStream;
 public class DecoratingAltStream extends AltInputStream {
     private InputStream decoratee;
 
+    /**
+     * Construct the stream with the decoratee
+     * @param decoratee the input stream that will be read from
+     */
     public DecoratingAltStream(InputStream decoratee) {
         this.decoratee = decoratee;
     }

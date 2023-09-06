@@ -6,9 +6,18 @@ import java.util.*;
 
 import static java.util.stream.Collectors.toMap;
 
+/**
+ * Plugs into the boot loader to provide an alternative implementation to ProcessEnvironment
+ * controllable at test time.
+ */
 public class ProcessEnvironmentInterceptor {
     private static Map<String, String> CURRENT_ENVIRONMENT_VARIABLES = new HashMap<>();
 
+    /**
+     * For use by the EnvironmentMocker - this overwrites the effective environment variables that the system
+     * appears to have.
+     * @param env the environment variable map to use - this is kept by reference and so is mutable
+     */
     @SuppressFBWarnings("EI_EXPOSE_STATIC_REP2")
     public static void setEnv(Map<String, String> env) {
         CURRENT_ENVIRONMENT_VARIABLES = env;
@@ -23,10 +32,20 @@ public class ProcessEnvironmentInterceptor {
         return filterNulls(CURRENT_ENVIRONMENT_VARIABLES);
     }
 
+    /**
+     * Get a single environment variable
+     * @param name name of the variable
+     * @return the value or null
+     */
     public static String getenv(String name) {
         return getenv().get(name);
     }
 
+    /**
+     * Reads the environment variables as does getenv - a different part of
+     * ProcessEnvironment that we're stubbing
+     * @return the environment map
+     */
     public static Map<String, String> environment() {
         return getenv();
     }

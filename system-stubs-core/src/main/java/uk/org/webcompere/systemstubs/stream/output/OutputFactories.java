@@ -77,6 +77,7 @@ public class OutputFactories {
 
     /**
      * Write to file when the output is active, closing it when it's deactivated
+     * @param file the target file for writing to
      */
     public static OutputFactory<FileOutputStream> writeToFile(File file) {
         return original -> Output.fromCloseableStream(new FileOutputStream(file));
