@@ -18,4 +18,12 @@ class WithEnvironmentVariables {
     void hasAccessToEnvironmentVariables() {
         assertThat(System.getenv("input")).isEqualTo("foo");
     }
+
+    @Test
+    void changeEnvironmentVariablesDuringTest() {
+        variables.set("input", "bar");
+
+        assertThat(System.getenv("input"))
+            .isEqualTo("bar");
+    }
 }

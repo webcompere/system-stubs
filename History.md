@@ -18,6 +18,17 @@ The main aims of this version:
   - reduce test boilerplate
 - Provide more configuration and fluent setters
 - Modularise the code
-- Standardise testing around _Mockito_ and _AssertJ_ 
+- Standardise testing around _Mockito_ and _AssertJ_
 - Standardise around the Java Library as much as possible
 
+### Execute Around
+
+In order to support migration from [System Lambda](https://github.com/stefanbirkner/system-lambda), and to enable reuse of the original unit tests, the `SystemStubs` facade supports the [execute around](https://java-design-patterns.com/patterns/execute-around/) idiom.
+
+To use the `SystemStubs` facade:
+
+```java
+import static uk.org.webcompere.systemstubs.SystemStubs.*;
+```
+
+Then methods like `assertNothingWrittenToSystemOut` or `restoreSystemProperties` will work as they did in System Lambda.
