@@ -27,11 +27,11 @@ It is published under the [MIT license](http://opensource.org/licenses/MIT) and 
 
 System Stubs [originated](History.md) as a fork of System Lambda,
 originally by Stefan Birkner, and is a partial rewrite and refactor of it. It has diverged in implementation
-from the original, but largely retains compatibility.
+from the original, but largely [retains compatibility](History.md#execute-around).
 
 It is divided into:
 
-- `system-stubs-core` - can be used stand-alone to stub system resources around test code
+- `system-stubs-core` - can be used stand-alone with any test framework to stub system resources around test code
   - Using the `SystemStubs` facade to build and execute stubs around test code
   - Using the subclasses of `TestResource`, like `EnvironmentVariables` or `SystemIn` to create stubs
   and then execute test code via `execute`
@@ -71,17 +71,35 @@ System Stubs into JUnit 5 tests.
 </dependency>
 ```
 
-## Usage with Execute Around
-
-In order to support migration from [System Lambda](https://github.com/stefanbirkner/system-lambda), and to enable reuse of the original unit tests, the `SystemStubs` facade supports the [execute around](https://java-design-patterns.com/patterns/execute-around/) idiom.
-
-To use the `SystemStubs` facade:
+## QuickStart (JUnit 5)
 
 ```java
-import static uk.org.webcompere.systemstubs.SystemStubs.*;
+@ExtendWith(SystemStubsExtension.class)
+class WithEnvironmentVariables {
+
+    @SystemStub
+    private EnvironmentVariables variables =
+        new EnvironmentVariables("input", "foo");
+
+    @Test
+    void hasAccessToEnvironmentVariables() {
+        assertThat(System.getenv("input"))
+            .isEqualTo("foo");
+    }
+
+    @Test
+    void changeEnvironmentVariablesDuringTest() {
+        variables.set("input", "bar");
+
+        assertThat(System.getenv("input"))
+            .isEqualTo("bar");
+    }
+}
 ```
 
-## Usage of individual System Stubs
+See the full guide to [JUnit 5](system-stubs-jupiter/README.md), or use it with [JUnit 4](system-stubs-junit4/README.md).
+
+## Using System Stubs Individually
 
 You can declare a system stub object:
 
