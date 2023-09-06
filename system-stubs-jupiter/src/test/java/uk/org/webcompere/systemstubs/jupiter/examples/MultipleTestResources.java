@@ -13,7 +13,7 @@ import uk.org.webcompere.systemstubs.stream.SystemOut;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(SystemStubsExtension.class)
-@TestMethodOrder(MethodOrderer.Alphanumeric.class)
+@TestMethodOrder(MethodOrderer.MethodName.class)
 public class MultipleTestResources {
     // protected the environment, allowing us a set method
     @SystemStub

@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class SystemStubsExtensionTest {
 
     @ExtendWith(SystemStubsExtension.class)
-    @TestMethodOrder(MethodOrderer.Alphanumeric.class)
+    @TestMethodOrder(MethodOrderer.MethodName.class)
     @Nested
     class Fields {
         @SystemStub
@@ -62,7 +62,7 @@ class SystemStubsExtensionTest {
     }
 
     @ExtendWith(SystemStubsExtension.class)
-    @TestMethodOrder(MethodOrderer.Alphanumeric.class)
+    @TestMethodOrder(MethodOrderer.MethodName.class)
     @Nested
     class CanInjectASystemStubToPutThingsBackAfter {
         @Test
@@ -104,7 +104,7 @@ class SystemStubsExtensionTest {
     @Nested
     @ExtendWith(SystemStubsExtension.class)
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-    @TestMethodOrder(MethodOrderer.Alphanumeric.class)
+    @TestMethodOrder(MethodOrderer.MethodName.class)
     class TestResourceLinkedToLifecycleOfTestInstance {
         @SystemStub
         private EnvironmentVariables environment;
