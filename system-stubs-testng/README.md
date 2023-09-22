@@ -34,13 +34,13 @@ public void afterTest() throws Exception {
 ```
 
 With this code, we'd expect tests to be able to modify the runtime environment by manipulating the
-`environmentVariables` object, and we'd expect the tests to have an environment variable `setinbefore` set
-to `yes`.
+`environmentVariables` object, and we'd expect the tests to see the environment variables set in the `beforeTest`
+function; in this example, `setinbefore` was set to `yes`.
 
-Similarly, we can use `setup` and `teardown` inside a test case, or use the `SystemStubs` methods such as
+Similarly, we can use `setup` and `teardown` methods of a `TestResources` such as `EnvironmentVariables` inside a test case, or use the `SystemStubs` wrapper methods such as
 `withEnvironmentVariables`. See the [main documentation](../README.md) for more on the execute around pattern.
 
-### Using of the Plugin
+### Using the Plugin
 
 The plugin:
 
@@ -54,6 +54,8 @@ Usage:
 @Listeners(SystemStubsListener.class)
 public class CaptureSystemOutTest {
 
+    // We can ininitialise this object with `new` here, or
+    // leave it uninitialized for the plugin to do it for us
     @SystemStub
     private SystemOut out;
 
@@ -74,13 +76,15 @@ public class CaptureSystemOutTest {
 
 > Note: in this instance we've used the `SystemOut` stub. We've had to remember to call its `clear` method as it
 > will be shared between tests.
+> Note: we may prefer to initialize our stub objects to give them configuration or initial values without using
+> a `@BeforeTest` function.
 
-We can use each of the stubs such as:
+We can use any of the core system stubs classes such as:
 
 - `EnvironmentVariables` - for overriding the environment variables
 - `SystemProperties` - for temporarily overwriting system properties and then restoring them afterwards
 - `SystemOut` - for tapping the `System.out`
-- ... and the others
+- ... and so on
 
 All we need to do is:
 
