@@ -23,11 +23,15 @@
 ## Overview
 System Stubs is used to test code which depends on methods in `java.lang.System`.
 
-It is published under the [MIT license](http://opensource.org/licenses/MIT) and requires at least Java 8. There is a [walkthrough of its main features](https://www.baeldung.com/java-system-stubs) over on [Baeldung.com](https://www.baeldung.com).
+The core is test framework agnostic, but there's explicit support for JUnit 4, JUnit 5 and TestNG in
+specialist sub-modules.
 
-System Stubs [originated](History.md) as a fork of System Lambda,
-originally by Stefan Birkner, and is a partial rewrite and refactor of it. It has diverged in implementation
-from the original, but largely [retains compatibility](History.md#execute-around).
+It is published under the [MIT license](http://opensource.org/licenses/MIT) and requires at least Java 11.
+There is a [walkthrough of its main features](https://www.baeldung.com/java-system-stubs) over on
+[Baeldung.com](https://www.baeldung.com).
+
+System Stubs [originated](History.md) as a fork of System Lambda, and is a partial rewrite and refactor of it.
+It has diverged in implementation from the original, but largely [retains compatibility](History.md#execute-around).
 
 It is divided into:
 
@@ -38,6 +42,35 @@ It is divided into:
 - [`system-stubs-junit4`](system-stubs-junit4/README.md) - a set of JUnit4 rules that activate the stubs around test code
 - [`system-stubs-jupiter`](system-stubs-jupiter/README.md) - a JUnit 5 extension that automatically injects
 System Stubs into JUnit 5 tests.
+- [`system-stubs-testng`](system-stubs-testng/README.md) - a plugin/listener for the TestNG framework, which automatically
+injects System Stubs into TestNG tests.
+
+
+## QuickStart (JUnit 5)
+
+```java
+@ExtendWith(SystemStubsExtension.class)
+class WithEnvironmentVariables {
+
+    @SystemStub
+    private EnvironmentVariables variables =
+        new EnvironmentVariables("input", "foo");
+
+    @Test
+    void hasAccessToEnvironmentVariables() {
+        assertThat(System.getenv("input"))
+            .isEqualTo("foo");
+    }
+
+    @Test
+    void changeEnvironmentVariablesDuringTest() {
+        variables.set("input", "bar");
+
+        assertThat(System.getenv("input"))
+            .isEqualTo("bar");
+    }
+}
+```
 
 ## Installation
 
@@ -71,33 +104,27 @@ System Stubs into JUnit 5 tests.
 </dependency>
 ```
 
-## QuickStart (JUnit 5)
+### TestNG Plugin
 
-```java
-@ExtendWith(SystemStubsExtension.class)
-class WithEnvironmentVariables {
-
-    @SystemStub
-    private EnvironmentVariables variables =
-        new EnvironmentVariables("input", "foo");
-
-    @Test
-    void hasAccessToEnvironmentVariables() {
-        assertThat(System.getenv("input"))
-            .isEqualTo("foo");
-    }
-
-    @Test
-    void changeEnvironmentVariablesDuringTest() {
-        variables.set("input", "bar");
-
-        assertThat(System.getenv("input"))
-            .isEqualTo("bar");
-    }
-}
+```xml
+<dependency>
+  <groupId>uk.org.webcompere</groupId>
+  <artifactId>system-stubs-testng</artifactId>
+  <version>2.1.2</version>
+</dependency>
 ```
 
 See the full guide to [JUnit 5](system-stubs-jupiter/README.md), or use it with [JUnit 4](system-stubs-junit4/README.md).
+
+## Catalogue of SystemStubs Objects
+
+- `EnvironmentVariables` - for overriding the environment variables
+- `SystemProperties` - for temporarily overwriting system properties and then restoring them afterwards
+- `SystemOut` - for tapping the output to `System.out`
+- `SystemErr` - for tapping the output to `System.err`
+- `SystemErrAndOut` - for tapping the output to both `System.err` and `System.out`
+- `SystemIn` - for providing input to `System.in`
+- `SystemExit` - prevents system exit from occurring, recording the exit code
 
 ## Using System Stubs Individually
 
@@ -121,6 +148,7 @@ a test, for example:
 
 ```java
 EnvironmentVariables env = new EnvironmentVariables("HOST", "localhost");
+
 // start controlling the environment
 env.setup();
 
@@ -187,7 +215,7 @@ the code under the test doesn't use checked exceptions.
 This is a good argument for using the JUnit4 or JUnit5 plugins, where you do not
 need to specifically turn the stubbing on via the `execute` method.
 
-## Available Stubs
+## How to Use Each of the Stubs
 
 ### System.exit
 
