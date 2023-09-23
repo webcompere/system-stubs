@@ -14,11 +14,11 @@
 > chosen version of Mockito or other libraries.
 >
 > **⚠ WARNING: JDK Support.**
-> > _This project has now moved to a JDK11 minimum version_
+> _This project has now moved to a JDK11 minimum version_
 >
 > Where these aren't appropriate, the [v1.x](https://github.com/webcompere/system-stubs/tree/1.x)
 > version of this will still work for Java versions below 16, and may also be
-> co-erced into working with via the java [command line](https://github.com/stefanbirkner/system-lambda/issues/23#issuecomment-1007608124).
+> co-erced into working with Java 16 via a [command line switch](https://github.com/stefanbirkner/system-lambda/issues/23#issuecomment-1007608124).
 
 ## Overview
 System Stubs is used to test code which depends on methods in `java.lang.System`.
