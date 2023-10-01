@@ -4,7 +4,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import java.util.*;
 
-import static java.util.stream.Collectors.toMap;
+import static java.util.stream.Collectors.toSet;
 
 /**
  * Plugs into the boot loader to provide an alternative implementation to ProcessEnvironment
@@ -12,6 +12,9 @@ import static java.util.stream.Collectors.toMap;
  */
 public class ProcessEnvironmentInterceptor {
     private static Map<String, String> CURRENT_ENVIRONMENT_VARIABLES = new HashMap<>();
+
+    @SuppressFBWarnings("URF_UNREAD_FIELD")
+    private static Map<String, String> theEnvironment;
 
     /**
      * For use by the EnvironmentMocker - this overwrites the effective environment variables that the system
@@ -21,6 +24,9 @@ public class ProcessEnvironmentInterceptor {
     @SuppressFBWarnings("EI_EXPOSE_STATIC_REP2")
     public static void setEnv(Map<String, String> env) {
         CURRENT_ENVIRONMENT_VARIABLES = env;
+
+        // this copy exposes process environment to tools looking to mock it
+        theEnvironment = Collections.unmodifiableMap(CURRENT_ENVIRONMENT_VARIABLES);
     }
 
     /**
@@ -28,8 +34,9 @@ public class ProcessEnvironmentInterceptor {
      * mocking is "turned on"
      * @return the current effective environment
      */
+    @SuppressFBWarnings("MS_EXPOSE_REP")
     public static Map<String, String> getenv() {
-        return filterNulls(CURRENT_ENVIRONMENT_VARIABLES);
+        return Collections.unmodifiableMap(filterNulls(CURRENT_ENVIRONMENT_VARIABLES));
     }
 
     /**
@@ -47,7 +54,7 @@ public class ProcessEnvironmentInterceptor {
      * @return the environment map
      */
     public static Map<String, String> environment() {
-        return getenv();
+        return new HashMap<>(getenv());
     }
 
     /**
@@ -129,10 +136,14 @@ public class ProcessEnvironmentInterceptor {
     }
 
     private static Map<String, String> filterNulls(Map<String, String> currentMockedEnvironment) {
-        return currentMockedEnvironment.entrySet()
+        var nullsToRemove = currentMockedEnvironment.entrySet()
             .stream()
-            .filter(entry -> entry.getValue() != null)
-            .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
+            .filter(entry -> entry.getValue() == null)
+            .map(Map.Entry::getKey)
+            .collect(toSet());
+
+        nullsToRemove.forEach(currentMockedEnvironment::remove);
+        return currentMockedEnvironment;
     }
 
     @SuppressFBWarnings("SE_COMPARATOR_SHOULD_BE_SERIALIZABLE")

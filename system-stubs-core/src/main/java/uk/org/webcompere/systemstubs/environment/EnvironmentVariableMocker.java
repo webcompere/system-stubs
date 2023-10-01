@@ -30,7 +30,7 @@ public class EnvironmentVariableMocker {
     private static final Map<String, String> ORIGINAL_ENV;
 
     static {
-        ORIGINAL_ENV = System.getenv();
+        ORIGINAL_ENV = new HashMap<>(System.getenv());
         try {
             Instrumentation instrumentation = ByteBuddyAgent.install();
             installInterceptorIntoBootLoader(instrumentation);
