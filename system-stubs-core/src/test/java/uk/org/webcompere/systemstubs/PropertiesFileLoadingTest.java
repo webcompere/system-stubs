@@ -16,6 +16,7 @@ public class PropertiesFileLoadingTest {
             new EnvironmentVariables()
                 .set(fromResource("test.properties"))
                 .execute(() -> {
+                   assertThat(System.getenv()).containsEntry("value1", "foo").containsEntry("value2", "bar");
                    assertThat(System.getenv("value1")).isEqualTo("foo");
                    assertThat(System.getenv("value2")).isEqualTo("bar");
                 });
