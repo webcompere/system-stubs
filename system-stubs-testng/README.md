@@ -6,7 +6,7 @@ Provides some automatic instantiation of System Stubs objects during the test li
 <dependency>
   <groupId>uk.org.webcompere</groupId>
   <artifactId>system-stubs-testng</artifactId>
-  <version>2.1.3</version>
+  <version>2.1.4</version>
 </dependency>
 ```
 
