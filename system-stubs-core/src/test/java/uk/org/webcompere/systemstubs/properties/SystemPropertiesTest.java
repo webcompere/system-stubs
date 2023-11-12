@@ -42,4 +42,117 @@ class SystemPropertiesTest {
             assertThat(System.getProperty("g")).isEqualTo("h");
         });
     }
+
+    @Test
+    void canRunPropertiesNested() throws Exception {
+        assertThat(System.getProperty("bar")).isNull();
+
+        SystemProperties properties = new SystemProperties();
+        properties.execute(() -> {
+            properties.set("bar", "h");
+            assertThat(System.getProperty("bar")).isEqualTo("h");
+
+
+            SystemProperties nested = new SystemProperties();
+            nested.execute(() -> {
+                properties.set("bar", "zh");
+                assertThat(System.getProperty("bar")).isEqualTo("zh");
+            });
+
+            assertThat(System.getProperty("bar")).isEqualTo("h");
+        });
+    }
+
+    @Test
+    void canDeletePropertiesNested() throws Exception {
+        assertThat(System.getProperty("bar")).isNull();
+
+        SystemProperties properties = new SystemProperties();
+        properties.execute(() -> {
+            properties.set("bar", "h");
+            assertThat(System.getProperty("bar")).isEqualTo("h");
+
+
+            SystemProperties nested = new SystemProperties();
+            nested.execute(() -> {
+                System.getProperties().remove("bar");
+                assertThat(System.getProperty("bar")).isNull();
+            });
+
+            assertThat(System.getProperty("bar")).isEqualTo("h");
+        });
+    }
+
+    @Test
+    void canDeletePropertiesNestedViaPropertiesObject() throws Exception {
+        assertThat(System.getProperty("bar")).isNull();
+
+        SystemProperties properties = new SystemProperties();
+        properties.execute(() -> {
+            properties.set("bar", "h");
+            assertThat(System.getProperty("bar")).isEqualTo("h");
+
+
+            SystemProperties nested = new SystemProperties();
+            nested.execute(() -> {
+                nested.remove("bar");
+                assertThat(System.getProperty("bar")).isNull();
+            });
+
+            assertThat(System.getProperty("bar")).isEqualTo("h");
+        });
+    }
+
+    @Test
+    void canPreDeletePropertiesNestedViaPropertiesObject() throws Exception {
+        assertThat(System.getProperty("bar")).isNull();
+
+        SystemProperties properties = new SystemProperties();
+        properties.execute(() -> {
+            properties.set("bar", "h");
+            assertThat(System.getProperty("bar")).isEqualTo("h");
+
+            SystemProperties nested = new SystemProperties();
+            nested.remove("bar");
+            nested.execute(() -> {
+                assertThat(System.getProperty("bar")).isNull();
+            });
+        });
+    }
+
+    @Test
+    void canPreDeleteMultiplePropertiesNestedViaPropertiesObject() throws Exception {
+        SystemProperties properties = new SystemProperties();
+        properties.execute(() -> {
+            properties.set("bar", "h");
+            properties.set("baz", "h");
+            assertThat(System.getProperty("bar")).isEqualTo("h");
+            assertThat(System.getProperty("baz")).isEqualTo("h");
+
+            SystemProperties nested = new SystemProperties();
+            nested.remove("bar").remove("baz");
+            nested.execute(() -> {
+                assertThat(System.getProperty("bar")).isNull();
+                assertThat(System.getProperty("baz")).isNull();
+            });
+        });
+    }
+
+    @Test
+    void settingAfterPreDeleteAlsoWorks() throws Exception {
+        assertThat(System.getProperty("bar")).isNull();
+
+        SystemProperties properties = new SystemProperties();
+        properties.execute(() -> {
+            properties.set("bar", "h");
+            assertThat(System.getProperty("bar")).isEqualTo("h");
+
+            SystemProperties nested = new SystemProperties();
+            nested.remove("bar");
+            nested.execute(() -> {
+                nested.set("bar", "bong");
+                assertThat(System.getProperty("bar")).isEqualTo("bong");
+            });
+        });
+    }
 }

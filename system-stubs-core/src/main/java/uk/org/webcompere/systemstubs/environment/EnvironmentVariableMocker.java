@@ -64,18 +64,25 @@ public class EnvironmentVariableMocker {
         instrumentation.appendToBootstrapClassLoaderSearch(new JarFile(tempFile));
     }
 
+    @Deprecated(since = "2.1.5")
+    public static void connect(Map<String, String> newEnvironmentVariables) {
+        connect(newEnvironmentVariables, Collections.emptySet());
+    }
+
     /**
      * Attach a map as the mutable replacement environment variables for now. This can be done
      * multiple times and each time the replacement will supersede the maps before. Then when {@link #pop()}
      * is called, we'll rollback to the previous.
      * @param newEnvironmentVariables the mutable map - note: this will be populated by the current
      *                                environment
+     * @param variablesToRemove a list of variables to take out of the resulting environment variables
      */
-    public static void connect(Map<String, String> newEnvironmentVariables) {
+    public static void connect(Map<String, String> newEnvironmentVariables, Set<String> variablesToRemove) {
         // add all entries not already present in the new environment variables
         System.getenv().entrySet().stream()
             .filter(entry -> !newEnvironmentVariables.containsKey(entry.getKey()))
             .forEach(entry -> newEnvironmentVariables.put(entry.getKey(), entry.getValue()));
+        variablesToRemove.forEach(newEnvironmentVariables::remove);
         REPLACEMENT_ENV.push(newEnvironmentVariables);
         ProcessEnvironmentInterceptor.setEnv(newEnvironmentVariables);
     }

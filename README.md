@@ -128,6 +128,9 @@ See the full guide to [JUnit 5](system-stubs-jupiter/README.md), or use it with 
 
 ## Using System Stubs Individually
 
+The plugins for JUnit etc will allow the stub objects to be used during a test, where they will
+be set up and torn down around the test method. However, they can also be used without the framework.
+
 You can declare a system stub object:
 
 ```java
@@ -310,6 +313,22 @@ mutable version of the `and` method used in the first example.
 affect the runtime environment. Calling it outside of execution will store the
 value for writing into the environment within `execute`.
 
+You can remove an environment variable with `remove`:
+
+```java
+// assuming that there's an environment variable "STAGE" set here
+new EnvironmentVariables()
+    .remove("STAGE")
+    .execute(() -> {
+        // the variable has been removed
+        assertThat(System.getenv("STAGE")).isNull();
+    });
+```
+
+The `remove` method deletes environment variables requested in the `EnvironmentVariables` object previously
+and also takes those environment variables out of the system environment while the `EnvironmentVariables`
+object is active.
+
 ### System Properties
 
 #### With `SystemStubs`
@@ -331,6 +350,15 @@ void execute_code_that_manipulates_system_properties() throws Exception {
   //Here the value of "some.property" is the same like before.
   //E.g. it is not set.
 }
+```
+
+This also supports removing properties from the system properties:
+
+```java
+// will be restored
+restoreSystemProperties(() ->{
+  System.getProperties().remove("someProp");
+});
 ```
 
 #### With `SystemProperties`
@@ -356,6 +384,16 @@ someProperties.execute(() -> {
 });
 
 // here the system properties are reverted
+```
+
+We can also specify properties to delete from the default system properties:
+
+```java
+// when this object is active, some properties will be removed
+// from system properties
+SystemProperties someProperties = new SystemProperties()
+    .remove("property1")
+    .remove("property2");
 ```
 
 ### Sources of `Properties` for `EnvironmentVariables` and `SystemProperties`

@@ -67,4 +67,11 @@ public class EnvironmentVariablesRule extends EnvironmentVariables implements Sy
     public EnvironmentVariablesRule set(Map<Object, Object> properties) {
         return (EnvironmentVariablesRule)super.set(properties);
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public EnvironmentVariablesRule remove(String name) {
+        return (EnvironmentVariablesRule)super.remove(name);
+    }
 }

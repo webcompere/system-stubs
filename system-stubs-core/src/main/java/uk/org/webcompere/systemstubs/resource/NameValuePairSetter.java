@@ -7,8 +7,7 @@ import java.util.Properties;
  * The general interface of something that can set name value pairs on itself
  * @param <T> the final type of the class which provides this
  */
-@FunctionalInterface
-public interface NameValuePairSetter<T extends NameValuePairSetter> {
+public interface NameValuePairSetter<T extends NameValuePairSetter<T>> {
     /**
      * Set a name value pair
      * @param name the name
@@ -43,4 +42,11 @@ public interface NameValuePairSetter<T extends NameValuePairSetter> {
         properties.forEach((key, value) -> set(String.valueOf(key), String.valueOf(value)));
         return (T)this;
     }
+
+    /**
+     * Remove one of the name value pairs
+     * @param name the name
+     * @return <code>this</code> for fluent calling
+     */
+    T remove(String name);
 }

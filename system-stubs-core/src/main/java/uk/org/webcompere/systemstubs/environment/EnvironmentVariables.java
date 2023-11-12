@@ -6,9 +6,7 @@ import uk.org.webcompere.systemstubs.resource.NameValuePairSetter;
 import uk.org.webcompere.systemstubs.resource.SingularTestResource;
 
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 import static java.util.Collections.emptyMap;
 import static uk.org.webcompere.systemstubs.properties.PropertiesUtils.toStringMap;
@@ -35,7 +33,8 @@ import static uk.org.webcompere.systemstubs.properties.PropertiesUtils.toStringM
  * @since 1.0.0
  */
 public class EnvironmentVariables extends SingularTestResource implements NameValuePairSetter<EnvironmentVariables> {
-    protected final Map<String, String> variables;
+    private final Map<String, String> variables;
+    private final Set<String> toRemove = new HashSet<>();
 
     /**
      * Default constructor with an empty set of environment variables. Use {@link #set(String, String)} to
@@ -113,6 +112,14 @@ public class EnvironmentVariables extends SingularTestResource implements NameVa
         return this;
     }
 
+    @Override
+    public EnvironmentVariables remove(String name) {
+        toRemove.add(name);
+        variables.remove(name);
+
+        return this;
+    }
+
     /**
      * Return a copy of all the variables set for testing
      * @return a copy of the map
@@ -141,7 +148,7 @@ public class EnvironmentVariables extends SingularTestResource implements NameVa
 
     @Override
     protected void doSetup() {
-        EnvironmentVariableMocker.connect(variables);
+        EnvironmentVariableMocker.connect(variables, toRemove);
     }
 
     @Override
