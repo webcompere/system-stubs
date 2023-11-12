@@ -72,4 +72,38 @@ public class EnvironmentVariablesRuleTest {
             assertThat(System.getenv("value1")).isEqualTo("foo");
         }
     }
+
+    public static class UsingRemoveViaConstructor {
+        @Rule
+        public EnvironmentVariablesRule environmentVariablesRule =
+            new EnvironmentVariablesRule(fromResource("test.properties"));
+
+        @Test
+        public void withMultipleEnvironmentVariablesSetByConstructor() {
+            assertThat(System.getenv("value1")).isEqualTo("foo");
+        }
+    }
+
+    public static class BuildVariableIsSet {
+        @Test
+        public void variablesAreVisibleNormally() {
+            assertThat(System.getenv("SET_IN_BUILD")).isEqualTo("buildme");
+            assertThat(System.getenv("SET_IN_BUILD2")).isEqualTo("buildmetoo");
+        }
+    }
+
+    public static class BuildVariableIsRemoveable{
+        @Rule
+        public EnvironmentVariablesRule environmentVariablesRule =
+            new EnvironmentVariablesRule()
+                .remove("SET_IN_BUILD")
+                .remove("SET_IN_BUILD2");
+
+
+        @Test
+        public void variablesAreVisibleNormally() {
+            assertThat(System.getenv("SET_IN_BUILD")).isNull();
+            assertThat(System.getenv("SET_IN_BUILD2")).isNull();
+        }
+    }
 }

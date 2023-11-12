@@ -47,6 +47,12 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <environmentVariables>
+            <SET_IN_BUILD>buildme</SET_IN_BUILD>
+            <SET_IN_BUILD2>buildmetoo</SET_IN_BUILD2>
+          </environmentVariables>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>org.jacoco</groupId>

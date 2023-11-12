@@ -123,6 +123,65 @@ class EnvironmentVariablesTest {
     }
 
     @Test
+    void canSetVariablesNested() throws Exception {
+        new EnvironmentVariables("TOO", "tar", "BOO", "bar")
+            .execute(() -> {
+                assertThat(System.getenv("TOO")).isEqualTo("tar");
+                assertThat(System.getenv("BOO")).isEqualTo("bar");
+
+                new EnvironmentVariables("CHEESE", "CRACKER")
+                    .execute(() -> {
+                        assertThat(System.getenv("TOO")).isEqualTo("tar");
+                        assertThat(System.getenv("BOO")).isEqualTo("bar");
+                        assertThat(System.getenv("CHEESE")).isEqualTo("CRACKER");
+                    });
+            });
+    }
+
+    @Test
+    void canRemoveVariablesNested() throws Exception {
+        new EnvironmentVariables("TOO", "tar", "BOO", "bar")
+            .execute(() -> {
+                new EnvironmentVariables("CHEESE", "CRACKER")
+                    .remove("BOO")
+                    .remove("TOO")
+                    .execute(() -> {
+                        assertThat(System.getenv("BOO")).isNull();
+                        assertThat(System.getenv("TOO")).isNull();
+                    });
+            });
+    }
+
+    @Test
+    void canRemoveVariablesNestedWhileActive() throws Exception {
+        new EnvironmentVariables("TOO", "tar", "BOO", "bar")
+            .execute(() -> {
+                var env = new EnvironmentVariables("CHEESE", "CRACKER");
+                env.execute(() -> {
+                    env.remove("BOO")
+                        .remove("TOO");
+
+                    assertThat(System.getenv("BOO")).isNull();
+                    assertThat(System.getenv("TOO")).isNull();
+                });
+            });
+    }
+
+    @Test
+    void canReAddRemovedVariables() throws Exception {
+        new EnvironmentVariables("TOO", "tar", "BOO", "bar")
+            .execute(() -> {
+                var env = new EnvironmentVariables("CHEESE", "CRACKER")
+                    .remove("BOO")
+                    .remove("TOO");
+                env.execute(() -> {
+                    env.set("TOO", "FAR");
+                    assertThat(System.getenv("TOO")).isEqualTo("FAR");
+                });
+            });
+    }
+
+    @Test
     void canInspectTheVariablesSetSoFar() {
         Map<String, String> set = new EnvironmentVariables()
             .set("a", "b")
