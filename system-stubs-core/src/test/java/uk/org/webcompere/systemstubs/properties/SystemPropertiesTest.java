@@ -147,8 +147,7 @@ class SystemPropertiesTest {
             properties.set("bar", "h");
             assertThat(System.getProperty("bar")).isEqualTo("h");
 
-            SystemProperties nested = new SystemProperties();
-            nested.remove("bar");
+            SystemProperties nested = new SystemProperties().remove("bar");
             nested.execute(() -> {
                 nested.set("bar", "bong");
                 assertThat(System.getProperty("bar")).isEqualTo("bong");
