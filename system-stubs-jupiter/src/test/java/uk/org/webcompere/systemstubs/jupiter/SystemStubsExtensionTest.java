@@ -45,6 +45,29 @@ class SystemStubsExtensionTest {
 
     @ExtendWith(SystemStubsExtension.class)
     @Nested
+    class SystemPropertiesAsParentClass {
+
+        @SystemStub
+        private SystemProperties systemProperties = new WithDefaultsSystemProperties()
+            .set("key1", "value3");
+
+        @Test
+        void defaultValuesAreSet() {
+            assertThat(System.getProperty("key1")).isEqualTo("value3");
+            assertThat(System.getProperty("key2")).isEqualTo("value2");
+        }
+    }
+
+    private static class WithDefaultsSystemProperties extends SystemProperties {
+
+        WithDefaultsSystemProperties() {
+            super("key1", "value1");
+            this.set("key2", "value2");
+        }
+    }
+
+    @ExtendWith(SystemStubsExtension.class)
+    @Nested
     class FieldWithoutAnnotation {
         private EnvironmentVariables environmentVariables = new EnvironmentVariables("not", "yet");
 

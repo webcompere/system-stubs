@@ -16,7 +16,7 @@ import static java.lang.System.setProperties;
  * that will be applied to the system to be set before the stubbing is triggered.
  */
 public class SystemPropertiesImpl<T extends SystemPropertiesImpl<T>> extends SingularTestResource
-    implements NameValuePairSetter<SystemPropertiesImpl<T>> {
+    implements NameValuePairSetter<T> {
     private Properties originalProperties;
     private Properties properties;
 
@@ -70,12 +70,13 @@ public class SystemPropertiesImpl<T extends SystemPropertiesImpl<T>> extends Sin
      * @since 1.0.0
      */
     @Override
-    public SystemPropertiesImpl<T> set(String name, String value) {
+    @SuppressWarnings("unchecked")
+    public T set(String name, String value) {
         properties.setProperty(name, value);
         if (isActive()) {
             System.setProperty(name, value);
         }
-        return this;
+        return (T) this;
     }
 
     /**
@@ -86,12 +87,13 @@ public class SystemPropertiesImpl<T extends SystemPropertiesImpl<T>> extends Sin
      * @since 2.1.5
      */
     @Override
-    public SystemPropertiesImpl<T> remove(String name) {
+    @SuppressWarnings("unchecked")
+    public T remove(String name) {
         propertiesToRemove.add(name);
         if (isActive()) {
             System.getProperties().remove(name);
         }
-        return this;
+        return (T) this;
     }
 
     @Override
