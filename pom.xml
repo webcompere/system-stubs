@@ -39,6 +39,7 @@
     <module>system-stubs-core</module>
     <module>system-stubs-junit4</module>
     <module>system-stubs-jupiter</module>
+    <module>system-stubs-testng</module>
   </modules>
 
   <properties>
@@ -105,6 +106,13 @@
         to avoid security warning -->
         <version>4.13.1</version>
         <!-- provided scope - the client provides their own JUnit -->
+        <scope>provided</scope>
+      </dependency>
+      <!-- For TestNG Plugin -->
+      <dependency>
+        <groupId>org.testng</groupId>
+        <artifactId>testng</artifactId>
+        <version>7.5</version>
         <scope>provided</scope>
       </dependency>
     </dependencies>

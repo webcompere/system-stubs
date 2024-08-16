@@ -3,14 +3,20 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/r943gjn189rlxts9/branch/main?svg=true)](https://ci.appveyor.com/project/ashleyfrieze/system-stubs/branch/main)
  [![codecov](https://codecov.io/gh/webcompere/system-stubs/branch/main/graph/badge.svg?token=J0N9VCXFQ1)](https://codecov.io/gh/webcompere/system-stubs)
 
-> **⚠ WARNING: JDK Compatibility.**  
+> **⚠ WARNING: JDK Compatibility.**
 > From JDK16 onwards, there's deep restrictons on the ability to use reflection to modify the Unmodifiable `Map` where `System` stores the
 > environment variables. We're looking for a fix to this. Until then, this library is not recommended for environment variable settings in Java 16+.
 
 ## Overview
-System Stubs is used to test code which depends on methods in `java.lang.System`.
+The core is test framework agnostic, but there's explicit support for JUnit 4, JUnit 5 and TestNG in
+specialist sub-modules.
 
-It is published under the [MIT license](http://opensource.org/licenses/MIT) and requires at least Java 8. There is a [walkthrough of its main features](https://www.baeldung.com/java-system-stubs) over on [Baeldung.com](https://www.baeldung.com).
+It is published under the [MIT license](http://opensource.org/licenses/MIT) and requires at least Java 11.
+There is a [walkthrough of its main features](https://www.baeldung.com/java-system-stubs) over on
+[Baeldung.com](https://www.baeldung.com).
+
+System Stubs [originated](History.md) as a fork of System Lambda, and is a partial rewrite and refactor of it.
+It has diverged in implementation from the original, but largely [retains compatibility](History.md#execute-around).
 
 It is divided into:
 
@@ -19,10 +25,36 @@ It is divided into:
   - Using the subclasses of `TestResource`, like `EnvironmentVariables` or `SystemIn` to create stubs
   and then execute test code via `execute`
 - [`system-stubs-junit4`](system-stubs-junit4/README.md) - a set of JUnit4 rules that activate the stubs around test code
-- [`system-stubs-jupiter`](system-stubs-jupiter/README.md) - a JUnit 5 extension that automatically injects
-System Stubs into JUnit 5 tests.
+- [`system-stubs-jupiter`](system-stubs-jupiter/README.md) - a JUnit 5 extension that automatically injects System Stubs into JUnit 5 tests.
+- [`system-stubs-testng`](system-stubs-testng/README.md) - a plugin/listener for the TestNG framework, which automatically
+    injects System Stubs into TestNG tests.
 
-System Stubs [originated](History.md) as a fork of System Lambda.
+
+## QuickStart (JUnit 5)
+
+```java
+@ExtendWith(SystemStubsExtension.class)
+class WithEnvironmentVariables {
+
+    @SystemStub
+    private EnvironmentVariables variables =
+        new EnvironmentVariables("input", "foo");
+
+    @Test
+    void hasAccessToEnvironmentVariables() {
+        assertThat(System.getenv("input"))
+            .isEqualTo("foo");
+    }
+
+    @Test
+    void changeEnvironmentVariablesDuringTest() {
+        variables.set("input", "bar");
+
+        assertThat(System.getenv("input"))
+            .isEqualTo("bar");
+    }
+}
+```
 
 ## Installation
 
@@ -55,6 +87,28 @@ System Stubs [originated](History.md) as a fork of System Lambda.
   <version>1.2.0</version>
 </dependency>
 ```
+
+### TestNG Plugin
+
+```xml
+<dependency>
+  <groupId>uk.org.webcompere</groupId>
+  <artifactId>system-stubs-testng</artifactId>
+  <version>1.2.1</version>
+</dependency>
+```
+
+See the full guide to [JUnit 5](system-stubs-jupiter/README.md), or use it with [JUnit 4](system-stubs-junit4/README.md).
+
+## Catalogue of SystemStubs Objects
+
+- `EnvironmentVariables` - for overriding the environment variables
+- `SystemProperties` - for temporarily overwriting system properties and then restoring them afterwards
+- `SystemOut` - for tapping the output to `System.out`
+- `SystemErr` - for tapping the output to `System.err`
+- `SystemErrAndOut` - for tapping the output to both `System.err` and `System.out`
+- `SystemIn` - for providing input to `System.in`
+- `SystemExit` - prevents system exit from occurring, recording the exit code
 
 ## Usage with Execute Around
 
@@ -154,7 +208,7 @@ the code under the test doesn't use checked exceptions.
 This is a good argument for using the JUnit4 or JUnit5 plugins, where you do not
 need to specifically turn the stubbing on via the `execute` method.
 
-## Available Stubs
+## How to Use Each of the Stubs
 
 ### System.exit
 
