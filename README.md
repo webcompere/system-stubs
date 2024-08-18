@@ -4,14 +4,19 @@
  [![codecov](https://codecov.io/gh/webcompere/system-stubs/branch/main/graph/badge.svg?token=J0N9VCXFQ1)](https://codecov.io/gh/webcompere/system-stubs)
 
 > **⚠ WARNING: JDK Compatibility.**
-> From JDK16 onwards, there's deep restrictons on the ability to use reflection to modify the Unmodifiable `Map` where `System` stores the
-> environment variables. We're looking for a fix to this. Until then, this library is not recommended for environment variable settings in Java 16+.
+> From JDK16 onwards, there are deep restrictions on the ability to use reflection to modify the Unmodifiable `Map`
+> where `System` stores the environment variables.
+> Owing to a (https://github.com/webcompere/system-stubs/issues/84#issuecomment-2292953216)[request] from a user who needed
+> some of the legacy functionality, this Java 8 version has been extended to remain compatible with the latest JUnit 5.
+> The v2.x release train (from main) is the LTS version and does not violate the Illegal Reflective Access limitations of later
+> versions of Java. However, the 1.x versions can continue to be used by adding the [`add-opens` command line](https://www.baeldung.com/java-unit-testing-environment-variables#3-when-reflective-access-doesnt-work) to
+> the test configuration.
 
 ## Overview
 The core is test framework agnostic, but there's explicit support for JUnit 4, JUnit 5 and TestNG in
 specialist sub-modules.
 
-It is published under the [MIT license](http://opensource.org/licenses/MIT) and requires at least Java 11.
+It is published under the [MIT license](http://opensource.org/licenses/MIT) and requires at least Java 8.
 There is a [walkthrough of its main features](https://www.baeldung.com/java-system-stubs) over on
 [Baeldung.com](https://www.baeldung.com).
 
