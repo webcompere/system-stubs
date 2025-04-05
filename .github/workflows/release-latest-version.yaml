@@ -14,8 +14,8 @@ jobs:
                   java-version: '11'
                   distribution: 'temurin'
                   server-id: ossrh
-                  server-username: ${{ secrets.OSSRH_USERNAME }}
-                  server-password: ${{ secrets.OSSRH_TOKEN }}
+                  server-username: MAVEN_USERNAME
+                  server-password: MAVEN_PASSWORD
             - id: install-secret-key
               name: Install gpg secret key
               run: |
