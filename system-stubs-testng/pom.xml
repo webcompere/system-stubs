@@ -5,13 +5,13 @@
   <parent>
     <groupId>uk.org.webcompere</groupId>
     <artifactId>system-stubs-parent</artifactId>
-    <version>2.1.8-SNAPSHOT</version>
+    <version>2.1.8</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
 
   <artifactId>system-stubs-testng</artifactId>
-  <version>2.1.8-SNAPSHOT</version>
+  <version>2.1.8</version>
   <packaging>jar</packaging>
 
   <properties>
