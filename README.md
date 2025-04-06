@@ -3,6 +3,8 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/r943gjn189rlxts9/branch/main?svg=true)](https://ci.appveyor.com/project/ashleyfrieze/system-stubs/branch/main)
  [![codecov](https://codecov.io/gh/webcompere/system-stubs/branch/main/graph/badge.svg?token=J0N9VCXFQ1)](https://codecov.io/gh/webcompere/system-stubs)
 [![Maven Central Version](https://img.shields.io/maven-central/v/uk.org.webcompere/system-stubs-parent)](https://central.sonatype.com/namespace/uk.org.webcompere)
+![GitHub Release](https://img.shields.io/github/v/release/webcompere/system-stubs)
+![Java](https://img.shields.io/badge/java-11-white.svg)
 
 > **⚠ WARNING: JDK Compatibility.**
 > From JDK16 onwards, there are deeper restrictions on the ability to use reflection. Previous versions of this library, and others in the space, encounter
