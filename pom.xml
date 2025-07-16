@@ -84,12 +84,12 @@
       <dependency>
         <groupId>net.bytebuddy</groupId>
         <artifactId>byte-buddy</artifactId>
-        <version>${version.byte.buddy}</version>
+        <version>1.17.4</version>
       </dependency>
       <dependency>
         <groupId>net.bytebuddy</groupId>
         <artifactId>byte-buddy-agent</artifactId>
-        <version>${version.byte.buddy}</version>
+        <version>1.17.4</version>
       </dependency>
       <dependency>
         <groupId>org.junit</groupId>
