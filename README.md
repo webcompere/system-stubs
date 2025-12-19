@@ -863,6 +863,10 @@ other tests in the same JVM runtime and **cannot** be localised to just the curr
 Build tools allow the test runner to fork separate processes for running subsets of the
 test classes, and this is the only safe way to use System Stubs with concurrent testing.
 
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=webcompere/system-stubs&type=date&legend=top-left)](https://www.star-history.com/#webcompere/system-stubs&type=date&legend=top-left)
+
 ## Contributing
 
 You have two options if you have a feature request, found a bug or
