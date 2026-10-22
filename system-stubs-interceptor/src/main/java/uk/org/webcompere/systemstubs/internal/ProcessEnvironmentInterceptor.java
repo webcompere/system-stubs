@@ -4,7 +4,6 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import java.util.*;
 
-import static java.util.stream.Collectors.toSet;
 
 /**
  * Plugs into the boot loader to provide an alternative implementation to ProcessEnvironment
@@ -136,14 +135,13 @@ public class ProcessEnvironmentInterceptor {
     }
 
     private static Map<String, String> filterNulls(Map<String, String> currentMockedEnvironment) {
-        var nullsToRemove = currentMockedEnvironment.entrySet()
-            .stream()
-            .filter(entry -> entry.getValue() == null)
-            .map(Map.Entry::getKey)
-            .collect(toSet());
-
-        nullsToRemove.forEach(currentMockedEnvironment::remove);
-        return currentMockedEnvironment;
+        Map<String, String> filteredEnvironment = new HashMap<>();
+        currentMockedEnvironment.forEach((key, value) -> {
+            if (value != null) {
+                filteredEnvironment.put(key, value);
+            }
+        });
+        return filteredEnvironment;
     }
 
     @SuppressFBWarnings("SE_COMPARATOR_SHOULD_BE_SERIALIZABLE")

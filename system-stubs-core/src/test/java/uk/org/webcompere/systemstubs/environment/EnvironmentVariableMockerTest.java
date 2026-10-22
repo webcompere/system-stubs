@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -91,6 +92,22 @@ class EnvironmentVariableMockerTest {
         newMap.put("foo", null);
 
         assertThat(System.getenv()).doesNotContainKey("foo");
+    }
+
+    @Test
+    void readingEnvironmentDoesNotInvalidateOtherReaders() {
+        Map<String, String> newMap = new HashMap<>();
+        EnvironmentVariableMocker.connect(newMap);
+        newMap.put("foo", null);
+        newMap.put("bar", "value");
+        Iterator<Map.Entry<String, String>> otherReader = newMap.entrySet().iterator();
+
+        assertThat(System.getenv()).doesNotContainKey("foo").containsEntry("bar", "value");
+        assertThat(System.getenv("foo")).isNull();
+
+        Map<String, String> observed = new HashMap<>();
+        otherReader.forEachRemaining(entry -> observed.put(entry.getKey(), entry.getValue()));
+        assertThat(observed).containsEntry("foo", null).containsEntry("bar", "value");
     }
 
     @Test
